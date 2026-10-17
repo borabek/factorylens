@@ -1,9 +1,10 @@
 #!/bin/zsh
 # Per-category download of MVTec 3D-AD. The single-archive link on the
-# official page returns "page not found", the per-category ones work.
-# On 2026-10-17 carrot, cookie, foam and peach also 404'd; I took those four
-# from the Kaggle mirror gengchensun/mvtec-3d-ad (its bagel is byte-identical
-# to the official one).
+# official page returns "page not found". On 2026-10-17 the per-category links
+# worked for six categories; carrot, cookie, foam and peach 404'd and came from
+# the Kaggle mirror gengchensun/mvtec-3d-ad instead (its bagel is
+# byte-identical to the official one). Dead links are skipped and listed at
+# the end.
 set -e
 dest=${1:?usage: download_mvtec3d.sh <dest dir>}
 mkdir -p "$dest"

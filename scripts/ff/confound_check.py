@@ -6,6 +6,7 @@ UTC, and NSF-MAP aligned them with a 4h59m51.1s shift.
 
 usage: python scripts/ff/confound_check.py "data/raw/ff_analog/Analog Dataset"
 """
+
 import sys
 from pathlib import Path
 
@@ -31,9 +32,11 @@ df["label"] = df["Description"].fillna("normal")
 df["run"] = (df["Q_Cell_CycleCount"] != df["Q_Cell_CycleCount"].shift()).cumsum()
 
 runs = df.groupby("run").agg(
-    start=("_time", "min"), end=("_time", "max"),
+    start=("_time", "min"),
+    end=("_time", "max"),
     label=("label", lambda s: s.value_counts().idxmax()),
-    vfd1=("Q_VFD1_Temperature", "mean"), vfd2=("Q_VFD2_Temperature", "mean"),
+    vfd1=("Q_VFD1_Temperature", "mean"),
+    vfd2=("Q_VFD2_Temperature", "mean"),
 )
 runs = runs[(runs["end"] - runs["start"]).dt.total_seconds() > 60]
 runs["anomalous"] = (runs["label"] != "normal").astype(int)

@@ -12,6 +12,9 @@ dependencies = [
     "tifffile>=2024.1",
 ]
 
+[project.scripts]
+factorylens = "factorylens.cli:main"
+
 [dependency-groups]
 dev = [
     "pytest>=8.0",

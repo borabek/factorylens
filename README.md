@@ -15,7 +15,7 @@ make lint test
 
 ## Data
 
-The code downloads public datasets; nothing is redistributed here.
+The code downloads public datasets; nothing is redistributed here. Details, counts and download commands are in [docs/data.md](docs/data.md).
 
 - [MVTec 3D-AD](https://www.mvtec.com/company/research/datasets/mvtec-3d-ad) (CC BY-NC-SA 4.0), the main benchmark
 - [Future Factories analog dataset](https://www.kaggle.com/datasets/ramyharik/ff-2023-12-12-analog-dataset) (CC BY-SA 4.0), used for a smaller sensor-only study

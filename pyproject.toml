@@ -51,3 +51,8 @@ show_missing = true
 [tool.mypy]
 strict = true
 files = ["src"]
+
+# torch is optional until the models land
+[[tool.mypy.overrides]]
+module = ["torch", "torch.*"]
+ignore_missing_imports = true

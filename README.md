@@ -1,5 +1,7 @@
 # FactoryLens
 
+[![ci](https://github.com/borabek/factorylens/actions/workflows/ci.yml/badge.svg)](https://github.com/borabek/factorylens/actions/workflows/ci.yml)
+
 Anomaly detection for industrial inspection using an RGB camera and a 3D sensor together, with a focus on what happens when one of the two sensors gets noisy or fails.
 
 This is a work in progress (started October 2026). The research question, the dataset decision and the hypotheses are in [docs/research_plan.md](docs/research_plan.md).
@@ -10,7 +12,7 @@ Needs [uv](https://docs.astral.sh/uv/) and Python 3.11+.
 
 ```bash
 make install   # creates .venv, installs pre-commit hooks
-make lint test
+make check     # lint, type check, tests with coverage
 ```
 
 ## Data

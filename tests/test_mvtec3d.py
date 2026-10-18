@@ -1,4 +1,5 @@
 import json
+import shutil
 
 import numpy as np
 import pytest
@@ -114,3 +115,37 @@ def test_deep_check_catches_empty_defect_mask(root):
     Image.fromarray(np.zeros((H, W), np.uint8)).save(path)
     problems = mvtec3d.check_category(root, "bagel", expected=FAKE_COUNTS, deep=True)
     assert problems == ["bagel/test/crack/000: defect sample with an empty mask"]
+
+
+def test_missing_split(root):
+    shutil.rmtree(root / "bagel" / "validation")
+    with pytest.raises(FileNotFoundError):
+        mvtec3d.list_samples(root, "bagel", "validation")
+    problems = mvtec3d.check_category(root, "bagel", expected=FAKE_COUNTS)
+    assert problems == ["bagel/validation: missing"]
+
+
+def test_check_flags_defects_in_training_data(root):
+    write_sample(root / "bagel" / "train", "crack", 0, with_gt=False)
+    problems = mvtec3d.check_category(root, "bagel", expected={"bagel": (4, 1, 3)})
+    assert problems == ["bagel/train: contains non-good samples"]
+
+
+def test_check_reports_missing_mask(root):
+    (root / "bagel" / "test" / "good" / "gt" / "001.png").unlink()
+    problems = mvtec3d.check_category(root, "bagel", expected=FAKE_COUNTS)
+    assert problems == ["bagel/test/good/001: no gt mask"]
+
+
+def test_deep_check_catches_empty_scan(root):
+    path = root / "bagel" / "train" / "good" / "xyz" / "002.tiff"
+    tifffile.imwrite(path, np.zeros((H, W, 3), np.float32), photometric="rgb")
+    problems = mvtec3d.check_category(root, "bagel", expected=FAKE_COUNTS, deep=True)
+    assert problems == ["bagel/train/good/002: xyz has no valid points"]
+
+
+def test_deep_check_catches_mask_size_mismatch(root):
+    path = root / "bagel" / "test" / "good" / "gt" / "000.png"
+    Image.fromarray(np.zeros((H, W + 2), np.uint8)).save(path)
+    problems = mvtec3d.check_category(root, "bagel", expected=FAKE_COUNTS, deep=True)
+    assert problems == ["bagel/test/good/000: rgb (6, 8) vs gt (6, 10)"]

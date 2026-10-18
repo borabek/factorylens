@@ -9,8 +9,8 @@ dist/
 build/
 
 # datasets and anything derived from them stay local
-data/
-outputs/
+/data/
+/outputs/
 
 .DS_Store
 .vscode/

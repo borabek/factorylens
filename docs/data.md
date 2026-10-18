@@ -26,7 +26,7 @@ On a first look at one training scan per category, between 66% (cable_gland) and
 
 ```bash
 scripts/download_mvtec3d.sh data/raw/mvtec3d
-uv run python scripts/check_mvtec3d.py data/raw/mvtec3d --deep
+uv run factorylens data check data/raw/mvtec3d --deep
 ```
 
 The full-archive link on the MVTec page was dead when I downloaded the data (2026-10-17), and so were the per-category links for carrot, cookie, foam and peach. I took those four from the Kaggle mirror [`gengchensun/mvtec-3d-ad`](https://www.kaggle.com/datasets/gengchensun/mvtec-3d-ad). The mirror's bagel folder is byte-identical to the official one, and the deep check passes on every category.

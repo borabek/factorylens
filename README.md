@@ -4,6 +4,15 @@ Anomaly detection for industrial inspection using an RGB camera and a 3D sensor 
 
 This is a work in progress (started October 2026). The research question, the dataset decision and the hypotheses are in [docs/research_plan.md](docs/research_plan.md).
 
+## Setup
+
+Needs [uv](https://docs.astral.sh/uv/) and Python 3.11+.
+
+```bash
+make install   # creates .venv, installs pre-commit hooks
+make lint test
+```
+
 ## Data
 
 The code downloads public datasets; nothing is redistributed here.

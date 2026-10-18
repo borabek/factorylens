@@ -2,6 +2,7 @@
 
 usage: python scripts/ff/cycle_runs.py "data/raw/ff_analog/Analog Dataset"
 """
+
 import sys
 from pathlib import Path
 
@@ -36,7 +37,8 @@ runs["label"] = runs["labels"].str.split(":").str[0]
 runs = runs[runs["dur_s"] > 60]  # drop counter-reset stubs
 block = (runs["label"] != runs["label"].shift()).cumsum()
 blocks = runs.groupby(block).agg(
-    label=("label", "first"), cycles=("label", "size"), start=("start", "min"), end=("end", "max"))
+    label=("label", "first"), cycles=("label", "size"), start=("start", "min"), end=("end", "max")
+)
 print("\nlabel blocks (full cycles only):")
 print(blocks.to_string())
 print("\ncycles per label:")

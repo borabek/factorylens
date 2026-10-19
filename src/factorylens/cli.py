@@ -8,9 +8,10 @@ import time
 from collections.abc import Sequence
 
 from factorylens import __version__
-from factorylens.data import mvtec3d
+from factorylens.data import mvtec3d, subsets
 
 DEFAULT_ROOT = "data/raw/mvtec3d"
+DEFAULT_KSHOT = "configs/kshot.json"
 
 
 def data_check(args: argparse.Namespace) -> int:
@@ -31,6 +32,14 @@ def data_check(args: argparse.Namespace) -> int:
     return 1 if all_problems else 0
 
 
+def data_kshot(args: argparse.Namespace) -> int:
+    ks = tuple(args.k or subsets.KS)
+    built = subsets.build(args.root, args.category or mvtec3d.CATEGORIES, ks)
+    subsets.save(built, args.out)
+    print(f"wrote {len(built)} categories x {len(subsets.SEEDS)} seeds, k={ks} to {args.out}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="factorylens")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -49,6 +58,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     check.add_argument("--deep", action="store_true", help="load every sample and compare sizes")
     check.set_defaults(func=data_check)
+
+    kshot = data_cmds.add_parser("kshot", help="write the fixed few-shot training subsets")
+    kshot.add_argument("root", nargs="?", default=DEFAULT_ROOT)
+    kshot.add_argument("--out", default=DEFAULT_KSHOT)
+    kshot.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
+    kshot.add_argument("--k", action="append", type=int, help=f"default: {subsets.KS}")
+    kshot.set_defaults(func=data_kshot)
 
     return parser
 

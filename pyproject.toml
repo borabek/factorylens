@@ -25,6 +25,7 @@ dev = [
     "pytest-cov>=7.1.0",
     "mypy>=2.4.0",
     "pandas-stubs>=3.0.5.260914",
+    "matplotlib>=3.11.2",
 ]
 
 [build-system]

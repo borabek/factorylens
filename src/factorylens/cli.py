@@ -8,10 +8,11 @@ import time
 from collections.abc import Sequence
 
 from factorylens import __version__
-from factorylens.data import mvtec3d, subsets
+from factorylens.data import ff, mvtec3d, subsets
 
 DEFAULT_ROOT = "data/raw/mvtec3d"
 DEFAULT_KSHOT = "configs/kshot.json"
+DEFAULT_FF_ROOT = "data/raw/ff_analog/Analog Dataset"
 
 
 def data_check(args: argparse.Namespace) -> int:
@@ -40,6 +41,19 @@ def data_kshot(args: argparse.Namespace) -> int:
     return 0
 
 
+def ff_blocks(args: argparse.Namespace) -> int:
+    cycles = ff.segment_cycles(ff.load_analog(args.root))
+    blocks = ff.label_blocks(cycles)
+    blocks["start"] = blocks["start"].dt.strftime("%m-%d %H:%M")
+    blocks["end"] = blocks["end"].dt.strftime("%m-%d %H:%M")
+    print(blocks.to_string())
+    train, test = ff.cross_day_split(cycles, anomaly=args.anomaly)
+    for name, part in [("train (day 1)", train), ("test (day 2)", test)]:
+        counts = part["label"].value_counts()
+        print(f"{name}: {len(part)} cycles, " + ", ".join(f"{k} {v}" for k, v in counts.items()))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="factorylens")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -65,6 +79,13 @@ def build_parser() -> argparse.ArgumentParser:
     kshot.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
     kshot.add_argument("--k", action="append", type=int, help=f"default: {subsets.KS}")
     kshot.set_defaults(func=data_kshot)
+
+    ff_group = groups.add_parser("ff", help="Future Factories analog data")
+    ff_cmds = ff_group.add_subparsers(dest="command", required=True)
+    blocks = ff_cmds.add_parser("blocks", help="label blocks and the cross-day split")
+    blocks.add_argument("root", nargs="?", default=DEFAULT_FF_ROOT)
+    blocks.add_argument("--anomaly", default="NoNose")
+    blocks.set_defaults(func=ff_blocks)
 
     return parser
 

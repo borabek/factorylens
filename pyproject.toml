@@ -8,7 +8,9 @@ authors = [{ name = "Bora Ilban Bayrakci" }]
 requires-python = ">=3.11"
 dependencies = [
     "numpy>=1.26",
+    "pandas>=3.0.6",
     "pillow>=10.0",
+    "scikit-learn>=1.9.1",
     "tifffile>=2024.1",
 ]
 
@@ -22,6 +24,7 @@ dev = [
     "pre-commit>=3.7",
     "pytest-cov>=7.1.0",
     "mypy>=2.4.0",
+    "pandas-stubs>=3.0.5.260914",
 ]
 
 [build-system]

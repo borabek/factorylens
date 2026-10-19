@@ -11,6 +11,7 @@ dependencies = [
     "pandas>=3.0.6",
     "pillow>=10.0",
     "scikit-learn>=1.9.1",
+    "scipy>=1.17.1",
     "tifffile>=2024.1",
     "torch>=2.14.1",
     "torchvision>=0.29.1",
@@ -28,6 +29,7 @@ dev = [
     "mypy>=2.4.0",
     "pandas-stubs>=3.0.5.260914",
     "matplotlib>=3.11.2",
+    "scipy-stubs>=1.17.1.5",
 ]
 
 [build-system]

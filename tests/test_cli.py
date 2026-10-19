@@ -55,3 +55,11 @@ def test_ff_blocks(tmp_path, capsys):
     out = capsys.readouterr().out
     assert "train (day 1): 2 cycles" in out
     assert "test (day 2): 2 cycles" in out
+
+
+def test_data_prepare(root, tmp_path, capsys):
+    out = tmp_path / "processed"
+    args = ["data", "prepare", str(root), "--cache", str(out), "--size", "4"]
+    assert cli.main(args + ["--category", "bagel", "--jobs", "1"]) == 0
+    assert "bagel" in capsys.readouterr().out
+    assert len(list(out.glob("4px-*/bagel_*.npz"))) == 3

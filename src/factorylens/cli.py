@@ -6,13 +6,15 @@ import argparse
 import sys
 import time
 from collections.abc import Sequence
+from concurrent.futures import ProcessPoolExecutor
 
 from factorylens import __version__
-from factorylens.data import ff, mvtec3d, subsets
+from factorylens.data import cache, ff, mvtec3d, subsets
 
 DEFAULT_ROOT = "data/raw/mvtec3d"
 DEFAULT_KSHOT = "configs/kshot.json"
 DEFAULT_FF_ROOT = "data/raw/ff_analog/Analog Dataset"
+DEFAULT_CACHE = "data/processed"
 
 
 def data_check(args: argparse.Namespace) -> int:
@@ -38,6 +40,31 @@ def data_kshot(args: argparse.Namespace) -> int:
     built = subsets.build(args.root, args.category or mvtec3d.CATEGORIES, ks)
     subsets.save(built, args.out)
     print(f"wrote {len(built)} categories x {len(subsets.SEEDS)} seeds, k={ks} to {args.out}")
+    return 0
+
+
+def _prepare_category(job: tuple[str, str, str, cache.Settings]) -> str:
+    root, cache_dir, category, settings = job
+    start = time.perf_counter()
+    sizes = []
+    for split in mvtec3d.SPLITS:
+        cache.get(root, cache_dir, category, split, settings)
+        sizes.append(cache.cache_path(cache_dir, category, split, settings).stat().st_size)
+    return f"{category:12s} {sum(sizes) / 1e6:7.1f} MB {time.perf_counter() - start:6.1f}s"
+
+
+def data_prepare(args: argparse.Namespace) -> int:
+    settings = cache.Settings(size=args.size)
+    categories = args.category or mvtec3d.CATEGORIES
+    jobs = [(args.root, args.cache, c, settings) for c in categories]
+    print(f"writing to {args.cache}/{settings.dirname()}")
+    if args.jobs == 1:
+        for job in jobs:
+            print(_prepare_category(job))
+        return 0
+    with ProcessPoolExecutor(max_workers=args.jobs) as pool:
+        for line in pool.map(_prepare_category, jobs):
+            print(line, flush=True)
     return 0
 
 
@@ -79,6 +106,14 @@ def build_parser() -> argparse.ArgumentParser:
     kshot.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
     kshot.add_argument("--k", action="append", type=int, help=f"default: {subsets.KS}")
     kshot.set_defaults(func=data_kshot)
+
+    prepare = data_cmds.add_parser("prepare", help="cache resized, background-free samples")
+    prepare.add_argument("root", nargs="?", default=DEFAULT_ROOT)
+    prepare.add_argument("--cache", default=DEFAULT_CACHE)
+    prepare.add_argument("--size", type=int, default=cache.Settings.size)
+    prepare.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
+    prepare.add_argument("--jobs", type=int, default=4)
+    prepare.set_defaults(func=data_prepare)
 
     ff_group = groups.add_parser("ff", help="Future Factories analog data")
     ff_cmds = ff_group.add_subparsers(dest="command", required=True)

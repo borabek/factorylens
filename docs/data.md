@@ -59,7 +59,15 @@ Things that matter later:
 ```bash
 scripts/download_mvtec3d.sh data/raw/mvtec3d
 uv run factorylens data check data/raw/mvtec3d --deep
+uv run factorylens data prepare data/raw/mvtec3d   # ~1 min, 0.7 GB
 ```
+
+`data prepare` writes every split at 224×224 to `data/processed/224px-<hash>/`:
+- RGB is resized bilinearly.
+- xyz and the masks are resized nearest-neighbour, after background removal at full resolution.
+- `<hash>` comes from the preprocessing settings, so a changed threshold gets a fresh directory instead of stale arrays.
+
+Reading bagel's 244 training samples from the cache takes 0.2 s, against 10 s from the raw files.
 
 The full-archive link on the MVTec page was dead when I downloaded the data (2026-10-17), and so were the per-category links for carrot, cookie, foam and peach. I took those four from the Kaggle mirror [`gengchensun/mvtec-3d-ad`](https://www.kaggle.com/datasets/gengchensun/mvtec-3d-ad). The mirror's bagel folder is byte-identical to the official one, and the deep check passes on every category.
 

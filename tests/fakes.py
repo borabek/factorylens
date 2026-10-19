@@ -19,7 +19,11 @@ def write_sample(split_dir, defect, idx, with_gt, mask_value=0):
 
     Image.fromarray(np.full((H, W, 3), 120, np.uint8)).save(d / "rgb" / f"{idx:03d}.png")
 
-    xyz = np.full((H, W, 3), 0.5, np.float32)
+    # a flat table 0.55 m away with a 1 cm box on it, so plane fitting has something to do
+    v, u = np.mgrid[0:H, 0:W].astype(np.float32)
+    z = np.full((H, W), 0.55, np.float32)
+    z[2:4, 2:5] -= 0.01
+    xyz = np.stack([u * 0.001, v * 0.001, z], axis=-1)
     xyz[0, 0] = 0  # one pixel the sensor missed
     tifffile.imwrite(d / "xyz" / f"{idx:03d}.tiff", xyz, photometric="rgb")
 

@@ -1,5 +1,5 @@
 import pytest
-from fakes import FAKE_COUNTS
+from fakes import FAKE_COUNTS, make_ff_frame, write_ff_csvs
 
 from factorylens import cli
 from factorylens.data import mvtec3d, subsets
@@ -46,3 +46,12 @@ def test_data_kshot_writes_file(root, tmp_path, capsys):
     assert set(written) == {"bagel"}
     assert len(written["bagel"]["4"]["2"]) == 2
     assert "k=(1, 2)" in capsys.readouterr().out
+
+
+def test_ff_blocks(tmp_path, capsys):
+    write_ff_csvs(tmp_path, make_ff_frame())
+
+    assert cli.main(["ff", "blocks", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "train (day 1): 2 cycles" in out
+    assert "test (day 2): 2 cycles" in out

@@ -85,6 +85,19 @@ uvx kaggle datasets download ramyharik/ff-2023-12-12-analog-dataset --unzip -p d
 
 Licence: CC BY-SA 4.0.
 
-See [research_plan.md](research_plan.md) for why the multimodal (image) version of this dataset is not used for the main comparison.
+See [research_plan.md](research_plan.md) for why the multimodal (image) version of this dataset is not used for the main comparison. The short version is this picture:
+
+![label blocks over time and the period with camera images](figures/ff_timeline.png)
+
+Anomalies were introduced in long blocks. Inside the window that has camera images, almost every anomalous cycle comes before every normal one. Normal and `NoNose` cycles do exist on both days, though, which allows a fair test: `factorylens ff blocks` trains on day 1 (23 normal, 36 NoNose) and tests on day 2 (138 normal, 23 NoNose).
+
+What a missing nose cone looks like in the gripper signals (day 1 only):
+
+![gripper load through a cycle, normal vs no nose](figures/ff_gripper.png)
+
+- **R03** has a short load pulse around 90–97 s into each normal cycle that is simply absent without the nose cone. That is a direct physical signature of the missing part.
+- **R01** sits about 50 units lower for the *whole* cycle in the NoNose block, not at any particular event. This looks more like slow drift between the two blocks (they are hours apart) than like the defect. A detector that leans on R01 would be using the same kind of shortcut as the image data, so this is the first thing the explainability check will look at.
+
+Both figures come from `scripts/ff/figures.py`.
 
 > Harik et al. *Analog and Multi-modal Manufacturing Datasets Acquired on the Future Factories Platform.* arXiv:2401.15544, 2024.

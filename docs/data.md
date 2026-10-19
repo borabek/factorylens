@@ -95,8 +95,15 @@ What a missing nose cone looks like in the gripper signals (day 1 only):
 
 ![gripper load through a cycle, normal vs no nose](figures/ff_gripper.png)
 
-- **R03** has a short load pulse around 90–97 s into each normal cycle that is simply absent without the nose cone. That is a direct physical signature of the missing part.
-- **R01** sits about 50 units lower for the *whole* cycle in the NoNose block, not at any particular event. This looks more like slow drift between the two blocks (they are hours apart) than like the defect. A detector that leans on R01 would be using the same kind of shortcut as the image data, so this is the first thing the explainability check will look at.
+- **R03** has a short load pulse around 90–97 s into each normal cycle that is simply absent without the nose cone. That is a direct physical signature of the missing part, and it holds on both days.
+- **R01** sits lower for the *whole* cycle in the day-1 NoNose block, not at any particular event. Checked against day 2, this is drift: the R01 level keeps falling through the run, and on day 2 the NoNose cycles are actually *higher* than the normal ones. A detector that learned "low R01 = missing nose" on day 1 would get day 2 backwards.
+
+| per-cycle value | day 1 normal | day 1 NoNose | day 2 normal | day 2 NoNose |
+|---|---|---|---|---|
+| R01 mean gripper load | 488 | 444 | 358 | 387 |
+| R03 peak load, 88–98 s (median) | 7060 | 1407 | 6565 | 1401 |
+
+This is the same kind of shortcut as in the image data, at a smaller scale. It is the first thing the explainability check on the sensor detector has to rule out.
 
 Both figures come from `scripts/ff/figures.py`.
 

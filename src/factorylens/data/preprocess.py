@@ -10,6 +10,12 @@ BTF drops points within 5 mm of the plane. On dowel (thin rods lying flat)
 that removes about 38% of the annotated defect pixels, against 14% at 2 mm,
 so 2 mm is the default here and BTF_THRESHOLD is kept for reproducing their
 numbers. scripts/check_background_removal.py has the per-category numbers.
+
+After the plane cut, a scan still has dozens of tiny isolated specks. BTF keeps
+only the largest connected cluster, but on tire and bagel that also throws away
+2-4% of the real object, and on carrot it cuts more than a fifth of the defect
+from 3 samples. Dropping components below 0.02% of the image removes the
+specks (~0.2% of the foreground) and keeps 99%+ of every category's defects.
 """
 
 from __future__ import annotations
@@ -18,11 +24,15 @@ from dataclasses import dataclass
 
 import numpy as np
 from PIL import Image
+from scipy import ndimage
 
 from factorylens.data.mvtec3d import valid_points
 
 DEFAULT_THRESHOLD = 0.002
 BTF_THRESHOLD = 0.005
+MIN_COMPONENT = 2e-4  # fraction of the image
+
+_EIGHT_NEIGHBOURS = np.ones((3, 3), bool)
 
 
 def resize_rgb(rgb: np.ndarray, size: int) -> np.ndarray:
@@ -108,20 +118,46 @@ def border_mask(shape: tuple[int, int], width: int) -> np.ndarray:
     return mask
 
 
+def drop_small_components(mask: np.ndarray, min_fraction: float = MIN_COMPONENT) -> np.ndarray:
+    """Remove 8-connected blobs smaller than `min_fraction` of the image."""
+    labels, n = ndimage.label(mask, structure=_EIGHT_NEIGHBOURS)
+    if n == 0:
+        return mask.copy()
+    sizes = np.bincount(labels.ravel())
+    keep = sizes >= min_fraction * mask.size
+    keep[0] = False
+    return np.asarray(keep[labels])
+
+
+def keep_largest_component(mask: np.ndarray) -> np.ndarray:
+    """BTF-style cleaning: only the biggest 8-connected blob survives."""
+    labels, n = ndimage.label(mask, structure=_EIGHT_NEIGHBOURS)
+    if n == 0:
+        return mask.copy()
+    sizes = np.bincount(labels.ravel())
+    sizes[0] = 0
+    return np.asarray(labels == sizes.argmax())
+
+
 def remove_background(
     xyz: np.ndarray,
     threshold: float = DEFAULT_THRESHOLD,
     border: int = 10,
     seed: int = 0,
+    min_component: float = MIN_COMPONENT,
 ) -> tuple[np.ndarray, np.ndarray, Plane]:
     """Zero out points within `threshold` metres of the background plane.
 
-    Returns the cleaned xyz, the foreground mask and the fitted plane.
+    Isolated blobs smaller than `min_component` (fraction of the image) are
+    dropped too; pass 0 to keep them. Returns the cleaned xyz, the foreground
+    mask and the fitted plane.
     """
     valid = valid_points(xyz)
     ring = border_mask(valid.shape, border) & valid
     plane = fit_plane(xyz[ring], seed=seed)
     foreground = valid & (np.abs(plane.distance(xyz)) >= threshold)
+    if min_component > 0:
+        foreground = drop_small_components(foreground, min_component)
     cleaned = np.where(foreground[..., None], xyz, 0).astype(np.float32)
     return cleaned, foreground, plane
 

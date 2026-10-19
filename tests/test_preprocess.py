@@ -78,3 +78,36 @@ def test_to_point_cloud_skips_missing_points():
     assert [5, 5] not in pixels.tolist()
     r, c = pixels[100]
     assert np.array_equal(points[100], xyz[r, c])
+
+
+def test_drop_small_components_removes_specks_only():
+    mask = np.zeros((100, 100), bool)
+    mask[10:40, 10:40] = True  # object, 900 px
+    mask[70:80, 70:75] = True  # second real part, 50 px
+    mask[95, 95] = True  # speck
+    cleaned = pp.drop_small_components(mask, min_fraction=0.002)  # 20 px
+    assert cleaned[10:40, 10:40].all() and cleaned[70:80, 70:75].all()
+    assert not cleaned[95, 95]
+
+
+def test_keep_largest_component_drops_everything_else():
+    mask = np.zeros((100, 100), bool)
+    mask[10:40, 10:40] = True
+    mask[70:80, 70:75] = True
+    largest = pp.keep_largest_component(mask)
+    assert largest.sum() == 900
+
+
+def test_component_helpers_on_empty_mask():
+    empty = np.zeros((5, 5), bool)
+    assert not pp.drop_small_components(empty).any()
+    assert not pp.keep_largest_component(empty).any()
+
+
+def test_remove_background_drops_floating_specks():
+    xyz, box = tilted_scene(noise=0.0005)
+    xyz[2, 50, 2] -= 0.05  # a single point floating 5 cm above the table
+    _, with_cleaning, _ = pp.remove_background(xyz, border=5, min_component=0.001)
+    _, without, _ = pp.remove_background(xyz, border=5, min_component=0)
+    assert without[2, 50] and not with_cleaning[2, 50]
+    assert with_cleaning[box].mean() > 0.99

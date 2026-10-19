@@ -3,8 +3,11 @@
 import json
 
 import numpy as np
+import pandas as pd
 import tifffile
 from PIL import Image
+
+from factorylens.data import ff
 
 H, W = 6, 8
 
@@ -40,3 +43,35 @@ def make_fake_root(tmp_path):
 
 
 FAKE_COUNTS = {"bagel": (3, 1, 3)}
+
+
+# Future Factories
+
+
+def make_ff_frame():
+    """Five cycles at 1 Hz: counter 1, 2, a 3 s reset stub (0), then 1, 2 again on day 2."""
+    pieces = [
+        ("2023-12-11T10:00:00Z", 1, 100, ""),
+        ("2023-12-11T10:01:40Z", 2, 100, "NoNose"),
+        ("2023-12-11T23:59:57Z", 0, 3, ""),
+        ("2023-12-12T08:00:00Z", 1, 100, ""),
+        ("2023-12-12T08:01:40Z", 2, 100, "NoNose"),
+    ]
+    rows = []
+    for start, counter, n, desc in pieces:
+        for t in pd.date_range(start, periods=n, freq="1s"):
+            rows.append({"time": t, "Q_Cell_CycleCount": counter, "label": desc or ff.NORMAL})
+    return pd.DataFrame(rows).set_index("time")
+
+
+def write_ff_csvs(tmp_path, df):
+    times = df.index.strftime("%Y-%m-%dT%H:%M:%S.%f").str[:-3] + "Z"
+    for i, name in enumerate(ff.FILES):
+        out = pd.DataFrame({"_time": times})
+        if name == ff.LABEL_FILE:
+            out["Q_Cell_CycleCount"] = df["Q_Cell_CycleCount"].values
+            out["Description"] = df["label"].replace(ff.NORMAL, "").values
+        else:
+            out[f"signal_{i}"] = 68.0
+            out["Description"] = ""
+        out.to_csv(tmp_path / name, index=False)

@@ -70,7 +70,9 @@ def data_prepare(args: argparse.Namespace) -> int:
 
 
 def rgb_run(args: argparse.Namespace) -> int:
-    config = PatchCoreConfig(arch=args.arch, layers=tuple(args.layer or PatchCoreConfig.layers))
+    config = PatchCoreConfig(
+        arch=args.arch, layers=tuple(args.layer or PatchCoreConfig.layers), grid=args.grid
+    )
     for category in args.category or mvtec3d.CATEGORIES:
         for seed in args.seed or [0]:
             r = experiments.run_rgb(
@@ -171,6 +173,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--seed", type=int, action="append")
     run.add_argument("--arch", default=PatchCoreConfig.arch)
     run.add_argument("--layer", action="append", help="default: layer2 and layer3")
+    run.add_argument("--grid", type=int, help="fixed patch grid side, e.g. 28")
     run.add_argument("--kshot", default=DEFAULT_KSHOT)
     run.add_argument("--results", default="results/rgb")
     run.add_argument("--scores", default="outputs/scores/rgb")

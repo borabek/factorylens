@@ -83,3 +83,16 @@ def test_channel_pooling_matrix_matches_adaptive_avg_pool(c, d):
     x = torch.randn(5, c)
     expected = torch.nn.functional.adaptive_avg_pool1d(x[:, None, :], d)[:, 0]
     torch.testing.assert_close(x @ channel_pooling_matrix(c, d), expected)
+
+
+def test_fixed_grid_puts_every_layer_choice_on_the_same_patches():
+    for layers in [("layer1",), ("layer3",), ("layer1", "layer2", "layer3")]:
+        cfg = PatchCoreConfig(arch="resnet18", embed_dim=32, layers=layers, grid=4)
+        emb = PatchCore(cfg, device="cpu", pretrained=False).embed(textures(2))
+        assert emb.shape == (2, 4, 4, 32)
+
+
+def test_default_grid_follows_the_first_layer():
+    cfg = PatchCoreConfig(arch="resnet18", embed_dim=32, layers=("layer1", "layer3"))
+    emb = PatchCore(cfg, device="cpu", pretrained=False).embed(textures(1))
+    assert emb.shape[1:3] == (16, 16)  # layer1 of a 64 px image

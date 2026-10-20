@@ -61,7 +61,7 @@ strict = true
 files = ["src"]
 
 [[tool.mypy.overrides]]
-module = ["torchvision", "torchvision.*"]
+module = ["torchvision", "torchvision.*", "sklearn", "sklearn.*"]
 ignore_missing_imports = true
 
 # CPU-only torch on Linux keeps CI from pulling ~2 GB of CUDA libraries;

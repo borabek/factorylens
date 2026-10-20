@@ -35,6 +35,9 @@ class PatchCoreConfig:
     projection_dim: int = 128
     blur_sigma: float = 4.0
     seed: int = 0
+    # patch grid side; None means the resolution of the first listed layer.
+    # Fixing it (e.g. 28) lets different layer choices be compared fairly.
+    grid: int | None = None
 
     def as_dict(self) -> dict[str, object]:
         d = asdict(self)
@@ -94,6 +97,14 @@ def nearest_distance(query: torch.Tensor, bank: torch.Tensor, chunk: int = 4096)
     return torch.cat(parts)
 
 
+def _to_grid(m: torch.Tensor, size: tuple[int, int]) -> torch.Tensor:
+    if tuple(m.shape[-2:]) == size:
+        return m
+    if m.shape[-1] > size[-1]:
+        return F.adaptive_avg_pool2d(m, size)  # finer layer: average down
+    return F.interpolate(m, size=size, mode="bilinear", align_corners=False)
+
+
 class PatchCore:
     def __init__(
         self,
@@ -119,13 +130,9 @@ class PatchCore:
                 F.avg_pool2d(feats[name], k, stride=1, padding=k // 2)
                 for name in self.config.layers
             ]
-            size = maps[0].shape[-2:]
-            maps = [
-                m
-                if m.shape[-2:] == size
-                else F.interpolate(m, size=size, mode="bilinear", align_corners=False)
-                for m in maps
-            ]
+            g = self.config.grid
+            size = (g, g) if g else (maps[0].shape[-2], maps[0].shape[-1])
+            maps = [_to_grid(m, size) for m in maps]
             x = torch.cat(maps, dim=1).permute(0, 2, 3, 1)  # (B, h, w, C)
             b, h, w, c = x.shape
             if self._pool is None or self._pool.shape[0] != c:

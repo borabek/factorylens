@@ -4,29 +4,59 @@
 
 ## RGB only (PatchCore)
 
-Full training set, WideResNet-50 layer2 + layer3, 10% coreset, 224 px. BTF columns are the *RGB iNet* row of Back to the Feature, which uses the same recipe; their numbers are copied from the paper (`configs/reference/btf.json`).
+Full training set, WideResNet-50 layer2 + layer3, 10% coreset, 224 px. BTF columns are the *RGB iNet* row of Back to the Feature, which uses the same recipe; their numbers are copied from the paper (`configs/reference/btf.json`). ± is the standard deviation over seeds; ms / image is scoring time on an M4 (MPS).
 
-| category    | image AUROC [95% CI]   |   BTF image | pixel AUROC   |   BTF pixel | AUPRO     |   BTF AUPRO |
-|:------------|:-----------------------|------------:|:--------------|------------:|:----------|------------:|
-| bagel       | 0.894 [0.81, 0.95]     |       0.854 | 0.977         |       0.983 | 0.851     |       0.898 |
-| cable_gland | 0.905 [0.82, 0.96]     |       0.84  | 0.991         |       0.984 | 0.967     |       0.948 |
-| carrot      | 0.874 [0.81, 0.93]     |       0.824 | 0.989         |       0.98  | 0.956     |       0.927 |
-| cookie      | 0.641 [0.54, 0.75]     |       0.687 | 0.974         |       0.974 | 0.894     |       0.872 |
-| dowel       | 0.963 [0.93, 0.99]     |       0.974 | 0.988         |       0.985 | 0.938     |       0.927 |
-| foam        | 0.771 [0.67, 0.86]     |       0.716 | 0.927         |       0.836 | 0.764     |       0.555 |
-| peach       | 0.667 [0.55, 0.78]     |       0.713 | 0.970         |       0.976 | 0.883     |       0.902 |
-| potato      | 0.566 [0.41, 0.70]     |       0.593 | 0.983         |       0.982 | 0.942     |       0.931 |
-| rope        | 0.963 [0.93, 0.99]     |       0.92  | 0.993         |       0.989 | 0.937     |       0.903 |
-| tire        | 0.755 [0.65, 0.85]     |       0.724 | 0.981         |       0.975 | 0.923     |       0.899 |
-| **mean**    | **0.800**              |       0.785 | **0.977**     |       0.966 | **0.906** |       0.876 |
+| category    | image AUROC       | 95% CI (seed 0)   |   BTF image | pixel AUROC   |   BTF pixel | AUPRO             |   BTF AUPRO |   ms / image |
+|:------------|:------------------|:------------------|------------:|:--------------|------------:|:------------------|------------:|-------------:|
+| bagel       | 0.892 ± 0.008     | [0.81, 0.95]      |       0.854 | 0.977         |       0.983 | 0.852 ± 0.002     |       0.898 |           40 |
+| cable_gland | 0.911 ± 0.007     | [0.82, 0.96]      |       0.84  | 0.990         |       0.984 | 0.966 ± 0.000     |       0.948 |           52 |
+| carrot      | 0.869 ± 0.009     | [0.81, 0.93]      |       0.824 | 0.989         |       0.98  | 0.956 ± 0.000     |       0.927 |           48 |
+| cookie      | 0.645 ± 0.008     | [0.54, 0.75]      |       0.687 | 0.973         |       0.974 | 0.894 ± 0.001     |       0.872 |           40 |
+| dowel       | 0.965 ± 0.004     | [0.93, 0.99]      |       0.974 | 0.986         |       0.985 | 0.932 ± 0.005     |       0.927 |           49 |
+| foam        | 0.759 ± 0.020     | [0.67, 0.86]      |       0.716 | 0.927         |       0.836 | 0.765 ± 0.004     |       0.555 |           49 |
+| peach       | 0.675 ± 0.009     | [0.55, 0.78]      |       0.713 | 0.970         |       0.976 | 0.883 ± 0.000     |       0.902 |           61 |
+| potato      | 0.563 ± 0.009     | [0.41, 0.70]      |       0.593 | 0.983         |       0.982 | 0.942 ± 0.000     |       0.931 |           51 |
+| rope        | 0.961 ± 0.003     | [0.93, 0.99]      |       0.92  | 0.993         |       0.989 | 0.936 ± 0.001     |       0.903 |           57 |
+| tire        | 0.752 ± 0.009     | [0.65, 0.85]      |       0.724 | 0.981         |       0.975 | 0.923 ± 0.002     |       0.899 |           39 |
+| **mean**    | **0.799 ± 0.005** |                   |       0.785 | **0.977**     |       0.966 | **0.905 ± 0.001** |       0.876 |           49 |
 
-<sub>10 runs from commit 79ac4df (clean checkout). CI: 1000 bootstrap resamples of the test images, stratified by label.</sub>
+<sub>50 runs from commit 79ac4df, e49b5dd (clean checkout). CI: 1000 bootstrap resamples of the test images, stratified by label.</sub>
 
 Reading the numbers:
 
-- The reimplementation lands close to the published one. BTF's image AUROC falls inside our 95% CI on 9 of 10 categories, and the largest gap is 0.065 (cable_gland).
-- RGB alone is weakest on potato, cookie, peach (0.57, 0.64, 0.67). These are organic objects where colour and texture vary a lot between normal samples, which probably makes a dent or a cut look like normal variation to an ImageNet feature. This is where 3D should help, if it helps anywhere.
-- Localisation on foam is 0.21 AUPRO above BTF's number. I have not found the reason yet (candidates: blur sigma, resizing, coreset details), so treat that gap as unexplained rather than as an improvement.
+- The reimplementation lands close to the published one. BTF's image AUROC falls inside our seed-0 95% CI on 9 of 10 categories, and the largest gap is 0.071 (cable_gland).
+- Seeds only change which patch the coreset starts from. Across 5 seeds the mean image AUROC moves by ±0.005; the most seed-sensitive category is foam (±0.020).
+- RGB alone is weakest on potato, cookie, peach (0.56, 0.65, 0.68). These are organic objects where colour and texture vary a lot between normal samples, which probably makes a dent or a cut look like normal variation to an ImageNet feature. The defect-type breakdown below makes this concrete.
+- Localisation on foam is 0.21 AUPRO above BTF's number and is still unexplained; see the checks at the end of this page.
+
+## What RGB misses, by defect type
+
+Each defect type scored against the good test images of its category (`scripts/defect_breakdown.py`, seed 0).
+
+![image AUROC per category and defect type](figures/rgb_defect_types.png)
+
+| defect        |   categories |   images |   image_auroc |   aupro |
+|:--------------|-------------:|---------:|--------------:|--------:|
+| hole          |            7 |      174 |         0.685 |   0.93  |
+| contamination |            9 |      223 |         0.746 |   0.901 |
+| cut           |            8 |      195 |         0.765 |   0.899 |
+| combined      |            8 |      174 |         0.85  |   0.903 |
+| crack         |            3 |       75 |         0.924 |   0.93  |
+| bent          |            2 |       48 |         0.938 |   0.987 |
+| thread        |            1 |       22 |         0.95  |   0.982 |
+| color         |            1 |       20 |         1     |   0.986 |
+| open          |            1 |       17 |         1     |   0.986 |
+
+Reading the numbers:
+
+- Defects with a clear visual signature are easy (a new colour, an opened strand, a dark crack line): color 1.00, open 1.00, crack 0.92. Defects that mostly change shape are not: hole 0.68, cut 0.77. That is the gap the 3D sensor is supposed to fill.
+- Contamination (0.75) sits in between: fine on most objects but weak on cookie (0.49), foam (0.66), peach (0.67), where foreign material looks like the object's own texture.
+- The hardest single cases are potato hole (0.45), cookie hole (0.48), cookie contamination (0.49), potato cut (0.50), at or below chance.
+- AUPRO stays high even where image AUROC is near chance (potato holes are localised well but the image score does not separate them). The image score is the single largest patch distance, so one unusual patch on a normal potato is enough to outscore a small hole.
+
+![best hit, worst miss and worst false alarm per category](figures/rgb_examples.png)
+
+Typical failure modes visible above (`scripts/rgb_examples.py`): on potato the whole object lights up for an unusually shaped but normal potato, and on tire the worst false alarm is a specular highlight on the tread.
 
 ## Which backbone layers (RGB)
 
@@ -63,3 +93,16 @@ Reading the numbers:
 - Mean image AUROC only moves by 0.048 across all six choices. Best is layer1+layer2+layer3 (0.818), against 0.800 for the default layer2+layer3. That is smaller than a typical per-category confidence interval.
 - For localisation the shallow features win: layer1 has the best AUPRO (0.945). layer3 alone is clearly worst on both, which matches the per-layer distance maps in `docs/figures/layer_maps.png`.
 - The default stays layer2+layer3. MVTec 3D-AD has no validation split with defects, so picking the layers that look best here would mean tuning on the test set and every later number would be optimistic. This table is an analysis, not a selection step.
+
+## Checks
+
+**AUPRO against the official evaluation code.** The MVTec 3D-AD / BTF code samples 100 thresholds evenly in FPR and counts 8-connected regions; ours uses every threshold and 4-connected regions (`scripts/check_aupro_against_official.py`, seed 0 maps).
+
+|          |   bagel |   cable_gland |   carrot |   cookie |   dowel |   foam |   peach |   potato |   rope |   tire |
+|:---------|--------:|--------------:|---------:|---------:|--------:|-------:|--------:|---------:|-------:|-------:|
+| ours     |   0.851 |         0.967 |    0.956 |    0.894 |   0.938 |  0.764 |   0.883 |    0.942 |  0.937 |  0.923 |
+| official |   0.854 |         0.963 |    0.954 |    0.891 |   0.932 |  0.76  |   0.881 |    0.94  |  0.933 |  0.917 |
+
+The mean differs by 0.003, so the metric is not where any difference to published numbers comes from.
+
+**Foam and the Gaussian blur.** Rerunning foam with blur sigma 0.0, 2.0, 4.0, 8.0 moves AUPRO by only 0.011 (0.756-0.767). With the metric and the blur ruled out, the remaining differences to BTF's pipeline are the RGB resize (they use bicubic) and their preprocessing; foam's 0.21 gap stays an open question.

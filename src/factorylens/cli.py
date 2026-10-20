@@ -8,8 +8,9 @@ import time
 from collections.abc import Sequence
 from concurrent.futures import ProcessPoolExecutor
 
-from factorylens import __version__
+from factorylens import __version__, experiments
 from factorylens.data import cache, ff, mvtec3d, subsets
+from factorylens.models.patchcore import PatchCoreConfig
 
 DEFAULT_ROOT = "data/raw/mvtec3d"
 DEFAULT_KSHOT = "configs/kshot.json"
@@ -68,6 +69,49 @@ def data_prepare(args: argparse.Namespace) -> int:
     return 0
 
 
+def rgb_run(args: argparse.Namespace) -> int:
+    config = PatchCoreConfig(arch=args.arch, layers=tuple(args.layer or PatchCoreConfig.layers))
+    for category in args.category or mvtec3d.CATEGORIES:
+        for seed in args.seed or [0]:
+            r = experiments.run_rgb(
+                args.root,
+                args.cache,
+                category,
+                k=args.k,
+                seed=seed,
+                model_config=config,
+                kshot_path=args.kshot,
+                results_dir=args.results,
+                scores_dir=None if args.no_scores else args.scores,
+                device=args.device,
+            )
+            print(
+                f"{category:12s} k={args.k or 'all'} seed={seed}  "
+                f"image AUROC {r['image_auroc']:.3f} "
+                f"[{r['image_auroc_ci_low']:.3f}, {r['image_auroc_ci_high']:.3f}]  "
+                f"pixel AUROC {r['pixel_auroc']:.3f}  AUPRO {r['aupro']:.3f}  "
+                f"fit {r['fit_s']:.0f}s",
+                flush=True,
+            )
+    return 0
+
+
+def results_table(args: argparse.Namespace) -> int:
+    df = experiments.collect(args.results)
+    if df.empty:
+        print(f"no results in {args.results}")
+        return 1
+    cols = ["image_auroc", "pixel_auroc", "aupro"]
+    group = [c for c in args.by if c in df.columns]
+    per_cat = df.groupby([*group, "category"])[cols].mean().unstack("category")
+    print(df.groupby(group)[cols].mean().round(3).to_markdown() if group else df[cols].mean())
+    if args.per_category:
+        for col in cols:
+            print(f"\n{col}")
+            print(per_cat[col].round(3).to_markdown())
+    return 0
+
+
 def ff_blocks(args: argparse.Namespace) -> int:
     cycles = ff.segment_cycles(ff.load_analog(args.root))
     blocks = ff.label_blocks(cycles)
@@ -114,6 +158,33 @@ def build_parser() -> argparse.ArgumentParser:
     prepare.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
     prepare.add_argument("--jobs", type=int, default=4)
     prepare.set_defaults(func=data_prepare)
+
+    rgb = groups.add_parser("rgb", help="RGB-only detector (PatchCore)")
+    rgb_cmds = rgb.add_subparsers(dest="command", required=True)
+    run = rgb_cmds.add_parser("run", help="fit on train, score test, save metrics")
+    run.add_argument("root", nargs="?", default=DEFAULT_ROOT)
+    run.add_argument("--cache", default=DEFAULT_CACHE)
+    run.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
+    run.add_argument(
+        "--k", type=int, choices=subsets.KS, help="k-shot; default: all training samples"
+    )
+    run.add_argument("--seed", type=int, action="append")
+    run.add_argument("--arch", default=PatchCoreConfig.arch)
+    run.add_argument("--layer", action="append", help="default: layer2 and layer3")
+    run.add_argument("--kshot", default=DEFAULT_KSHOT)
+    run.add_argument("--results", default="results/rgb")
+    run.add_argument("--scores", default="outputs/scores/rgb")
+    run.add_argument("--no-scores", action="store_true", help="don't keep per-image scores")
+    run.add_argument("--device")
+    run.set_defaults(func=rgb_run)
+
+    res = groups.add_parser("results", help="summarise result files")
+    res_cmds = res.add_subparsers(dest="command", required=True)
+    table = res_cmds.add_parser("table", help="mean metrics, optionally per category")
+    table.add_argument("results")
+    table.add_argument("--by", action="append", default=[], help="config field to group by")
+    table.add_argument("--per-category", action="store_true")
+    table.set_defaults(func=results_table)
 
     ff_group = groups.add_parser("ff", help="Future Factories analog data")
     ff_cmds = ff_group.add_subparsers(dest="command", required=True)

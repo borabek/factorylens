@@ -12,6 +12,7 @@ dependencies = [
     "pillow>=10.0",
     "scikit-learn>=1.9.1",
     "scipy>=1.17.1",
+    "tabulate>=0.10.0",
     "tifffile>=2024.1",
     "torch>=2.14.1",
     "torchvision>=0.29.1",

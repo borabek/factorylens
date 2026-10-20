@@ -62,3 +62,18 @@ def test_git_state_inside_this_repo():
 def test_result_file_is_plain_json(tmp_path):
     path = repro.save_result(tmp_path / "r.json", {"n": 3}, {"a": [1, 2]})
     assert json.loads(path.read_text())["config"]["a"] == [1, 2]
+
+
+def test_run_info_captured_early_is_what_gets_saved(tmp_path):
+    early = repro.run_info()
+    early["git"] = {"commit": "a" * 40, "dirty": False}  # pretend the checkout changed since
+    path = repro.save_result(tmp_path / "r.json", {"x": 1}, {}, run=early)
+    assert repro.load_result(path)["run"]["git"]["commit"] == "a" * 40
+
+
+def test_run_info_reads_git_from_the_package_checkout(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)  # not a git repo
+    from_package = repro.run_info()["git"]
+    if from_package["commit"] is None:
+        pytest.skip("package not imported from a git checkout")
+    assert len(from_package["commit"]) == 40

@@ -8,7 +8,16 @@ This is a work in progress (started October 2026). The research question, the da
 
 ## Where things are
 
-No detection results yet. Findings from looking at the data, each with the script that produces it:
+**First results** (full tables in [docs/results.md](docs/results.md)). RGB only, PatchCore with the full training set:
+
+| | image AUROC | pixel AUROC | AUPRO |
+|---|---|---|---|
+| this repo | 0.800 | 0.977 | 0.906 |
+| Back to the Feature, RGB iNet (published) | 0.785 | 0.966 | 0.876 |
+
+The reimplementation matches the published baseline: BTF's number is inside our 95% CI on 9 of 10 categories. RGB is weakest on potato, cookie and peach (0.57–0.67), which is where the 3D sensor has to earn its place. The 3D and fusion models come next.
+
+Findings from the data itself, each with the script that produces it:
 
 - **The obvious multimodal dataset is confounded with time.** In Future Factories, almost every anomalous cycle in the camera period comes before every normal one, and elapsed time alone gives an AUROC of 0.986 (`scripts/ff/confound_check.py`). That is why the main study uses MVTec 3D-AD.
 - **The 3D sensor is often blind exactly at the defect.** On bagel, cookie and peach, 12–13% of defect pixels have no 3D point (`scripts/eda_mvtec3d.py`). Only the camera can see those.
@@ -24,6 +33,9 @@ uv run factorylens data check data/raw/mvtec3d --deep   # counts, file pairing, 
 uv run factorylens data prepare data/raw/mvtec3d        # cached 224 px samples, ~1 min
 uv run factorylens data kshot                           # rewrite configs/kshot.json
 uv run factorylens ff blocks                            # FF label blocks and day split
+uv run factorylens rgb run --category bagel             # PatchCore on one category
+uv run factorylens results table results/rgb            # mean metrics over result files
+uv run python scripts/make_results_tables.py            # regenerate docs/results.md
 ```
 
 ## Setup

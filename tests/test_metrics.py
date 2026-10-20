@@ -102,3 +102,33 @@ def test_bootstrap_ci_brackets_the_point_estimate():
     assert lo < point < hi
     assert 0.05 < hi - lo < 0.4
     assert metrics.bootstrap_ci(labels, scores, n_boot=300) == (lo, hi)  # seeded
+
+
+def official_aupro(gts, maps, limit=0.3, n=100):
+    """The official MVTec 3D-AD / BTF au_pro logic: 8-connected regions, 100 thresholds
+    spaced evenly in FPR, trapezoid with an interpolated end point."""
+    comps, ok = [], []
+    for g, m in zip(gts, maps, strict=True):
+        lab, k = ndimage.label(g, np.ones((3, 3), int))
+        ok.append(m[lab == 0])
+        comps += [np.sort(m[lab == j]) for j in range(1, k + 1)]
+    ok = np.sort(np.concatenate(ok))
+    fprs, pros = [1.0], [1.0]
+    for pos in np.linspace(0, len(ok) - 1, n, dtype=int):
+        t = ok[pos]
+        fprs.append(1.0 - (pos + 1) / len(ok))
+        pros.append(np.mean([1.0 - np.searchsorted(c, t, side="right") / len(c) for c in comps]))
+    x, y = np.array(fprs[::-1]), np.array(pros[::-1])
+    ins = np.searchsorted(x, limit, side="right")
+    y_i = y[ins - 1] + (y[ins] - y[ins - 1]) * (limit - x[ins - 1]) / (x[ins] - x[ins - 1])
+    keep = x <= limit
+    area = np.sum(0.5 * (y[keep][1:] + y[keep][:-1]) * np.diff(x[keep]))
+    area += 0.5 * (y_i + y[ins - 1]) * (limit - x[ins - 1])  # last piece up to the limit
+    return area / limit
+
+
+def test_aupro_agrees_with_the_official_style_computation():
+    # differences come only from region connectivity and threshold sampling
+    for seed in range(3):
+        masks, maps = toy(seed, n=6, size=48)
+        assert metrics.aupro(masks, maps) == pytest.approx(official_aupro(masks, maps), abs=0.02)

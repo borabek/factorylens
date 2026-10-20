@@ -64,6 +64,13 @@ def package_versions() -> dict[str, str]:
 
 
 def run_info(cwd: str | Path | None = None) -> dict[str, Any]:
+    """Environment and code state. Call it when a run *starts*.
+
+    git state is read from the checkout the package was imported from, not
+    the current directory, so it describes the code that is actually running.
+    """
+    if cwd is None:
+        cwd = Path(__file__).resolve().parent
     return {
         "time": datetime.now(UTC).isoformat(timespec="seconds"),
         "git": git_state(cwd),
@@ -73,14 +80,23 @@ def run_info(cwd: str | Path | None = None) -> dict[str, Any]:
     }
 
 
-def save_result(path: str | Path, metrics: Mapping[str, Any], config: Mapping[str, Any]) -> Path:
-    """Write metrics with their config and run info. NaN or inf in metrics raises ValueError."""
+def save_result(
+    path: str | Path,
+    metrics: Mapping[str, Any],
+    config: Mapping[str, Any],
+    run: Mapping[str, Any] | None = None,
+) -> Path:
+    """Write metrics with their config and run info. NaN or inf in metrics raises ValueError.
+
+    Pass `run` captured with run_info() at the start of a long job. Reading it
+    at save time records whatever the checkout looks like an hour later.
+    """
     path = Path(path)
     record = {
         "config": dict(config),
         "config_hash": config_hash(config),
         "metrics": dict(metrics),
-        "run": run_info(),
+        "run": dict(run) if run is not None else run_info(),
     }
     # allow_nan=False: a NaN score is a bug somewhere upstream, not a result
     text = json.dumps(record, indent=2, allow_nan=False)

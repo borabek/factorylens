@@ -19,7 +19,7 @@ import pandas as pd
 from factorylens.data import cache, subsets
 from factorylens.eval import metrics
 from factorylens.models.patchcore import PatchCore, PatchCoreConfig
-from factorylens.repro import config_hash, load_result, save_result
+from factorylens.repro import config_hash, load_result, run_info, save_result
 
 
 def evaluate(
@@ -53,6 +53,7 @@ def run_rgb(
     device: str | None = None,
     pretrained: bool = True,
 ) -> dict[str, Any]:
+    run = run_info()  # before anything else, see save_result()
     model_config = replace(model_config or PatchCoreConfig(), seed=seed)
     settings = cache.Settings()
     train = cache.get(root, cache_dir, category, "train", settings)
@@ -86,7 +87,7 @@ def run_rgb(
         "score_ms_per_image": 1000 * score_s / len(test),
     }
     name = run_name(config)
-    save_result(Path(results_dir) / f"{name}.json", result, config)
+    save_result(Path(results_dir) / f"{name}.json", result, config, run=run)
     if scores_dir is not None:
         Path(scores_dir).mkdir(parents=True, exist_ok=True)
         np.savez_compressed(

@@ -96,3 +96,10 @@ def test_default_grid_follows_the_first_layer():
     cfg = PatchCoreConfig(arch="resnet18", embed_dim=32, layers=("layer1", "layer3"))
     emb = PatchCore(cfg, device="cpu", pretrained=False).embed(textures(1))
     assert emb.shape[1:3] == (16, 16)  # layer1 of a 64 px image
+
+
+def test_maps_keep_the_shape_of_non_square_inputs():
+    model = PatchCore(SMALL, device="cpu", pretrained=False).fit(textures(2))
+    wide = np.concatenate([textures(1, seed=3), textures(1, seed=4)], axis=2)  # 64 x 128
+    _, maps = model.score(wide)
+    assert maps.shape == (1, 64, 128)

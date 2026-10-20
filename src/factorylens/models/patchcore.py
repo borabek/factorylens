@@ -126,6 +126,7 @@ class PatchCore:
         k = self.config.neighbourhood
         for i in range(0, len(images), self.batch_size):
             feats = self.backbone(to_batch(list(images[i : i + self.batch_size])).to(self.device))
+            # zero padding at the border, as in PatchCore's own patch extraction
             maps = [
                 F.avg_pool2d(feats[name], k, stride=1, padding=k // 2)
                 for name in self.config.layers
@@ -151,17 +152,17 @@ class PatchCore:
         return self
 
     def score(self, images: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        """Image scores (N,) and pixel maps (N, S, S) at the input resolution."""
+        """Image scores (N,) and pixel maps (N, H, W) at the input resolution."""
         if self.bank is None:
             raise RuntimeError("call fit() before score()")
-        size = images.shape[1]
+        size = (images.shape[1], images.shape[2])
         image_scores, maps = [], []
         for i in range(0, len(images), self.batch_size):
             emb = self.embed(images[i : i + self.batch_size])
             b, h, w, d = emb.shape
             dist = nearest_distance(emb.reshape(-1, d), self.bank).reshape(b, 1, h, w)
             image_scores.append(dist.amax(dim=(1, 2, 3)).cpu())
-            up = F.interpolate(dist, size=(size, size), mode="bilinear", align_corners=False)
+            up = F.interpolate(dist, size=size, mode="bilinear", align_corners=False)
             maps.append(up[:, 0].cpu())
         pixel = torch.cat(maps).numpy()
         if self.config.blur_sigma > 0:

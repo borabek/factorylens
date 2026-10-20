@@ -31,58 +31,76 @@ def provenance(df: pd.DataFrame, results_dir: str) -> str:
 
 
 def rgb_section() -> list[str]:
-    df = experiments.collect("results/rgb")
-    df = df[df["k"].isna()].set_index("category").sort_index()
+    runs = experiments.collect("results/rgb")
+    runs = runs[runs["k"].isna()]
     btf = reference("RGB iNet")
+    per_cat = runs.groupby("category")[[*METRICS, "score_ms_per_image"]].agg(["mean", "std"])
+    seeds = runs.groupby("category")["seed"].nunique()
+    first = runs[runs["seed"] == 0].set_index("category")
+    sd = per_cat.xs("std", axis=1, level=1).fillna(0)
+    mean = per_cat.xs("mean", axis=1, level=1)
+
+    def pm(m: float, s: float) -> str:
+        return f"{m:.3f} ± {s:.3f}" if seeds.max() > 1 else f"{m:.3f}"
+
     rows = []
-    for cat, r in df.iterrows():
+    for cat in mean.index:
         rows.append(
             {
                 "category": cat,
-                "image AUROC [95% CI]": f"{r.image_auroc:.3f} [{r.image_auroc_ci_low:.2f}, "
-                f"{r.image_auroc_ci_high:.2f}]",
+                "image AUROC": pm(mean.loc[cat, "image_auroc"], sd.loc[cat, "image_auroc"]),
+                "95% CI (seed 0)": f"[{first.loc[cat, 'image_auroc_ci_low']:.2f}, "
+                f"{first.loc[cat, 'image_auroc_ci_high']:.2f}]",
                 "BTF image": f"{btf.loc[cat, 'image_auroc']:.3f}",
-                "pixel AUROC": f"{r.pixel_auroc:.3f}",
+                "pixel AUROC": f"{mean.loc[cat, 'pixel_auroc']:.3f}",
                 "BTF pixel": f"{btf.loc[cat, 'pixel_auroc']:.3f}",
-                "AUPRO": f"{r.aupro:.3f}",
+                "AUPRO": pm(mean.loc[cat, "aupro"], sd.loc[cat, "aupro"]),
                 "BTF AUPRO": f"{btf.loc[cat, 'aupro']:.3f}",
+                "ms / image": f"{mean.loc[cat, 'score_ms_per_image']:.0f}",
             }
         )
-    mean = df[METRICS].mean()
-    bmean = btf.loc[df.index, METRICS].mean()
+    # spread of the headline number: average over categories per seed, then across seeds
+    by_seed = runs.groupby("seed")[METRICS].mean()
+    head = by_seed.mean()
+    head_sd = by_seed.std().fillna(0)
+    bmean = btf.loc[mean.index, METRICS].mean()
     rows.append(
         {
             "category": "**mean**",
-            "image AUROC [95% CI]": f"**{mean.image_auroc:.3f}**",
+            "image AUROC": f"**{pm(head.image_auroc, head_sd.image_auroc)}**",
+            "95% CI (seed 0)": "",
             "BTF image": f"{bmean.image_auroc:.3f}",
-            "pixel AUROC": f"**{mean.pixel_auroc:.3f}**",
+            "pixel AUROC": f"**{head.pixel_auroc:.3f}**",
             "BTF pixel": f"{bmean.pixel_auroc:.3f}",
-            "AUPRO": f"**{mean.aupro:.3f}**",
+            "AUPRO": f"**{pm(head.aupro, head_sd.aupro)}**",
             "BTF AUPRO": f"{bmean.aupro:.3f}",
+            "ms / image": f"{mean['score_ms_per_image'].mean():.0f}",
         }
     )
     table = pd.DataFrame(rows).to_markdown(index=False)
-    diff = (df["image_auroc"] - btf.loc[df.index, "image_auroc"]).abs()
-    inside = (
-        (btf.loc[df.index, "image_auroc"] >= df["image_auroc_ci_low"])
-        & (btf.loc[df.index, "image_auroc"] <= df["image_auroc_ci_high"])
-    ).sum()
-    weakest = df["image_auroc"].nsmallest(3)
-    foam_gap = df.loc["foam", "aupro"] - btf.loc["foam", "aupro"]
+
+    btf_img = btf.loc[first.index, "image_auroc"]
+    inside = (btf_img >= first["image_auroc_ci_low"]) & (btf_img <= first["image_auroc_ci_high"])
+    diff = (mean["image_auroc"] - btf.loc[mean.index, "image_auroc"]).abs()
+    weakest = mean["image_auroc"].nsmallest(3)
+    foam_gap = mean.loc["foam", "aupro"] - btf.loc["foam", "aupro"]
+    worst_sd = sd["image_auroc"].idxmax()
     notes = [
         "Reading the numbers:",
         "",
         f"- The reimplementation lands close to the published one. BTF's image AUROC falls inside "
-        f"our 95% CI on {inside} of {len(df)} categories, and the largest gap is "
-        f"{diff.max():.3f} ({diff.idxmax()}).",
+        f"our seed-0 95% CI on {int(inside.sum())} of {len(inside)} categories, and the "
+        f"largest gap is {diff.max():.3f} ({diff.idxmax()}).",
+        f"- Seeds only change which patch the coreset starts from. Across {seeds.max()} seeds the "
+        f"mean image AUROC moves by ±{head_sd.image_auroc:.3f}; the most seed-sensitive "
+        f"category is {worst_sd} (±{sd.loc[worst_sd, 'image_auroc']:.3f}).",
         f"- RGB alone is weakest on {', '.join(weakest.index)} "
         f"({', '.join(f'{v:.2f}' for v in weakest)}). These are organic objects where colour and "
         "texture vary a lot between normal samples, which probably makes a dent or a cut look like "
-        "normal variation to an ImageNet feature. This is where 3D should help, if it helps "
-        "anywhere.",
-        f"- Localisation on foam is {foam_gap:.2f} AUPRO above BTF's number. I have not found the "
-        "reason yet (candidates: blur sigma, resizing, coreset details), so treat that gap as "
-        "unexplained rather than as an improvement.",
+        "normal variation to an ImageNet feature. The defect-type breakdown below makes this "
+        "concrete.",
+        f"- Localisation on foam is {foam_gap:.2f} AUPRO above BTF's number and is still "
+        "unexplained; see the checks at the end of this page.",
         "",
     ]
     return [
@@ -90,15 +108,109 @@ def rgb_section() -> list[str]:
         "",
         "Full training set, WideResNet-50 layer2 + layer3, 10% coreset, 224 px. "
         "BTF columns are the *RGB iNet* row of Back to the Feature, which uses the same "
-        "recipe; their numbers are copied from the paper (`configs/reference/btf.json`).",
+        "recipe; their numbers are copied from the paper (`configs/reference/btf.json`). "
+        "± is the standard deviation over seeds; ms / image is scoring time on an M4 (MPS).",
         "",
         table,
         "",
-        f"<sub>{provenance(df.reset_index(), 'results/rgb')}. CI: 1000 bootstrap "
+        f"<sub>{provenance(runs, 'results/rgb')}. CI: 1000 bootstrap "
         "resamples of the test images, stratified by label.</sub>",
         "",
         *notes,
     ]
+
+
+def defect_section() -> list[str]:
+    path = Path("results/analysis/rgb_defect_types.csv")
+    if not path.exists():
+        return []
+    df = pd.read_csv(path)
+    by_type = (
+        df.groupby("defect")
+        .agg(
+            categories=("category", "size"),
+            images=("n", "sum"),
+            image_auroc=("image_auroc", "mean"),
+            aupro=("aupro", "mean"),
+        )
+        .sort_values("image_auroc")
+    )
+    hardest = df.nsmallest(4, "image_auroc")
+    contamination = df[df["defect"] == "contamination"].nsmallest(3, "image_auroc")
+    geometric = by_type.loc[[d for d in ("hole", "cut") if d in by_type.index], "image_auroc"]
+    visual = by_type.loc[
+        [d for d in ("color", "open", "crack") if d in by_type.index], "image_auroc"
+    ]
+    return [
+        "## What RGB misses, by defect type",
+        "",
+        "Each defect type scored against the good test images of its category "
+        "(`scripts/defect_breakdown.py`, seed 0).",
+        "",
+        "![image AUROC per category and defect type](figures/rgb_defect_types.png)",
+        "",
+        by_type.round(3).to_markdown(),
+        "",
+        "Reading the numbers:",
+        "",
+        "- Defects with a clear visual signature are easy (a new colour, an opened strand, "
+        "a dark crack line): "
+        + ", ".join(f"{d} {v:.2f}" for d, v in visual.items())
+        + ". Defects that mostly change shape are not: "
+        + ", ".join(f"{d} {v:.2f}" for d, v in geometric.items())
+        + ". That is the gap the 3D sensor is supposed to fill.",
+        f"- Contamination ({by_type.loc['contamination', 'image_auroc']:.2f}) sits in between: "
+        "fine on most objects but weak on "
+        + ", ".join(f"{r.category} ({r.image_auroc:.2f})" for r in contamination.itertuples())
+        + ", where foreign material looks like the object's own texture.",
+        "- The hardest single cases are "
+        + ", ".join(f"{r.category} {r.defect} ({r.image_auroc:.2f})" for r in hardest.itertuples())
+        + ", at or below chance.",
+        "- AUPRO stays high even where image AUROC is near chance (potato holes are localised "
+        "well but the image score does not separate them). The image score is the single "
+        "largest patch distance, so one unusual patch on a normal potato is enough to outscore "
+        "a small hole.",
+        "",
+        "![best hit, worst miss and worst false alarm per category](figures/rgb_examples.png)",
+        "",
+        "Typical failure modes visible above (`scripts/rgb_examples.py`): on potato the whole "
+        "object lights up for an unusually shaped but normal potato, and on tire the worst false "
+        "alarm is a specular highlight on the tread.",
+        "",
+    ]
+
+
+def checks_section() -> list[str]:
+    path = Path("results/analysis/aupro_vs_official.csv")
+    if not path.exists():
+        return []
+    df = pd.read_csv(path, index_col="category")
+    lines = [
+        "## Checks",
+        "",
+        "**AUPRO against the official evaluation code.** The MVTec 3D-AD / BTF code samples "
+        "100 thresholds evenly in FPR and counts 8-connected regions; ours uses every threshold "
+        "and 4-connected regions (`scripts/check_aupro_against_official.py`, seed 0 maps).",
+        "",
+        df.round(3).T.to_markdown(),
+        "",
+        f"The mean differs by {abs(df['ours'].mean() - df['official'].mean()):.3f}, so the "
+        "metric is not where any difference to published numbers comes from.",
+        "",
+    ]
+    blur = Path("results/ablation/blur")
+    if blur.exists():
+        b = experiments.collect(blur)
+        rng = b["aupro"].max() - b["aupro"].min()
+        lines += [
+            f"**Foam and the Gaussian blur.** Rerunning foam with blur sigma "
+            f"{', '.join(str(x) for x in sorted(b['blur_sigma']))} moves AUPRO by only "
+            f"{rng:.3f} ({b['aupro'].min():.3f}-{b['aupro'].max():.3f}). With the metric and the "
+            "blur ruled out, the remaining differences to BTF's pipeline are the RGB resize "
+            "(they use bicubic) and their preprocessing; foam's 0.21 gap stays an open question.",
+            "",
+        ]
+    return lines
 
 
 def layer_section() -> list[str]:
@@ -154,7 +266,9 @@ def main() -> None:
         "<!-- generated by scripts/make_results_tables.py, do not edit by hand -->",
         "",
         *rgb_section(),
+        *defect_section(),
         *layer_section(),
+        *checks_section(),
     ]
     OUT.write_text("\n".join(lines))
     print("wrote", OUT)

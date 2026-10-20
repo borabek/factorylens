@@ -1,0 +1,56 @@
+{
+  "config": {
+    "model": "patchcore_rgb",
+    "category": "carrot",
+    "k": null,
+    "seed": 3,
+    "pretrained": true,
+    "preprocess": {
+      "size": 224,
+      "threshold": 0.002,
+      "min_component": 0.0002
+    },
+    "arch": "wide_resnet50_2",
+    "layers": [
+      "layer2",
+      "layer3"
+    ],
+    "neighbourhood": 3,
+    "embed_dim": 1024,
+    "coreset_ratio": 0.1,
+    "keep_all_below": 10000,
+    "projection_dim": 128,
+    "blur_sigma": 4.0,
+    "grid": null
+  },
+  "config_hash": "238a4da1fa43",
+  "metrics": {
+    "image_auroc": 0.8630751964085298,
+    "image_auroc_ci_low": 0.7951599326599327,
+    "image_auroc_ci_high": 0.923982884399551,
+    "pixel_auroc": 0.9886877063362745,
+    "aupro": 0.9560491554414385,
+    "n_train": 286,
+    "n_test": 159,
+    "bank_size": 22422,
+    "fit_s": 54.854993665998336,
+    "score_ms_per_image": 51.18981315721406
+  },
+  "run": {
+    "time": "2026-10-20T10:07:16+00:00",
+    "git": {
+      "commit": "e49b5dda37fe45f8a9761a171381a3e1710bfd63",
+      "dirty": false
+    },
+    "python": "3.12.15",
+    "platform": "Darwin arm64",
+    "packages": {
+      "factorylens": "0.1.0",
+      "numpy": "2.5.4",
+      "pillow": "13.0.0",
+      "tifffile": "2026.10.15",
+      "torch": "2.14.1",
+      "scikit-learn": "1.9.1"
+    }
+  }
+}

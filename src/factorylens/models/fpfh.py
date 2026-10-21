@@ -50,8 +50,9 @@ def fpfh_map(xyz: np.ndarray, config: FPFHConfig | None = None) -> np.ndarray:
     pc = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(xyz[valid].astype(np.float64)))
     search = o3d.geometry.KDTreeSearchParamHybrid
     pc.estimate_normals(search(radius=2 * config.voxel_size, max_nn=config.normal_nn))
-    # open3d's stubs only list the overload with explicit indices
-    fpfh = o3d.pipelines.registration.compute_fpfh_feature(  # type: ignore[call-arg]
+    # open3d's stubs only list the overload with explicit indices (and on Linux CI
+    # open3d isn't installed at all, so the ignore is unused there)
+    fpfh = o3d.pipelines.registration.compute_fpfh_feature(  # type: ignore[call-arg, unused-ignore]
         pc, search(radius=5 * config.voxel_size, max_nn=config.feature_nn)
     )
     out[valid] = np.asarray(fpfh.data).T

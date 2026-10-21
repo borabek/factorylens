@@ -32,5 +32,10 @@ jobs:
         with:
           enable-cache: true
           python-version: ${{ matrix.python }}
-      - run: uv sync --locked
+      # open3d (FPFH features) needs libusb on macOS; the Linux job runs without
+      # the 3d extra and skips those tests
+      - if: runner.os == 'macOS'
+        run: brew install libusb && uv sync --locked --extra 3d
+      - if: runner.os != 'macOS'
+        run: uv sync --locked
       - run: uv run pytest -q --cov --cov-report=term

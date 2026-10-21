@@ -64,3 +64,24 @@ def test_take_selects_by_stem(root):
     np.testing.assert_array_equal(sub.rgb, p.rgb[[0, 2]])
     with pytest.raises(ValueError, match="not in this split"):
         cache.take(p, ["000", "123"])
+
+
+def test_default_settings_keep_their_hash():
+    # results already on disk refer to this directory name
+    assert cache.Settings().dirname() == "224px-dc2fcbc2cd97"
+
+
+def test_btf_settings_black_out_the_background(root):
+    p = cache.prepare(root, "bagel", "train", cache.Settings(size=8, zero_background_rgb=True))
+    assert (p.rgb[~p.foreground] == 0).mean() > 0.5  # edges blend, as in BTF
+    assert p.rgb[p.foreground].mean() > 60  # bilinear resize blends the box edge
+    assert cache.BTF_SETTINGS.dirname() != cache.Settings().dirname()
+
+
+def test_keep_largest_drops_smaller_blobs(root):
+    plain = cache.prepare(root, "bagel", "train", cache.Settings(size=8, min_component=0))
+    largest = cache.prepare(
+        root, "bagel", "train", cache.Settings(size=8, min_component=0, keep_largest=True)
+    )
+    assert largest.foreground.sum() <= plain.foreground.sum()
+    assert (largest.xyz[~largest.foreground] == 0).all()

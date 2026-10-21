@@ -18,7 +18,8 @@ import pandas as pd
 
 from factorylens.data import cache, subsets
 from factorylens.eval import metrics
-from factorylens.models.patchcore import PatchCore, PatchCoreConfig
+from factorylens.models.detectors import Detector, RGBDetector
+from factorylens.models.patchcore import PatchCoreConfig
 from factorylens.repro import config_hash, load_result, run_info, save_result
 
 
@@ -40,49 +41,47 @@ def run_name(config: dict[str, Any]) -> str:
     return f"{config['category']}_k{k}_s{config['seed']}_{config_hash(config)}"
 
 
-def run_rgb(
+def run(
+    detector: Detector,
     root: str | Path,
     cache_dir: str | Path,
     category: str,
     k: int | None = None,
     seed: int = 0,
-    model_config: PatchCoreConfig | None = None,
+    settings: cache.Settings | None = None,
     kshot_path: str | Path = "configs/kshot.json",
     results_dir: str | Path = "results/rgb",
-    scores_dir: str | Path | None = "outputs/scores/rgb",
-    device: str | None = None,
-    pretrained: bool = True,
+    scores_dir: str | Path | None = None,
+    extra_config: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    """Fit `detector` on one category, score its test split, save metrics (and scores)."""
     run = run_info()  # before anything else, see save_result()
-    model_config = replace(model_config or PatchCoreConfig(), seed=seed)
-    settings = cache.Settings()
+    settings = settings or cache.Settings()
     train = cache.get(root, cache_dir, category, "train", settings)
     if k is not None:
         train = cache.take(train, subsets.load(kshot_path)[category][str(seed)][str(k)])
     test = cache.get(root, cache_dir, category, "test", settings)
 
     start = time.perf_counter()
-    model = PatchCore(model_config, device=device, pretrained=pretrained).fit(train.rgb)
+    detector.fit(train)
     fit_s = time.perf_counter() - start
     start = time.perf_counter()
-    scores, maps = model.score(test.rgb)
+    scores, maps = detector.score(test)
     score_s = time.perf_counter() - start
 
     config = {
-        "model": "patchcore_rgb",
         "category": category,
         "k": k,
         "seed": seed,
-        "pretrained": pretrained,
+        **(extra_config or {}),
         "preprocess": settings.as_dict(),
-        **model_config.as_dict(),
+        **detector.config_dict(),
     }
     result = evaluate(test.is_anomalous, scores, test.mask, maps)
-    assert model.bank is not None
     result |= {
         "n_train": len(train),
         "n_test": len(test),
-        "bank_size": len(model.bank),
+        "bank_size": detector.bank_size,
         "fit_s": fit_s,
         "score_ms_per_image": 1000 * score_s / len(test),
     }
@@ -99,6 +98,35 @@ def run_rgb(
             stem=np.array(test.stem),
         )
     return result
+
+
+def run_rgb(
+    root: str | Path,
+    cache_dir: str | Path,
+    category: str,
+    k: int | None = None,
+    seed: int = 0,
+    model_config: PatchCoreConfig | None = None,
+    kshot_path: str | Path = "configs/kshot.json",
+    results_dir: str | Path = "results/rgb",
+    scores_dir: str | Path | None = "outputs/scores/rgb",
+    device: str | None = None,
+    pretrained: bool = True,
+) -> dict[str, Any]:
+    model_config = replace(model_config or PatchCoreConfig(), seed=seed)
+    detector = RGBDetector(model_config, device=device, pretrained=pretrained)
+    return run(
+        detector,
+        root,
+        cache_dir,
+        category,
+        k=k,
+        seed=seed,
+        kshot_path=kshot_path,
+        results_dir=results_dir,
+        scores_dir=scores_dir,
+        extra_config={"pretrained": pretrained},
+    )
 
 
 def collect(results_dir: str | Path) -> pd.DataFrame:

@@ -157,8 +157,12 @@ def make_detector(model: str, seed: int, args: argparse.Namespace) -> Detector:
             FPFHDetectorConfig(bank=BankConfig(seed=seed)), feature_cache=args.features
         )
     if model == "btf":
+        weight = args.fpfh_weight if args.fpfh_weight == "balanced" else float(args.fpfh_weight)
         return BTFDetector(
-            replace(BTF_RGB, seed=seed), device=args.device, feature_cache=args.features
+            replace(BTF_RGB, seed=seed),
+            device=args.device,
+            feature_cache=args.features,
+            fpfh_weight=weight,
         )
     raise ValueError(model)
 
@@ -282,6 +286,7 @@ def build_parser() -> argparse.ArgumentParser:
     runner.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
     runner.add_argument("--seed", type=int, action="append")
     runner.add_argument("--results", help="default: results/<model>[-<preprocess>prep]")
+    runner.add_argument("--fpfh-weight", default="1", help="btf only: a number or 'balanced'")
     runner.add_argument("--no-scores", action="store_true")
     runner.add_argument("--device")
     runner.set_defaults(func=run_models)

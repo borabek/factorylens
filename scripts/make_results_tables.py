@@ -172,6 +172,48 @@ def threed_section() -> list[str]:
     ]
 
 
+def sensor_section() -> list[str]:
+    path = Path("results/analysis/rgb_vs_3d_defect_types.csv")
+    if not path.exists():
+        return []
+    df = pd.read_csv(path)
+    var = pd.read_csv("results/analysis/rgb_vs_3d_variance_explained.csv").iloc[0]
+    by_cat = df.groupby("category")["diff"].mean().sort_values()
+    by_defect = df.groupby("defect")["diff"].agg(["mean", "count"])
+    holes_cuts = by_defect.loc[[d for d in ("hole", "cut") if d in by_defect.index], "mean"]
+    return [
+        "## Which sensor finds which defect",
+        "",
+        "RGB and 3D side by side per category and defect type, 3D minus RGB image AUROC "
+        "(`scripts/compare_sensors.py`, seed 0, this repo's preprocessing).",
+        "",
+        "![3D minus RGB image AUROC per category and defect type]"
+        "(figures/rgb_vs_3d_defect_types.png)",
+        "",
+        "Reading the numbers:",
+        "",
+        f"- The object decides more than the defect does. Category alone explains "
+        f"{100 * var['category']:.0f}% of the variation in the difference, defect type alone "
+        f"{100 * var['defect']:.0f}%.",
+        "- 3D wins on "
+        + ", ".join(f"{c} ({v:+.2f})" for c, v in by_cat[::-1][:4].items())
+        + ". These are organic objects whose colour and texture vary from one normal sample to "
+        "the next, so the camera's notion of normal is wide and a dent hides inside it. RGB "
+        "wins on "
+        + ", ".join(f"{c} ({v:+.2f})" for c, v in by_cat[:3].items())
+        + ", which are manufactured parts with a consistent look; cable gland also has the "
+        "lowest 3D coverage in the dataset (61% of pixels, see docs/data.md).",
+        "- This corrects the day-4 guess that holes and cuts are where 3D helps. Averaged over "
+        "categories they only move by "
+        + ", ".join(f"{d} {v:+.2f}" for d, v in holes_cuts.items())
+        + "; on a potato 3D finds them far better, on a tire or a cable gland far worse.",
+        "- The two single-instance types are the cleanest cases: foam's colour defect is "
+        "invisible to geometry, and cable gland's damaged thread is probably too fine for the "
+        "3D scan to resolve.",
+        "",
+    ]
+
+
 def btf_section() -> list[str]:
     if not Path("results/btf-btfprep").exists():
         return []
@@ -373,6 +415,7 @@ def main() -> None:
         *rgb_section(),
         *defect_section(),
         *threed_section(),
+        *sensor_section(),
         *btf_section(),
         *layer_section(),
         *checks_section(),

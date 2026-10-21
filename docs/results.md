@@ -83,6 +83,19 @@ Reading the numbers:
 - Geometry and colour fail in different places. FPFH beats RGB by the most on potato (+0.38), cookie (+0.17), peach (+0.10), and loses by the most on cable_gland (-0.30), tire (-0.23), foam (-0.15). Potato, where RGB was near chance, is one of the easiest categories for 3D.
 - Our FPFH is above the published one on average (0.793 and 0.817 vs 0.753 image AUROC). The biggest single gap is dowel (0.868 vs 0.718).
 
+## Which sensor finds which defect
+
+RGB and 3D side by side per category and defect type, 3D minus RGB image AUROC (`scripts/compare_sensors.py`, seed 0, this repo's preprocessing).
+
+![3D minus RGB image AUROC per category and defect type](figures/rgb_vs_3d_defect_types.png)
+
+Reading the numbers:
+
+- The object decides more than the defect does. Category alone explains 73% of the variation in the difference, defect type alone 22%.
+- 3D wins on potato (+0.38), cookie (+0.18), peach (+0.11), carrot (+0.09). These are organic objects whose colour and texture vary from one normal sample to the next, so the camera's notion of normal is wide and a dent hides inside it. RGB wins on cable_gland (-0.29), tire (-0.22), foam (-0.16), which are manufactured parts with a consistent look; cable gland also has the lowest 3D coverage in the dataset (61% of pixels, see docs/data.md).
+- This corrects the day-4 guess that holes and cuts are where 3D helps. Averaged over categories they only move by hole +0.05, cut +0.02; on a potato 3D finds them far better, on a tire or a cable gland far worse.
+- The two single-instance types are the cleanest cases: foam's colour defect is invisible to geometry, and cable gland's damaged thread is probably too fine for the 3D scan to resolve.
+
 ## Reproducing Back to the Feature
 
 All three models run the way BTF runs them: their preprocessing (5 mm cut, largest blob, RGB blacked out where points were removed), no padding in the 3x3 average, all 1536 RGB channels, PatchCore's reweighted image score. Image AUROC, seed 0.

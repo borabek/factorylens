@@ -63,3 +63,45 @@ def test_data_prepare(root, tmp_path, capsys):
     assert cli.main(args + ["--category", "bagel", "--jobs", "1"]) == 0
     assert "bagel" in capsys.readouterr().out
     assert len(list(out.glob("4px-*/bagel_*.npz"))) == 3
+
+
+def test_run_fpfh_and_btf_from_the_cli(root, tmp_path, monkeypatch, capsys):
+    from test_fpfh import fake_fpfh_map
+
+    from factorylens.models import fpfh
+
+    monkeypatch.setattr(fpfh, "fpfh_map", fake_fpfh_map)
+    base = [str(root), "--cache", str(tmp_path / "c"), "--features", str(tmp_path / "f")]
+    base += ["--category", "bagel", "--no-scores", "--device", "cpu"]
+    assert cli.main(["run", "fpfh", *base, "--results", str(tmp_path / "r1")]) == 0
+    assert "fpfh   bagel" in capsys.readouterr().out
+    assert len(list((tmp_path / "r1").glob("*.json"))) == 1
+
+
+def test_data_fpfh_precomputes_features(root, tmp_path, monkeypatch):
+    from test_fpfh import fake_fpfh_map
+
+    from factorylens.models import fpfh
+
+    monkeypatch.setattr(fpfh, "fpfh_map", fake_fpfh_map)
+    args = ["data", "fpfh", str(root), "--cache", str(tmp_path / "c")]
+    args += ["--features", str(tmp_path / "f"), "--category", "bagel", "--jobs", "1"]
+    monkeypatch.setattr(cli, "ProcessPoolExecutor", _InlinePool)
+    assert cli.main(args) == 0
+    assert len(list((tmp_path / "f").glob("*/bagel_*.pt"))) == 3
+
+
+class _InlinePool:
+    """Runs jobs in this process, so monkeypatches still apply."""
+
+    def __init__(self, max_workers=None):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def map(self, fn, jobs):
+        return map(fn, jobs)

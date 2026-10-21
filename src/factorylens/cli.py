@@ -7,15 +7,28 @@ import sys
 import time
 from collections.abc import Sequence
 from concurrent.futures import ProcessPoolExecutor
+from dataclasses import replace
+from pathlib import Path
 
 from factorylens import __version__, experiments
 from factorylens.data import cache, ff, mvtec3d, subsets
-from factorylens.models.patchcore import PatchCoreConfig
+from factorylens.models import fpfh
+from factorylens.models.detectors import (
+    BTFDetector,
+    Detector,
+    FPFHDetector,
+    FPFHDetectorConfig,
+    RGBDetector,
+)
+from factorylens.models.memory_bank import BankConfig
+from factorylens.models.patchcore import BTF_RGB, PatchCoreConfig
 
 DEFAULT_ROOT = "data/raw/mvtec3d"
 DEFAULT_KSHOT = "configs/kshot.json"
 DEFAULT_FF_ROOT = "data/raw/ff_analog/Analog Dataset"
 DEFAULT_CACHE = "data/processed"
+DEFAULT_FEATURES = "outputs/features/fpfh"
+PREPROCESS = {"default": cache.Settings(), "btf": cache.BTF_SETTINGS}
 
 
 def data_check(args: argparse.Namespace) -> int:
@@ -114,6 +127,68 @@ def results_table(args: argparse.Namespace) -> int:
     return 0
 
 
+def _fpfh_category(job: tuple[str, str, str, str, cache.Settings]) -> str:
+    root, cache_dir, features_dir, category, settings = job
+    start = time.perf_counter()
+    for split in mvtec3d.SPLITS:
+        fpfh.patches_for(cache.get(root, cache_dir, category, split, settings), None, features_dir)
+    return f"{category:12s} {time.perf_counter() - start:6.1f}s"
+
+
+def data_fpfh(args: argparse.Namespace) -> int:
+    settings = PREPROCESS[args.preprocess]
+    jobs = [
+        (args.root, args.cache, args.features, c, settings)
+        for c in args.category or mvtec3d.CATEGORIES
+    ]
+    with ProcessPoolExecutor(max_workers=args.jobs) as pool:
+        for line in pool.map(_fpfh_category, jobs):
+            print(line, flush=True)
+    return 0
+
+
+def make_detector(model: str, seed: int, args: argparse.Namespace) -> Detector:
+    if model == "rgb":
+        return RGBDetector(PatchCoreConfig(seed=seed), device=args.device)
+    if model == "rgb-btf":
+        return RGBDetector(replace(BTF_RGB, seed=seed), device=args.device)
+    if model == "fpfh":
+        return FPFHDetector(
+            FPFHDetectorConfig(bank=BankConfig(seed=seed)), feature_cache=args.features
+        )
+    if model == "btf":
+        return BTFDetector(
+            replace(BTF_RGB, seed=seed), device=args.device, feature_cache=args.features
+        )
+    raise ValueError(model)
+
+
+def run_models(args: argparse.Namespace) -> int:
+    settings = PREPROCESS[args.preprocess]
+    results = args.results or f"results/{args.model}" + (
+        "" if args.preprocess == "default" else f"-{args.preprocess}prep"
+    )
+    for category in args.category or mvtec3d.CATEGORIES:
+        for seed in args.seed or [0]:
+            r = experiments.run(
+                make_detector(args.model, seed, args),
+                args.root,
+                args.cache,
+                category,
+                seed=seed,
+                settings=settings,
+                results_dir=results,
+                scores_dir=None if args.no_scores else f"outputs/scores/{Path(results).name}",
+            )
+            print(
+                f"{args.model:6s} {category:12s} seed={seed}  "
+                f"image AUROC {r['image_auroc']:.3f}  pixel AUROC {r['pixel_auroc']:.3f}  "
+                f"AUPRO {r['aupro']:.3f}  fit {r['fit_s']:.0f}s",
+                flush=True,
+            )
+    return 0
+
+
 def ff_blocks(args: argparse.Namespace) -> int:
     cycles = ff.segment_cycles(ff.load_analog(args.root))
     blocks = ff.label_blocks(cycles)
@@ -188,6 +263,28 @@ def build_parser() -> argparse.ArgumentParser:
     table.add_argument("--by", action="append", default=[], help="config field to group by")
     table.add_argument("--per-category", action="store_true")
     table.set_defaults(func=results_table)
+
+    feats = data_cmds.add_parser("fpfh", help="precompute FPFH patch features")
+    feats.add_argument("root", nargs="?", default=DEFAULT_ROOT)
+    feats.add_argument("--cache", default=DEFAULT_CACHE)
+    feats.add_argument("--features", default=DEFAULT_FEATURES)
+    feats.add_argument("--preprocess", choices=PREPROCESS, default="default")
+    feats.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
+    feats.add_argument("--jobs", type=int, default=4)
+    feats.set_defaults(func=data_fpfh)
+
+    runner = groups.add_parser("run", help="fit and evaluate a detector on every category")
+    runner.add_argument("model", choices=["rgb", "rgb-btf", "fpfh", "btf"])
+    runner.add_argument("root", nargs="?", default=DEFAULT_ROOT)
+    runner.add_argument("--cache", default=DEFAULT_CACHE)
+    runner.add_argument("--features", default=DEFAULT_FEATURES)
+    runner.add_argument("--preprocess", choices=PREPROCESS, default="default")
+    runner.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
+    runner.add_argument("--seed", type=int, action="append")
+    runner.add_argument("--results", help="default: results/<model>[-<preprocess>prep]")
+    runner.add_argument("--no-scores", action="store_true")
+    runner.add_argument("--device")
+    runner.set_defaults(func=run_models)
 
     ff_group = groups.add_parser("ff", help="Future Factories analog data")
     ff_cmds = ff_group.add_subparsers(dest="command", required=True)

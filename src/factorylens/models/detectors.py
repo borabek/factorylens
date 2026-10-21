@@ -101,12 +101,20 @@ class FPFHDetector:
         return len(self.memory.bank) if self.memory.bank is not None else 0
 
 
+def spread(x: torch.Tensor) -> float:
+    """Mean distance of a feature vector to the mean vector."""
+    flat = x.reshape(-1, x.shape[-1])
+    return float((flat - flat.mean(0)).norm(dim=1).mean())
+
+
 class BTFDetector:
-    """RGB and FPFH patches side by side, unscaled, as in the BTF paper.
+    """RGB and FPFH patches side by side, as in the BTF paper.
 
     FPFH histograms are in the hundreds while ImageNet features are around 1,
-    so distances in this joint space are dominated by the 3D part. That is
-    kept on purpose here: this class reproduces BTF, it does not fix it.
+    so with the default fpfh_weight=1 (BTF's choice) distances in this joint
+    space are dominated by the 3D part. fpfh_weight scales the FPFH half
+    before concatenation; "balanced" picks the factor on the training patches
+    so that both halves have the same spread.
     """
 
     name = "btf"
@@ -118,33 +126,50 @@ class BTFDetector:
         device: str | None = None,
         pretrained: bool = True,
         feature_cache: str | Path | None = None,
+        fpfh_weight: float | str = 1.0,
     ) -> None:
+        if isinstance(fpfh_weight, str) and fpfh_weight != "balanced":
+            raise ValueError(f"fpfh_weight must be a number or 'balanced', not {fpfh_weight!r}")
         self.rgb = PatchCore(rgb, device=device, pretrained=pretrained)
         self.features = features or fpfh.FPFHConfig(grid=rgb.grid or 28)
         self.memory = MemoryBank(rgb.bank_config())
         self.feature_cache = feature_cache
+        self.fpfh_weight = fpfh_weight
+        self.fitted_weight: float | None = None if fpfh_weight == "balanced" else float(fpfh_weight)
 
-    def _patches(self, p: Prepared) -> torch.Tensor:
+    def parts(self, p: Prepared) -> tuple[torch.Tensor, torch.Tensor]:
+        """RGB and FPFH patch features of a split, before weighting."""
         rgb = self.rgb.embed(p.rgb)
         geo = fpfh.patches_for(p, self.features, self.feature_cache).to(rgb.device)
         if rgb.shape[1:3] != geo.shape[1:3]:
             raise ValueError(
                 f"grids differ: rgb {tuple(rgb.shape[1:3])}, fpfh {tuple(geo.shape[1:3])}"
             )
-        return torch.cat([rgb, geo], dim=-1)
+        return rgb, geo
+
+    def patches(self, p: Prepared) -> torch.Tensor:
+        rgb, geo = self.parts(p)
+        if self.fitted_weight is None:
+            raise RuntimeError("call fit() first, the balanced weight comes from the train split")
+        return torch.cat([rgb, geo * self.fitted_weight], dim=-1)
 
     def fit(self, train: Prepared) -> BTFDetector:
-        self.memory.fit(self._patches(train))
+        if self.fpfh_weight == "balanced":
+            rgb, geo = self.parts(train)
+            self.fitted_weight = spread(rgb) / spread(geo)
+        self.memory.fit(self.patches(train))
         return self
 
     def score(self, test: Prepared) -> tuple[np.ndarray, np.ndarray]:
-        return self.memory.score(self._patches(test), _size(test))
+        return self.memory.score(self.patches(test), _size(test))
 
     def config_dict(self) -> dict[str, Any]:
         return {
             "model": "btf",
             "rgb": self.rgb.config.as_dict(),
             "fpfh": self.features.as_dict(),
+            "fpfh_weight": self.fpfh_weight,
+            "fpfh_weight_fitted": self.fitted_weight,
         }
 
     @property

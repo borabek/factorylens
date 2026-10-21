@@ -16,8 +16,7 @@ from pathlib import Path
 import pandas as pd
 
 from factorylens.data import cache, mvtec3d
-from factorylens.models import fpfh
-from factorylens.models.detectors import BTFDetector
+from factorylens.models.detectors import BTFDetector, spread
 
 
 def main() -> None:
@@ -30,11 +29,8 @@ def main() -> None:
     rows = []
     for category in mvtec3d.CATEGORIES:
         train = cache.get(args.root, args.cache, category, "train", cache.BTF_SETTINGS)
-        patches = BTFDetector(feature_cache=args.features)._patches(train)
-        flat = patches.reshape(-1, patches.shape[-1]).cpu()
-        rgb, geo = flat[:, : -fpfh.N_BINS], flat[:, -fpfh.N_BINS :]
-        spread_rgb = float((rgb - rgb.mean(0)).norm(dim=1).mean())
-        spread_fpfh = float((geo - geo.mean(0)).norm(dim=1).mean())
+        rgb, geo = BTFDetector(feature_cache=args.features).parts(train)
+        spread_rgb, spread_fpfh = spread(rgb.cpu()), spread(geo.cpu())
         rows.append(
             {
                 "category": category,

@@ -33,6 +33,11 @@ NORMAL = "normal"
 # train-on-day-1 / test-on-day-2 split possible at all.
 DAY_BOUNDARY = pd.Timestamp("2023-12-12T00:00:00Z")
 
+# Conveyor drives 2-4 report about 1% of temperatures as what look like
+# misread registers: values from 1e-30 to 1e38, many negative. Drive 1 stays
+# between 68 and 94 F, so anything outside 40-140 F is treated as missing.
+TEMPERATURE_RANGE_F = (40.0, 140.0)
+
 
 def load_analog(root: str | Path, files: tuple[str, ...] = FILES) -> pd.DataFrame:
     """All signals in one frame indexed by UTC time, plus a `label` column."""
@@ -51,6 +56,9 @@ def load_analog(root: str | Path, files: tuple[str, ...] = FILES) -> pd.DataFram
             df["label"] = description.fillna(NORMAL)
         frames.append(df.set_axis(pd.DatetimeIndex(times, name="time")))
     out = pd.concat(frames, axis=1)
+    lo, hi = TEMPERATURE_RANGE_F
+    for col in [c for c in out.columns if c.endswith("_Temperature")]:
+        out[col] = out[col].where(out[col].between(lo, hi))
     return out.sort_index()
 
 

@@ -28,9 +28,23 @@ class Settings:
     size: int = 224
     threshold: float = preprocess.DEFAULT_THRESHOLD
     min_component: float = preprocess.MIN_COMPONENT
+    # BTF's preprocessing keeps only the largest blob and blacks out the RGB
+    # pixels it removed; both are off here except when reproducing BTF
+    keep_largest: bool = False
+    zero_background_rgb: bool = False
 
     def as_dict(self) -> dict[str, Any]:
-        return {"size": self.size, "threshold": self.threshold, "min_component": self.min_component}
+        d: dict[str, Any] = {
+            "size": self.size,
+            "threshold": self.threshold,
+            "min_component": self.min_component,
+        }
+        # only written when set, so the default settings keep their old hash
+        if self.keep_largest:
+            d["keep_largest"] = True
+        if self.zero_background_rgb:
+            d["zero_background_rgb"] = True
+        return d
 
     def dirname(self) -> str:
         return f"{self.size}px-{config_hash(self.as_dict())}"
@@ -54,6 +68,11 @@ class Prepared:
         return np.array([d != "good" for d in self.defect])
 
 
+BTF_SETTINGS = Settings(
+    threshold=preprocess.BTF_THRESHOLD, min_component=0, keep_largest=True, zero_background_rgb=True
+)
+
+
 def prepare(root: str | Path, category: str, split: str, settings: Settings) -> Prepared:
     rgbs, xyzs, fgs, masks, defects, stems = [], [], [], [], [], []
     size = settings.size
@@ -63,7 +82,13 @@ def prepare(root: str | Path, category: str, split: str, settings: Settings) -> 
             threshold=settings.threshold,
             min_component=settings.min_component,
         )
-        rgbs.append(preprocess.resize_rgb(mvtec3d.load_rgb(s.rgb_path), size))
+        if settings.keep_largest:
+            fg = preprocess.keep_largest_component(fg)
+            xyz = np.where(fg[..., None], xyz, 0).astype(np.float32)
+        rgb = mvtec3d.load_rgb(s.rgb_path)
+        if settings.zero_background_rgb:
+            rgb = np.where(fg[..., None], rgb, 0).astype(np.uint8)
+        rgbs.append(preprocess.resize_rgb(rgb, size))
         xyzs.append(preprocess.resize_xyz(xyz, size))
         fgs.append(preprocess.resize_mask(fg, size))
         if s.gt_path is not None:

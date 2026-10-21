@@ -103,3 +103,16 @@ def test_maps_keep_the_shape_of_non_square_inputs():
     wide = np.concatenate([textures(1, seed=3), textures(1, seed=4)], axis=2)  # 64 x 128
     _, maps = model.score(wide)
     assert maps.shape == (1, 64, 128)
+
+
+def test_btf_style_options():
+    from dataclasses import replace
+
+    from factorylens.models.patchcore import BTF_RGB
+
+    model = PatchCore(replace(BTF_RGB, arch="resnet18"), device="cpu", pretrained=False)
+    emb = model.embed(textures(2))
+    # no padding shrinks 8x8 to 6x6, the fixed grid stretches it to 28x28; all 128+256 channels kept
+    assert emb.shape == (2, 28, 28, 384)
+    scores, maps = model.fit(textures(3)).score(textures(2, seed=9))
+    assert scores.shape == (2,) and maps.shape == (2, 64, 64)

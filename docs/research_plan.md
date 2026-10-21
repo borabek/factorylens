@@ -32,7 +32,9 @@ The Future Factories (FF) multimodal dataset does not support a fair comparison 
 |---|---|---|
 | hours since start | 0.737 | **0.986** |
 | conveyor 1 VFD temperature | 0.507 | 0.600 |
-| conveyor 2 VFD temperature | 0.503 | 0.511 |
+| conveyor 2 VFD temperature | 0.597 | 0.502 |
+
+<sub>Corrected on 2026-10-21. About 1% of the conveyor 2–4 temperature readings turned out to be corrupted values, from 1e-30 to 1e38 and many negative. They are now masked outside 40–140 °F. The first version of this table used them: conveyor 2 read 0.503 and 0.511. The conclusion does not change.</sub>
 
 Elapsed time alone reaches an AUROC of 0.986 inside the image window. Any input that drifts with time could produce a high score without detecting a single missing part: room lighting, camera warm-up, a cable being nudged. A vision model, a sensor model and a fused model would all be scored on that confound, so the A/B/C comparison would not mean anything.
 

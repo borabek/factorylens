@@ -1,0 +1,58 @@
+{
+  "config": {
+    "category": "tire",
+    "k": null,
+    "seed": 1,
+    "preprocess": {
+      "size": 224,
+      "threshold": 0.002,
+      "min_component": 0.0002
+    },
+    "model": "fpfh",
+    "fpfh": {
+      "voxel_size": 0.05,
+      "normal_nn": 30,
+      "feature_nn": 100,
+      "grid": 28,
+      "pad": false
+    },
+    "bank": {
+      "coreset_ratio": 0.1,
+      "keep_all_below": 10000,
+      "projection_dim": 128,
+      "blur_sigma": 4.0,
+      "reweight": false,
+      "seed": 1
+    }
+  },
+  "config_hash": "db8f091491e3",
+  "metrics": {
+    "image_auroc": 0.5255172413793103,
+    "image_auroc_ci_low": 0.39159770114942544,
+    "image_auroc_ci_high": 0.6616436781609194,
+    "pixel_auroc": 0.9864669087525761,
+    "aupro": 0.9494437142538811,
+    "n_train": 210,
+    "n_test": 112,
+    "bank_size": 16464,
+    "fit_s": 8.361609832994873,
+    "score_ms_per_image": 5.053353419498308
+  },
+  "run": {
+    "time": "2026-10-21T12:40:06+00:00",
+    "git": {
+      "commit": "5a7f07cc787c303f53368ef8cc14cb88c7c32762",
+      "dirty": false
+    },
+    "python": "3.12.15",
+    "platform": "Darwin arm64",
+    "packages": {
+      "factorylens": "0.1.0",
+      "numpy": "2.5.4",
+      "pillow": "13.0.0",
+      "tifffile": "2026.10.15",
+      "torch": "2.14.1",
+      "scikit-learn": "1.9.1"
+    }
+  }
+}

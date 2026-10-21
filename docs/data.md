@@ -107,4 +107,26 @@ This is the same kind of shortcut as in the image data, at a smaller scale. It i
 
 Both figures come from `scripts/ff/figures.py`.
 
+### Cleaning
+
+Conveyor drives 2–4 report about 1% of their temperatures as corrupted values, from 1e-30 up to 1e38 and many negative. These look like misread registers. Drive 1 never leaves 68–94 °F, so `load_analog` treats temperatures outside 40–140 °F as missing. After that, all four drives sit between 68 and 93 °F.
+
+### The cycle, without the PLC counter
+
+The signals alone recover the cycle length. `scripts/ff/periods.py` bins each gripper-load and base-joint signal to 1 s and keeps the longest gap-free stretch (16.9 h). It then reads the period from the autocorrelation. All eight signals give 294.8–295.2 s, against a PLC median of 295.0 s, so the counter-based segmentation is not an artefact of the counter.
+
+![periodogram and autocorrelation of R03's gripper load](figures/ff_periodogram.png)
+
+The periodogram is not the right tool for picking the period, although it confirms it. A short pulse once per cycle puts as much power in the harmonics as in the fundamental, and on synthetic pulses the tallest peak sits at half the period. The autocorrelation only peaks at whole cycles. `tests/test_ts.py` pins both behaviours down.
+
+### What drifts
+
+A straight-line fit to each signal's per-cycle mean over normal cycles (`results/analysis/ff_trends.csv`):
+
+- The base joint of R01 drifts the most cleanly, by -0.155° per hour (R² 0.69). Its gripper load falls too (R² 0.59). This is the drift behind the R01 shortcut above.
+- All four conveyor drive temperatures rise by about 0.2 °F per hour (R² about 0.41). The room or the drives warm up over the run.
+- The base joints of R02–R04 do not drift (R² ≤ 0.01).
+
+Over the 29 hours these trends add up to 2–3 times the normal cycle-to-cycle spread. That is why anything that follows time can look like a defect detector on this data.
+
 > Harik et al. *Analog and Multi-modal Manufacturing Datasets Acquired on the Future Factories Platform.* arXiv:2401.15544, 2024.

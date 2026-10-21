@@ -69,3 +69,17 @@ def test_load_analog_refuses_misaligned_files(tmp_path):
     other.to_csv(tmp_path / ff.FILES[1], index=False)
     with pytest.raises(ValueError, match="different timestamps"):
         ff.load_analog(tmp_path, files=ff.FILES[:2])
+
+
+def test_load_analog_masks_impossible_temperatures(tmp_path):
+    df = make_frame()
+    write_csvs(tmp_path, df)
+    other = pd.read_csv(tmp_path / ff.FILES[1])
+    other = other.rename(columns={"signal_1": "Q_VFD2_Temperature"})
+    other.loc[5, "Q_VFD2_Temperature"] = -2.98e38
+    other.loc[6, "Q_VFD2_Temperature"] = 3.1e-31
+    other.loc[7, "Q_VFD2_Temperature"] = 1.1e15
+    other.to_csv(tmp_path / ff.FILES[1], index=False)
+    loaded = ff.load_analog(tmp_path, files=ff.FILES[:2])
+    assert loaded["Q_VFD2_Temperature"].isna().sum() == 3
+    assert loaded["Q_VFD2_Temperature"].dropna().eq(68.0).all()

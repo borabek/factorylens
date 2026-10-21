@@ -20,6 +20,10 @@ def reference(method: str) -> pd.DataFrame:
     return pd.DataFrame(ref["methods"][method], index=ref["categories"])
 
 
+def load_config(path: Path) -> dict:
+    return json.loads(path.read_text())["config"]
+
+
 def provenance(df: pd.DataFrame, results_dir: str) -> str:
     commits, dirty = set(), False
     for name in df["file"]:
@@ -267,6 +271,65 @@ def btf_section() -> list[str]:
     ]
 
 
+def balance_section() -> list[str]:
+    if not Path("results/btf-balanced-btfprep").exists():
+        return []
+    cols = {
+        "RGB": "results/rgb-btf-btfprep",
+        "FPFH": "results/fpfh-btfprep",
+        "weight 1 (BTF)": "results/btf-btfprep",
+        "weight 0.1": "results/btf-w0.1-btfprep",
+        "weight 0.03": "results/btf-w0.03-btfprep",
+        "balanced": "results/btf-balanced-btfprep",
+    }
+    table = pd.DataFrame({k: per_category(v, "image_auroc") for k, v in cols.items()})
+    table["paper BTF"] = reference("BTF (RGB + FPFH)")["image_auroc"]
+    mean = table.mean()
+    out = table.copy()
+    out.loc["**mean**"] = mean
+    best_single = table[["RGB", "FPFH"]].max(axis=1)
+    above = int((table["balanced"] > best_single).sum())
+    runs = experiments.collect("results/btf-balanced-btfprep")
+    weights = pd.Series(
+        [
+            load_config(Path("results/btf-balanced-btfprep") / f)["fpfh_weight_fitted"]
+            for f in runs["file"]
+        ]
+    )
+    ours = per_category("results/btf-balanced", "image_auroc").mean()
+    aupro = per_category("results/btf-balanced-btfprep", "aupro").mean()
+    return [
+        "## Balancing the two halves",
+        "",
+        "The test for the explanation above: same BTF model, same preprocessing, but the FPFH "
+        "half is scaled before concatenation. *balanced* picks the factor per category on the "
+        "training patches so that both halves have the same spread; nothing from the test set "
+        "is used. Image AUROC, seed 0.",
+        "",
+        out.round(3).to_markdown(),
+        "",
+        f"<sub>{provenance(runs, 'results/btf-balanced-btfprep')}.</sub>",
+        "",
+        "Reading the numbers:",
+        "",
+        f"- Balanced, the same concatenation reaches {mean['balanced']:.3f}, up from "
+        f"{mean['weight 1 (BTF)']:.3f}, and is above both single sensors on {above} of "
+        f"{len(table)} categories. It is also above the paper's {mean['paper BTF']:.3f} "
+        f"(AUPRO {aupro:.3f}).",
+        "- So the explanation holds causally, not just as a correlation: change nothing but the "
+        "relative scale of the two halves and the fusion goes from worse than either sensor to "
+        "better than both.",
+        f"- The fitted factors range from {weights.min():.3f} to {weights.max():.3f}, so FPFH "
+        f"is shrunk {1 / weights.max():.0f}-{1 / weights.min():.0f}x depending on the category.",
+        f"- A fixed factor of 0.03 does about as well on average ({mean['weight 0.03']:.3f}), "
+        f"0.1 a little worse ({mean['weight 0.1']:.3f}). Taking whichever fixed factor scores "
+        "best here would be choosing it on the test set; the balanced factor is decided from "
+        "the training data before any test image is seen, so it is the number to quote.",
+        f"- With this repo's preprocessing instead of BTF's, balanced fusion gives {ours:.3f}.",
+        "",
+    ]
+
+
 def defect_section() -> list[str]:
     path = Path("results/analysis/rgb_defect_types.csv")
     if not path.exists():
@@ -417,6 +480,7 @@ def main() -> None:
         *threed_section(),
         *sensor_section(),
         *btf_section(),
+        *balance_section(),
         *layer_section(),
         *checks_section(),
     ]

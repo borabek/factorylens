@@ -8,14 +8,17 @@ This is a work in progress (started October 2026). The research question, the da
 
 ## Where things are
 
-**First results** (full tables in [docs/results.md](docs/results.md)). RGB only, PatchCore with the full training set:
+**First results** (full tables in [docs/results.md](docs/results.md)), image AUROC averaged over the 10 categories:
 
-| | image AUROC | pixel AUROC | AUPRO |
-|---|---|---|---|
-| this repo (5 seeds) | 0.799 ± 0.005 | 0.977 | 0.905 ± 0.001 |
-| Back to the Feature, RGB iNet (published) | 0.785 | 0.966 | 0.876 |
+| | this repo | published (Back to the Feature) |
+|---|---|---|
+| RGB only, PatchCore (5 seeds) | 0.799 ± 0.005 | 0.785 |
+| 3D only, FPFH | 0.793 | 0.753 |
+| RGB + FPFH concatenated, as in BTF | 0.801 | 0.873 |
 
-The reimplementation matches the published baseline: BTF's number is inside our 95% CI on 9 of 10 categories. RGB is weakest on potato, cookie and peach (0.56–0.68), and by defect type it finds colour changes and cracks almost perfectly but holes and cuts much less often (image AUROC 0.68 and 0.77). Shape defects are where the 3D sensor has to earn its place. The 3D and fusion models come next.
+- The two sensors fail in different places. RGB is near chance on potato (0.56), where 3D gets 0.95. 3D struggles on cable_gland and tire, where RGB is fine.
+- Both single-sensor baselines reproduce. The published fusion does not: concatenating the two feature sets as BTF does lands *below* the better single sensor on 8 of 10 categories.
+- The FPFH half of the joint features is 12–47 times wider than the RGB half, so the distances are almost entirely 3D. How to combine the two sensors properly is the next step.
 
 Findings from the data itself, each with the script that produces it:
 

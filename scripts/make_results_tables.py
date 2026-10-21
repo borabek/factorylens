@@ -120,6 +120,111 @@ def rgb_section() -> list[str]:
     ]
 
 
+def per_category(results_dir: str, metric: str) -> pd.Series:
+    df = experiments.collect(results_dir)
+    return df.groupby("category")[metric].mean()
+
+
+def threed_section() -> list[str]:
+    if not Path("results/fpfh").exists():
+        return []
+    paper = reference("FPFH")
+    rows = {}
+    for metric in ("image_auroc", "aupro"):
+        rows[f"FPFH {metric} (ours, 2 mm)"] = per_category("results/fpfh", metric)
+        rows[f"FPFH {metric} (BTF preprocessing)"] = per_category("results/fpfh-btfprep", metric)
+        rows[f"FPFH {metric} (paper)"] = paper[metric]
+    table = pd.DataFrame(rows)
+    rgb = per_category("results/rgb", "image_auroc")
+    ours = table["FPFH image_auroc (ours, 2 mm)"]
+    better = (ours - rgb).sort_values()
+    gap = ours - table["FPFH image_auroc (paper)"]
+    mean = table.mean()
+    out = table.copy()
+    out.loc["**mean**"] = mean
+    out.columns = [
+        c.replace("image_auroc", "image AUROC").replace("aupro", "AUPRO") for c in out.columns
+    ]
+    return [
+        "## 3D only (FPFH)",
+        "",
+        "Same memory bank as the RGB detector, on FPFH point-cloud features with BTF's settings "
+        "(normals from 30 neighbours, FPFH from 100, 28x28 grid). Two preprocessings: this "
+        "repo's (2 mm plane cut, tiny blobs dropped) and BTF's (5 mm cut, largest blob only). "
+        "Seed 0.",
+        "",
+        out.round(3).to_markdown(),
+        "",
+        f"<sub>{provenance(experiments.collect('results/fpfh'), 'results/fpfh')}.</sub>",
+        "",
+        "Reading the numbers:",
+        "",
+        "- Geometry and colour fail in different places. FPFH beats RGB by the most on "
+        + ", ".join(f"{c} (+{v:.2f})" for c, v in better[::-1][:3].items())
+        + ", and loses by the most on "
+        + ", ".join(f"{c} ({v:.2f})" for c, v in better[:3].items())
+        + ". Potato, where RGB was near chance, is one of the easiest categories for 3D.",
+        f"- Our FPFH is above the published one on average ({mean.iloc[0]:.3f} and "
+        f"{mean.iloc[1]:.3f} vs {mean.iloc[2]:.3f} image AUROC). The biggest single gap is "
+        f"{gap.idxmax()} ({table.loc[gap.idxmax()].iloc[0]:.3f} vs "
+        f"{table.loc[gap.idxmax()].iloc[2]:.3f}).",
+        "",
+    ]
+
+
+def btf_section() -> list[str]:
+    if not Path("results/btf-btfprep").exists():
+        return []
+    cols = {
+        "RGB": ("results/rgb-btf-btfprep", "RGB iNet"),
+        "FPFH": ("results/fpfh-btfprep", "FPFH"),
+        "BTF (RGB + FPFH)": ("results/btf-btfprep", "BTF (RGB + FPFH)"),
+    }
+    rows = {}
+    for label, (path, method) in cols.items():
+        rows[f"{label}, ours"] = per_category(path, "image_auroc")
+        rows[f"{label}, paper"] = reference(method)["image_auroc"]
+    table = pd.DataFrame(rows)
+    mean = table.mean()
+    out = table.copy()
+    out.loc["**mean**"] = mean
+    scale = pd.read_csv("results/analysis/btf_feature_scale.csv", index_col="category")
+    fused = table["BTF (RGB + FPFH), ours"]
+    best_single = table[["RGB, ours", "FPFH, ours"]].max(axis=1)
+    worse = int((fused < best_single).sum())
+    return [
+        "## Reproducing Back to the Feature",
+        "",
+        "All three models run the way BTF runs them: their preprocessing (5 mm cut, largest "
+        "blob, RGB blacked out where points were removed), no padding in the 3x3 average, all "
+        "1536 RGB channels, PatchCore's reweighted image score. Image AUROC, seed 0.",
+        "",
+        out.round(3).to_markdown(),
+        "",
+        f"<sub>{provenance(experiments.collect('results/btf-btfprep'), 'results/btf-btfprep')}."
+        "</sub>",
+        "",
+        "Reading the numbers:",
+        "",
+        f"- Each half reproduces, and then some: RGB {mean['RGB, ours']:.3f} vs "
+        f"{mean['RGB, paper']:.3f}, FPFH {mean['FPFH, ours']:.3f} vs {mean['FPFH, paper']:.3f}.",
+        f"- The combination does not. BTF reaches {mean['BTF (RGB + FPFH), ours']:.3f} here "
+        f"against {mean['BTF (RGB + FPFH), paper']:.3f} in the paper, and it is below the better "
+        f"single modality on {worse} of {len(fused)} categories. Fusing made things worse.",
+        f"- The reason is scale. Over the training patches the FPFH half is "
+        f"{scale['ratio'].min():.0f}-{scale['ratio'].max():.0f} times wider than the RGB half "
+        f"(`scripts/btf_feature_scale.py`), so at least {100 * scale['fpfh_share'].min():.1f}% of "
+        "a typical squared distance is FPFH. Concatenation without rescaling is effectively "
+        "FPFH alone, and the per-category numbers track FPFH closely. The paper's result must "
+        "come from a setup where the two halves were closer in size or weighted differently; I "
+        "have not found which (FPFH magnitudes depend on the library version, for one). Either "
+        "way the method is sensitive to something that should not matter.",
+        "- That is the starting point for the fusion experiments: rescale or score the two "
+        "modalities separately before combining them.",
+        "",
+    ]
+
+
 def defect_section() -> list[str]:
     path = Path("results/analysis/rgb_defect_types.csv")
     if not path.exists():
@@ -267,6 +372,8 @@ def main() -> None:
         "",
         *rgb_section(),
         *defect_section(),
+        *threed_section(),
+        *btf_section(),
         *layer_section(),
         *checks_section(),
     ]

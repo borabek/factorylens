@@ -58,6 +58,58 @@ Reading the numbers:
 
 Typical failure modes visible above (`scripts/rgb_examples.py`): on potato the whole object lights up for an unusually shaped but normal potato, and on tire the worst false alarm is a specular highlight on the tread.
 
+## 3D only (FPFH)
+
+Same memory bank as the RGB detector, on FPFH point-cloud features with BTF's settings (normals from 30 neighbours, FPFH from 100, 28x28 grid). Two preprocessings: this repo's (2 mm plane cut, tiny blobs dropped) and BTF's (5 mm cut, largest blob only). Seed 0.
+
+|             |   FPFH image AUROC (ours, 2 mm) |   FPFH image AUROC (BTF preprocessing) |   FPFH image AUROC (paper) |   FPFH AUPRO (ours, 2 mm) |   FPFH AUPRO (BTF preprocessing) |   FPFH AUPRO (paper) |
+|:------------|--------------------------------:|---------------------------------------:|---------------------------:|--------------------------:|---------------------------------:|---------------------:|
+| bagel       |                           0.845 |                                  0.865 |                      0.82  |                     0.97  |                            0.972 |                0.972 |
+| cable_gland |                           0.609 |                                  0.596 |                      0.533 |                     0.893 |                            0.888 |                0.849 |
+| carrot      |                           0.964 |                                  0.964 |                      0.877 |                     0.991 |                            0.991 |                0.981 |
+| cookie      |                           0.819 |                                  0.82  |                      0.769 |                     0.919 |                            0.913 |                0.939 |
+| dowel       |                           0.868 |                                  0.875 |                      0.718 |                     0.94  |                            0.889 |                0.963 |
+| foam        |                           0.609 |                                  0.686 |                      0.574 |                     0.744 |                            0.728 |                0.693 |
+| peach       |                           0.78  |                                  0.782 |                      0.774 |                     0.982 |                            0.983 |                0.975 |
+| potato      |                           0.946 |                                  0.945 |                      0.895 |                     0.992 |                            0.992 |                0.981 |
+| rope        |                           0.971 |                                  0.951 |                      0.99  |                     0.906 |                            0.901 |                0.98  |
+| tire        |                           0.526 |                                  0.688 |                      0.582 |                     0.949 |                            0.953 |                0.949 |
+| **mean**    |                           0.793 |                                  0.817 |                      0.753 |                     0.929 |                            0.921 |                0.928 |
+
+<sub>10 runs from commit 401d938 (clean checkout).</sub>
+
+Reading the numbers:
+
+- Geometry and colour fail in different places. FPFH beats RGB by the most on potato (+0.38), cookie (+0.17), peach (+0.10), and loses by the most on cable_gland (-0.30), tire (-0.23), foam (-0.15). Potato, where RGB was near chance, is one of the easiest categories for 3D.
+- Our FPFH is above the published one on average (0.793 and 0.817 vs 0.753 image AUROC). The biggest single gap is dowel (0.868 vs 0.718).
+
+## Reproducing Back to the Feature
+
+All three models run the way BTF runs them: their preprocessing (5 mm cut, largest blob, RGB blacked out where points were removed), no padding in the 3x3 average, all 1536 RGB channels, PatchCore's reweighted image score. Image AUROC, seed 0.
+
+|             |   RGB, ours |   RGB, paper |   FPFH, ours |   FPFH, paper |   BTF (RGB + FPFH), ours |   BTF (RGB + FPFH), paper |
+|:------------|------------:|-------------:|-------------:|--------------:|-------------------------:|--------------------------:|
+| bagel       |       0.885 |        0.854 |        0.865 |         0.82  |                    0.841 |                     0.938 |
+| cable_gland |       0.877 |        0.84  |        0.596 |         0.533 |                    0.569 |                     0.765 |
+| carrot      |       0.889 |        0.824 |        0.964 |         0.877 |                    0.965 |                     0.972 |
+| cookie      |       0.766 |        0.687 |        0.82  |         0.769 |                    0.816 |                     0.888 |
+| dowel       |       0.953 |        0.974 |        0.875 |         0.718 |                    0.875 |                     0.96  |
+| foam        |       0.832 |        0.716 |        0.686 |         0.574 |                    0.643 |                     0.664 |
+| peach       |       0.782 |        0.713 |        0.782 |         0.774 |                    0.776 |                     0.904 |
+| potato      |       0.614 |        0.593 |        0.945 |         0.895 |                    0.939 |                     0.929 |
+| rope        |       0.941 |        0.92  |        0.951 |         0.99  |                    0.951 |                     0.982 |
+| tire        |       0.737 |        0.724 |        0.688 |         0.582 |                    0.64  |                     0.726 |
+| **mean**    |       0.828 |        0.785 |        0.817 |         0.753 |                    0.801 |                     0.873 |
+
+<sub>10 runs from commit 401d938 (clean checkout).</sub>
+
+Reading the numbers:
+
+- Each half reproduces, and then some: RGB 0.828 vs 0.785, FPFH 0.817 vs 0.753.
+- The combination does not. BTF reaches 0.801 here against 0.873 in the paper, and it is below the better single modality on 8 of 10 categories. Fusing made things worse.
+- The reason is scale. Over the training patches the FPFH half is 12-47 times wider than the RGB half (`scripts/btf_feature_scale.py`), so at least 99.4% of a typical squared distance is FPFH. Concatenation without rescaling is effectively FPFH alone, and the per-category numbers track FPFH closely. The paper's result must come from a setup where the two halves were closer in size or weighted differently; I have not found which (FPFH magnitudes depend on the library version, for one). Either way the method is sensitive to something that should not matter.
+- That is the starting point for the fusion experiments: rescale or score the two modalities separately before combining them.
+
 ## Which backbone layers (RGB)
 
 Same detector, every layer combination on the same 28x28 patch grid (`scripts/run_layer_ablation.py`), full training set.

@@ -21,6 +21,11 @@ dependencies = [
 [project.scripts]
 factorylens = "factorylens.cli:main"
 
+[project.optional-dependencies]
+3d = [
+    "open3d>=0.20.0",
+]
+
 [dependency-groups]
 dev = [
     "pytest>=8.0",

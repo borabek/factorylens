@@ -1,0 +1,9 @@
+signal,hours_used,period_s,acf_at_period,diff_to_plc_s
+I_R01_Gripper_Load,16.9089,294.7680,0.6358,-0.2300
+I_R02_Gripper_Load,16.9089,295.0626,0.4712,0.0646
+I_R03_Gripper_Load,16.9089,294.9907,0.8736,-0.0073
+I_R04_Gripper_Load,16.9089,294.8741,0.1552,-0.1239
+M_R01_SJointAngle_Degree,16.9089,294.9859,0.8334,-0.0121
+M_R02_SJointAngle_Degree,16.9089,294.9583,0.8597,-0.0397
+M_R03_SJointAngle_Degree,16.9089,294.9445,0.8882,-0.0535
+M_R04_SJointAngle_Degree,16.9089,295.1575,0.9345,0.1595

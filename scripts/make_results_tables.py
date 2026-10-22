@@ -125,7 +125,10 @@ def rgb_section() -> list[str]:
 
 
 def per_category(results_dir: str, metric: str) -> pd.Series:
+    """Mean over seeds of the full-training-set runs (k-shot runs are left out)."""
     df = experiments.collect(results_dir)
+    if "k" in df:
+        df = df[df["k"].isna()]
     return df.groupby("category")[metric].mean()
 
 
@@ -469,6 +472,122 @@ def layer_section() -> list[str]:
     ]
 
 
+def sweep_section() -> list[str]:
+    if not Path("results/sweep").exists():
+        return []
+    models = {"RGB": "rgb", "FPFH": "fpfh", "early fusion": "early", "late fusion": "late"}
+    full = pd.DataFrame(
+        {name: per_category(f"results/sweep/{m}", "image_auroc") for name, m in models.items()}
+    )
+    aupro = pd.DataFrame(
+        {name: per_category(f"results/sweep/{m}", "aupro") for name, m in models.items()}
+    ).mean()
+    paired = pd.read_csv("results/analysis/sweep_paired.csv")
+
+    def mark(category: str, model: str) -> str:
+        rows = paired[(paired["category"] == category) & (paired["model"] == model)]
+        rows = rows[rows["versus"].isin(["rgb", "fpfh"])]
+        return " ✓" if (rows["ci_low"] > 0).all() else ""
+
+    shown = full.map(lambda v: f"{v:.3f}")
+    for cat in full.index:
+        shown.loc[cat, "early fusion"] += mark(cat, "early")
+        shown.loc[cat, "late fusion"] += mark(cat, "late")
+    shown.loc["**mean**"] = full.mean().map(lambda v: f"{v:.3f}")
+    shown.loc["**AUPRO**"] = aupro.map(lambda v: f"{v:.3f}")
+
+    wins = paired[paired["versus"].isin(["rgb", "fpfh"])].assign(
+        win=lambda d: d["ci_low"] > 0, loss=lambda d: d["ci_high"] < 0
+    )
+    both = wins.groupby(["model", "category"])["win"].all().groupby("model").sum()
+    losses = wins.groupby("model")["loss"].sum()
+    early_late = paired[(paired["model"] == "early") & (paired["versus"] == "late")]
+
+    kshot = pd.read_csv("results/analysis/sweep_kshot.csv")
+    kshot["k"] = kshot["k"].map(lambda k: "all" if k == float("inf") else str(int(k)))
+    cell = kshot.apply(
+        lambda r: (
+            f"{r['image_auroc']:.3f}" + (f" ± {r['image_auroc_sd']:.3f}" if r["seeds"] > 1 else "")
+        ),
+        axis=1,
+    )
+    names = {**{m: n for n, m in models.items()}, "rgb_aug": "RGB + flips"}
+    ktable = (
+        kshot.assign(cell=cell, model=kshot["model"].map(names))
+        .pivot(index="model", columns="k", values="cell")
+        .reindex(columns=["1", "5", "10", "50", "all"])
+        .reindex(list(names.values()))
+        .fillna("")
+    )
+
+    runs = pd.concat(
+        [experiments.collect(f"results/sweep/{m}").assign(model=m) for m in models.values()]
+    )
+    every = pd.concat(
+        [
+            experiments.collect(f"results/sweep/{m}").assign(
+                file=lambda d, m=m: m + "/" + d["file"]
+            )
+            for m in [*models.values(), "rgb_aug"]
+        ]
+    )
+    grid = runs.pivot_table(
+        index=["category", "k", "seed"], columns="model", values="image_auroc"
+    ).dropna()
+    best = grid[["rgb", "fpfh"]].max(axis=1)
+    small = grid.index.get_level_values("k") <= 10
+    fails = {m: float((grid[m] < best - 0.05)[small].mean()) for m in ("early", "late")}
+    coverage = pd.read_csv("results/analysis/early_fusion_coverage_bagel.csv")
+    rho = coverage[["excess_normal", "joint_auroc"]].corr("spearman").iloc[0, 1]
+
+    return [
+        "## Fusion and training-set size",
+        "",
+        "`factorylens sweep`: the same RGB and FPFH patch features in four detectors, "
+        "with this repo's preprocessing. *early*: the two halves concatenated, FPFH scaled "
+        "per run so that both have the same spread on the training patches. *late*: one "
+        "memory bank per sensor, each score standardised on the validation normals, then "
+        "summed. Image AUROC on the full training set, seed 0; ✓ = better than both single "
+        "sensors, paired bootstrap 95% interval above zero.",
+        "",
+        shown.to_markdown(disable_numparse=True),
+        "",
+        f"<sub>{provenance(every, 'results/sweep')}, all k and draws.</sub>",
+        "",
+        f"- Early fusion is better than both sensors on {both.get('early', 0)} of "
+        f"{len(full)} categories by the paired test, late fusion on "
+        f"{both.get('late', 0)}. Neither is significantly worse than a single sensor on any "
+        f"category ({losses.get('early', 0) + losses.get('late', 0)} losses in "
+        f"{len(wins)} comparisons).",
+        f"- Early beats late on image AUROC (mean +{early_late['diff'].mean():.3f}, "
+        f"significant on {(early_late['ci_low'] > 0).sum()} categories, never worse), but "
+        f"late fusion localises better (AUPRO {aupro['late fusion']:.3f} vs "
+        f"{aupro['early fusion']:.3f}).",
+        "",
+        "Mean image AUROC over the 10 categories for k normal training images, ± the "
+        "spread over five k-shot draws (`configs/kshot.json`):",
+        "",
+        ktable.to_markdown(disable_numparse=True),
+        "",
+        "![image AUROC and AUPRO against the number of training images]"
+        "(figures/data_efficiency.png)",
+        "",
+        "- Both fusions beat both single sensors at every k from 5 up. With one image, "
+        "late fusion is the best model and early fusion is no better than FPFH.",
+        f"- Early fusion is fragile with little data: at k ≤ 10 it falls more than 0.05 "
+        f"below the better single sensor in {fails['early']:.0%} of runs, late fusion in "
+        f"{fails['late']:.0%}. Its spread over draws is about twice late fusion's.",
+        "- The reason is coverage. A joint neighbour has to match appearance and geometry "
+        "in the same training patch, and a few images do not contain enough combinations. "
+        "On bagel, how much farther the joint neighbour of a normal test patch is than the "
+        f"two separate ones has a Spearman correlation of {rho:.2f} with early fusion's "
+        "AUROC over the 20 k-shot runs (`scripts/early_fusion_coverage.py`).",
+        "- Flips and rotations of the training images help RGB a little at k = 1 and 10 and "
+        "not at 5. They do not close the gap to either fusion.",
+        "",
+    ]
+
+
 def main() -> None:
     lines = [
         "# Results",
@@ -481,6 +600,7 @@ def main() -> None:
         *sensor_section(),
         *btf_section(),
         *balance_section(),
+        *sweep_section(),
         *layer_section(),
         *checks_section(),
     ]

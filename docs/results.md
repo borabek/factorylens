@@ -151,6 +151,47 @@ Reading the numbers:
 - A fixed factor of 0.03 does about as well on average (0.930), 0.1 a little worse (0.912). Taking whichever fixed factor scores best here would be choosing it on the test set; the balanced factor is decided from the training data before any test image is seen, so it is the number to quote.
 - With this repo's preprocessing instead of BTF's, balanced fusion gives 0.910.
 
+## Fusion and training-set size
+
+`factorylens sweep`: the same RGB and FPFH patch features in four detectors, with this repo's preprocessing. *early*: the two halves concatenated, FPFH scaled per run so that both have the same spread on the training patches. *late*: one memory bank per sensor, each score standardised on the validation normals, then summed. Image AUROC on the full training set, seed 0; ✓ = better than both single sensors, paired bootstrap 95% interval above zero.
+
+| category    | RGB   | FPFH   | early fusion   | late fusion   |
+|:------------|:------|:-------|:---------------|:--------------|
+| bagel       | 0.894 | 0.845  | 0.971 ✓        | 0.925         |
+| cable_gland | 0.905 | 0.609  | 0.914          | 0.880         |
+| carrot      | 0.874 | 0.964  | 0.993 ✓        | 0.974         |
+| cookie      | 0.641 | 0.819  | 0.869          | 0.822         |
+| dowel       | 0.963 | 0.868  | 0.999 ✓        | 0.983 ✓       |
+| foam        | 0.771 | 0.609  | 0.816          | 0.804         |
+| peach       | 0.667 | 0.780  | 0.874 ✓        | 0.761         |
+| potato      | 0.566 | 0.946  | 0.943          | 0.929         |
+| rope        | 0.963 | 0.971  | 0.989          | 0.980         |
+| tire        | 0.755 | 0.526  | 0.728          | 0.702         |
+| **mean**    | 0.800 | 0.793  | 0.910          | 0.876         |
+| **AUPRO**   | 0.906 | 0.929  | 0.961          | 0.970         |
+
+<sub>990 runs from commit e09149b (clean checkout), all k and draws.</sub>
+
+- Early fusion is better than both sensors on 4 of 10 categories by the paired test, late fusion on 1. Neither is significantly worse than a single sensor on any category (0 losses in 40 comparisons).
+- Early beats late on image AUROC (mean +0.034, significant on 4 categories, never worse), but late fusion localises better (AUPRO 0.970 vs 0.961).
+
+Mean image AUROC over the 10 categories for k normal training images, ± the spread over five k-shot draws (`configs/kshot.json`):
+
+| model        | 1             | 5             | 10            | 50            | all   |
+|:-------------|:--------------|:--------------|:--------------|:--------------|:------|
+| RGB          | 0.613 ± 0.029 | 0.692 ± 0.026 | 0.726 ± 0.017 | 0.767 ± 0.009 | 0.800 |
+| FPFH         | 0.628 ± 0.011 | 0.683 ± 0.011 | 0.705 ± 0.011 | 0.764 ± 0.009 | 0.793 |
+| early fusion | 0.626 ± 0.026 | 0.741 ± 0.019 | 0.782 ± 0.026 | 0.871 ± 0.005 | 0.909 |
+| late fusion  | 0.651 ± 0.013 | 0.730 ± 0.006 | 0.769 ± 0.015 | 0.833 ± 0.008 | 0.876 |
+| RGB + flips  | 0.641 ± 0.021 | 0.695 ± 0.027 | 0.739 ± 0.017 |               |       |
+
+![image AUROC and AUPRO against the number of training images](figures/data_efficiency.png)
+
+- Both fusions beat both single sensors at every k from 5 up. With one image, late fusion is the best model and early fusion is no better than FPFH.
+- Early fusion is fragile with little data: at k ≤ 10 it falls more than 0.05 below the better single sensor in 25% of runs, late fusion in 13%. Its spread over draws is about twice late fusion's.
+- The reason is coverage. A joint neighbour has to match appearance and geometry in the same training patch, and a few images do not contain enough combinations. On bagel, how much farther the joint neighbour of a normal test patch is than the two separate ones has a Spearman correlation of -0.94 with early fusion's AUROC over the 20 k-shot runs (`scripts/early_fusion_coverage.py`).
+- Flips and rotations of the training images help RGB a little at k = 1 and 10 and not at 5. They do not close the gap to either fusion.
+
 ## Which backbone layers (RGB)
 
 Same detector, every layer combination on the same 28x28 patch grid (`scripts/run_layer_ablation.py`), full training set.

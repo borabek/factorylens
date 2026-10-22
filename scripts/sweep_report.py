@@ -5,7 +5,12 @@
    over the test images (both models scored on the same resample).
 2. results/analysis/sweep_kshot.csv: mean over categories for every model and
    k, with the spread over the five k-shot seeds.
-3. docs/figures/data_efficiency.png: the same as a figure.
+3. results/analysis/sweep_kshot_tests.csv: model pairs compared at every k.
+   The five draws of a category share training images (they are nested), so
+   they are averaged first and the test runs over the 10 categories
+   (Wilcoxon signed-rank, exact).
+4. docs/figures/data_efficiency.png: the means as a figure.
+5. docs/figures/data_efficiency_categories.png: one panel per category.
 
 usage: uv run python scripts/sweep_report.py
 """
@@ -19,6 +24,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+from scipy.stats import wilcoxon  # noqa: E402
 
 from factorylens import experiments  # noqa: E402
 from factorylens.eval.metrics import paired_bootstrap  # noqa: E402
@@ -89,6 +95,71 @@ def kshot(runs: pd.DataFrame) -> pd.DataFrame:
             }
         )
     return pd.DataFrame(rows)
+
+
+KSHOT_PAIRS = [("early", "late"), ("early", "best single"), ("late", "best single")]
+
+
+def kshot_tests(runs: pd.DataFrame) -> pd.DataFrame:
+    grid = runs.pivot_table(index=["k", "category", "seed"], columns="sweep", values="image_auroc")
+    grid = grid[grid.index.get_level_values("k").notna()]
+    grid["best single"] = grid[["rgb", "fpfh"]].max(axis=1)
+    rows = []
+    for k, part in grid.groupby(level="k"):
+        per_cat = part.groupby(level="category").mean()
+        for a, b in KSHOT_PAIRS:
+            diff = per_cat[a] - per_cat[b]
+            rows.append(
+                {
+                    "k": int(k),
+                    "model": a,
+                    "versus": b,
+                    "mean_diff": diff.mean(),
+                    "categories_better": int((diff > 0).sum()),
+                    "runs_better": int((part[a] > part[b]).sum()),
+                    "runs": len(part),
+                    "wilcoxon_p": float(wilcoxon(diff).pvalue),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def category_figure(runs: pd.DataFrame, out: Path) -> None:
+    runs = runs[runs["sweep"] != "rgb_aug"].assign(k=runs["k"].astype("float").fillna(np.inf))
+    means = runs.groupby(["category", "sweep", "k"])["image_auroc"].mean().reset_index()
+    n_train = runs[runs["k"] == np.inf].groupby("category")["n_train"].first()
+    cats = sorted(means["category"].unique())
+    fig, axes = plt.subplots(2, 5, figsize=(11.0, 4.6), sharey=True)
+    fig.patch.set_facecolor(SURFACE)
+    for ax, cat in zip(axes.flat, cats, strict=True):
+        ax.set_facecolor(SURFACE)
+        for model in ("rgb", "fpfh", "early", "late"):
+            part = means[(means["category"] == cat) & (means["sweep"] == model)].sort_values("k")
+            x = part["k"].replace(np.inf, n_train[cat])
+            ax.plot(x, part["image_auroc"], marker="o", ms=2.5, lw=1.2, color=COLORS[model])
+        ax.set_xscale("log")
+        ax.set_xticks([1, 10, 100], ["1", "10", "100"])
+        ax.minorticks_off()
+        ax.axhline(0.5, color=MUTED, lw=0.7, ls=(0, (3, 3)))
+        ax.set_title(cat.replace("_", " "), fontsize=8.5, color=INK, loc="left")
+        ax.grid(axis="y", color="#e1e0d9", lw=0.5)
+        ax.tick_params(colors=INK_2, labelsize=7.5)
+    handles = [
+        plt.Line2D([], [], color=COLORS[m], lw=1.5) for m in ("rgb", "fpfh", "early", "late")
+    ]
+    fig.legend(
+        handles,
+        [NAMES[m] for m in ("rgb", "fpfh", "early", "late")],
+        ncol=4,
+        frameon=False,
+        fontsize=8,
+        loc="lower center",
+    )
+    fig.supxlabel("normal training images (last point: all)", fontsize=8.5, color=INK_2, y=0.06)
+    fig.supylabel("image AUROC, mean of 5 draws", fontsize=8.5, color=INK_2)
+    fig.tight_layout(rect=(0, 0.08, 1, 1))
+    fig.savefig(out, dpi=150, facecolor=SURFACE)
+    plt.close(fig)
 
 
 def label_ends(ax: plt.Axes, table: pd.DataFrame, metric: str, n_train: int) -> None:
@@ -180,6 +251,10 @@ def main() -> None:
     table.round(4).to_csv(args.out / "sweep_kshot.csv", index=False)
     n_train = int(runs.loc[runs["k"].isna(), "n_train"].median())
     figure(table, n_train, args.figure)
+    category_figure(runs, args.figure.with_name("data_efficiency_categories.png"))
+    ktests = kshot_tests(runs)
+    ktests.round(4).to_csv(args.out / "sweep_kshot_tests.csv", index=False)
+    print(ktests.round(3).to_string(index=False))
 
     wide = table.pivot(index="k", columns="model", values="image_auroc")
     print(wide.round(3).to_string())

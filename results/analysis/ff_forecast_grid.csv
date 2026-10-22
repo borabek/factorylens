@@ -1,0 +1,241 @@
+direction,channels,lags,harmonics,alpha,auroc
+day 1 -> day 2,R03,1,0,0.1,0.7316
+day 1 -> day 2,R03,1,0,1.0,0.7316
+day 1 -> day 2,R03,1,0,10.0,0.7319
+day 1 -> day 2,R03,1,3,0.1,0.7398
+day 1 -> day 2,R03,1,3,1.0,0.7401
+day 1 -> day 2,R03,1,3,10.0,0.7398
+day 1 -> day 2,R03,1,6,0.1,0.7376
+day 1 -> day 2,R03,1,6,1.0,0.7372
+day 1 -> day 2,R03,1,6,10.0,0.7363
+day 1 -> day 2,R03,1,12,0.1,0.759
+day 1 -> day 2,R03,1,12,1.0,0.759
+day 1 -> day 2,R03,1,12,10.0,0.7574
+day 1 -> day 2,R03,3,0,0.1,0.8034
+day 1 -> day 2,R03,3,0,1.0,0.8037
+day 1 -> day 2,R03,3,0,10.0,0.8006
+day 1 -> day 2,R03,3,3,0.1,0.811
+day 1 -> day 2,R03,3,3,1.0,0.8103
+day 1 -> day 2,R03,3,3,10.0,0.8062
+day 1 -> day 2,R03,3,6,0.1,0.8261
+day 1 -> day 2,R03,3,6,1.0,0.8255
+day 1 -> day 2,R03,3,6,10.0,0.8214
+day 1 -> day 2,R03,3,12,0.1,0.8453
+day 1 -> day 2,R03,3,12,1.0,0.8453
+day 1 -> day 2,R03,3,12,10.0,0.8422
+day 1 -> day 2,R03,5,0,0.1,0.8472
+day 1 -> day 2,R03,5,0,1.0,0.8463
+day 1 -> day 2,R03,5,0,10.0,0.844
+day 1 -> day 2,R03,5,3,0.1,0.8485
+day 1 -> day 2,R03,5,3,1.0,0.8481
+day 1 -> day 2,R03,5,3,10.0,0.8437
+day 1 -> day 2,R03,5,6,0.1,0.8472
+day 1 -> day 2,R03,5,6,1.0,0.8475
+day 1 -> day 2,R03,5,6,10.0,0.8444
+day 1 -> day 2,R03,5,12,0.1,0.8384
+day 1 -> day 2,R03,5,12,1.0,0.8377
+day 1 -> day 2,R03,5,12,10.0,0.8333
+day 1 -> day 2,R03,10,0,0.1,0.8806
+day 1 -> day 2,R03,10,0,1.0,0.8828
+day 1 -> day 2,R03,10,0,10.0,0.8878
+day 1 -> day 2,R03,10,3,0.1,0.8812
+day 1 -> day 2,R03,10,3,1.0,0.8825
+day 1 -> day 2,R03,10,3,10.0,0.8878
+day 1 -> day 2,R03,10,6,0.1,0.8806
+day 1 -> day 2,R03,10,6,1.0,0.8828
+day 1 -> day 2,R03,10,6,10.0,0.8875
+day 1 -> day 2,R03,10,12,0.1,0.8759
+day 1 -> day 2,R03,10,12,1.0,0.8778
+day 1 -> day 2,R03,10,12,10.0,0.8803
+day 1 -> day 2,R03,20,0,0.1,0.8686
+day 1 -> day 2,R03,20,0,1.0,0.868
+day 1 -> day 2,R03,20,0,10.0,0.8733
+day 1 -> day 2,R03,20,3,0.1,0.8686
+day 1 -> day 2,R03,20,3,1.0,0.8674
+day 1 -> day 2,R03,20,3,10.0,0.8733
+day 1 -> day 2,R03,20,6,0.1,0.8686
+day 1 -> day 2,R03,20,6,1.0,0.868
+day 1 -> day 2,R03,20,6,10.0,0.8743
+day 1 -> day 2,R03,20,12,0.1,0.8667
+day 1 -> day 2,R03,20,12,1.0,0.867
+day 1 -> day 2,R03,20,12,10.0,0.8749
+day 1 -> day 2,all robots,1,0,0.1,0.6745
+day 1 -> day 2,all robots,1,0,1.0,0.673
+day 1 -> day 2,all robots,1,0,10.0,0.6692
+day 1 -> day 2,all robots,1,3,0.1,0.6818
+day 1 -> day 2,all robots,1,3,1.0,0.6808
+day 1 -> day 2,all robots,1,3,10.0,0.6777
+day 1 -> day 2,all robots,1,6,0.1,0.6934
+day 1 -> day 2,all robots,1,6,1.0,0.6931
+day 1 -> day 2,all robots,1,6,10.0,0.6925
+day 1 -> day 2,all robots,1,12,0.1,0.6903
+day 1 -> day 2,all robots,1,12,1.0,0.6906
+day 1 -> day 2,all robots,1,12,10.0,0.6884
+day 1 -> day 2,all robots,3,0,0.1,0.7911
+day 1 -> day 2,all robots,3,0,1.0,0.7832
+day 1 -> day 2,all robots,3,0,10.0,0.7612
+day 1 -> day 2,all robots,3,3,0.1,0.7867
+day 1 -> day 2,all robots,3,3,1.0,0.7795
+day 1 -> day 2,all robots,3,3,10.0,0.7599
+day 1 -> day 2,all robots,3,6,0.1,0.7823
+day 1 -> day 2,all robots,3,6,1.0,0.7779
+day 1 -> day 2,all robots,3,6,10.0,0.7621
+day 1 -> day 2,all robots,3,12,0.1,0.7839
+day 1 -> day 2,all robots,3,12,1.0,0.7788
+day 1 -> day 2,all robots,3,12,10.0,0.7606
+day 1 -> day 2,all robots,5,0,0.1,0.8091
+day 1 -> day 2,all robots,5,0,1.0,0.7962
+day 1 -> day 2,all robots,5,0,10.0,0.7858
+day 1 -> day 2,all robots,5,3,0.1,0.8021
+day 1 -> day 2,all robots,5,3,1.0,0.7924
+day 1 -> day 2,all robots,5,3,10.0,0.7801
+day 1 -> day 2,all robots,5,6,0.1,0.793
+day 1 -> day 2,all robots,5,6,1.0,0.7807
+day 1 -> day 2,all robots,5,6,10.0,0.7716
+day 1 -> day 2,all robots,5,12,0.1,0.764
+day 1 -> day 2,all robots,5,12,1.0,0.7546
+day 1 -> day 2,all robots,5,12,10.0,0.7448
+day 1 -> day 2,all robots,10,0,0.1,0.7262
+day 1 -> day 2,all robots,10,0,1.0,0.7297
+day 1 -> day 2,all robots,10,0,10.0,0.7467
+day 1 -> day 2,all robots,10,3,0.1,0.713
+day 1 -> day 2,all robots,10,3,1.0,0.718
+day 1 -> day 2,all robots,10,3,10.0,0.7369
+day 1 -> day 2,all robots,10,6,0.1,0.7146
+day 1 -> day 2,all robots,10,6,1.0,0.719
+day 1 -> day 2,all robots,10,6,10.0,0.7353
+day 1 -> day 2,all robots,10,12,0.1,0.7004
+day 1 -> day 2,all robots,10,12,1.0,0.7042
+day 1 -> day 2,all robots,10,12,10.0,0.7187
+day 1 -> day 2,all robots,20,0,0.1,0.6808
+day 1 -> day 2,all robots,20,0,1.0,0.6755
+day 1 -> day 2,all robots,20,0,10.0,0.6733
+day 1 -> day 2,all robots,20,3,0.1,0.6793
+day 1 -> day 2,all robots,20,3,1.0,0.6727
+day 1 -> day 2,all robots,20,3,10.0,0.6695
+day 1 -> day 2,all robots,20,6,0.1,0.6783
+day 1 -> day 2,all robots,20,6,1.0,0.673
+day 1 -> day 2,all robots,20,6,10.0,0.6717
+day 1 -> day 2,all robots,20,12,0.1,0.6755
+day 1 -> day 2,all robots,20,12,1.0,0.6701
+day 1 -> day 2,all robots,20,12,10.0,0.6704
+day 2 -> day 1,R03,1,0,0.1,0.5592
+day 2 -> day 1,R03,1,0,1.0,0.5592
+day 2 -> day 1,R03,1,0,10.0,0.558
+day 2 -> day 1,R03,1,3,0.1,0.5531
+day 2 -> day 1,R03,1,3,1.0,0.5531
+day 2 -> day 1,R03,1,3,10.0,0.5519
+day 2 -> day 1,R03,1,6,0.1,0.564
+day 2 -> day 1,R03,1,6,1.0,0.5628
+day 2 -> day 1,R03,1,6,10.0,0.5604
+day 2 -> day 1,R03,1,12,0.1,0.6377
+day 2 -> day 1,R03,1,12,1.0,0.6377
+day 2 -> day 1,R03,1,12,10.0,0.6377
+day 2 -> day 1,R03,3,0,0.1,0.7029
+day 2 -> day 1,R03,3,0,1.0,0.7029
+day 2 -> day 1,R03,3,0,10.0,0.7029
+day 2 -> day 1,R03,3,3,0.1,0.6969
+day 2 -> day 1,R03,3,3,1.0,0.6969
+day 2 -> day 1,R03,3,3,10.0,0.6981
+day 2 -> day 1,R03,3,6,0.1,0.6836
+day 2 -> day 1,R03,3,6,1.0,0.6836
+day 2 -> day 1,R03,3,6,10.0,0.6836
+day 2 -> day 1,R03,3,12,0.1,0.6993
+day 2 -> day 1,R03,3,12,1.0,0.6993
+day 2 -> day 1,R03,3,12,10.0,0.6993
+day 2 -> day 1,R03,5,0,0.1,0.8406
+day 2 -> day 1,R03,5,0,1.0,0.8406
+day 2 -> day 1,R03,5,0,10.0,0.8382
+day 2 -> day 1,R03,5,3,0.1,0.843
+day 2 -> day 1,R03,5,3,1.0,0.8418
+day 2 -> day 1,R03,5,3,10.0,0.8406
+day 2 -> day 1,R03,5,6,0.1,0.8092
+day 2 -> day 1,R03,5,6,1.0,0.808
+day 2 -> day 1,R03,5,6,10.0,0.8043
+day 2 -> day 1,R03,5,12,0.1,0.7669
+day 2 -> day 1,R03,5,12,1.0,0.7669
+day 2 -> day 1,R03,5,12,10.0,0.7669
+day 2 -> day 1,R03,10,0,0.1,0.8671
+day 2 -> day 1,R03,10,0,1.0,0.8659
+day 2 -> day 1,R03,10,0,10.0,0.8732
+day 2 -> day 1,R03,10,3,0.1,0.8659
+day 2 -> day 1,R03,10,3,1.0,0.8659
+day 2 -> day 1,R03,10,3,10.0,0.872
+day 2 -> day 1,R03,10,6,0.1,0.8647
+day 2 -> day 1,R03,10,6,1.0,0.8647
+day 2 -> day 1,R03,10,6,10.0,0.8696
+day 2 -> day 1,R03,10,12,0.1,0.8345
+day 2 -> day 1,R03,10,12,1.0,0.837
+day 2 -> day 1,R03,10,12,10.0,0.8394
+day 2 -> day 1,R03,20,0,0.1,0.8671
+day 2 -> day 1,R03,20,0,1.0,0.8671
+day 2 -> day 1,R03,20,0,10.0,0.8659
+day 2 -> day 1,R03,20,3,0.1,0.8696
+day 2 -> day 1,R03,20,3,1.0,0.8684
+day 2 -> day 1,R03,20,3,10.0,0.8671
+day 2 -> day 1,R03,20,6,0.1,0.8671
+day 2 -> day 1,R03,20,6,1.0,0.8671
+day 2 -> day 1,R03,20,6,10.0,0.8684
+day 2 -> day 1,R03,20,12,0.1,0.8587
+day 2 -> day 1,R03,20,12,1.0,0.8587
+day 2 -> day 1,R03,20,12,10.0,0.8611
+day 2 -> day 1,all robots,1,0,0.1,0.4396
+day 2 -> day 1,all robots,1,0,1.0,0.4396
+day 2 -> day 1,all robots,1,0,10.0,0.4384
+day 2 -> day 1,all robots,1,3,0.1,0.4408
+day 2 -> day 1,all robots,1,3,1.0,0.4396
+day 2 -> day 1,all robots,1,3,10.0,0.4396
+day 2 -> day 1,all robots,1,6,0.1,0.4372
+day 2 -> day 1,all robots,1,6,1.0,0.4372
+day 2 -> day 1,all robots,1,6,10.0,0.4372
+day 2 -> day 1,all robots,1,12,0.1,0.4155
+day 2 -> day 1,all robots,1,12,1.0,0.4155
+day 2 -> day 1,all robots,1,12,10.0,0.4155
+day 2 -> day 1,all robots,3,0,0.1,0.4988
+day 2 -> day 1,all robots,3,0,1.0,0.4976
+day 2 -> day 1,all robots,3,0,10.0,0.4867
+day 2 -> day 1,all robots,3,3,0.1,0.4964
+day 2 -> day 1,all robots,3,3,1.0,0.4964
+day 2 -> day 1,all robots,3,3,10.0,0.4928
+day 2 -> day 1,all robots,3,6,0.1,0.4783
+day 2 -> day 1,all robots,3,6,1.0,0.4783
+day 2 -> day 1,all robots,3,6,10.0,0.4698
+day 2 -> day 1,all robots,3,12,0.1,0.4783
+day 2 -> day 1,all robots,3,12,1.0,0.4771
+day 2 -> day 1,all robots,3,12,10.0,0.471
+day 2 -> day 1,all robots,5,0,0.1,0.5809
+day 2 -> day 1,all robots,5,0,1.0,0.5809
+day 2 -> day 1,all robots,5,0,10.0,0.5676
+day 2 -> day 1,all robots,5,3,0.1,0.5833
+day 2 -> day 1,all robots,5,3,1.0,0.5821
+day 2 -> day 1,all robots,5,3,10.0,0.5725
+day 2 -> day 1,all robots,5,6,0.1,0.5435
+day 2 -> day 1,all robots,5,6,1.0,0.5411
+day 2 -> day 1,all robots,5,6,10.0,0.5302
+day 2 -> day 1,all robots,5,12,0.1,0.4952
+day 2 -> day 1,all robots,5,12,1.0,0.494
+day 2 -> day 1,all robots,5,12,10.0,0.4891
+day 2 -> day 1,all robots,10,0,0.1,0.4976
+day 2 -> day 1,all robots,10,0,1.0,0.4988
+day 2 -> day 1,all robots,10,0,10.0,0.5024
+day 2 -> day 1,all robots,10,3,0.1,0.4758
+day 2 -> day 1,all robots,10,3,1.0,0.4795
+day 2 -> day 1,all robots,10,3,10.0,0.4855
+day 2 -> day 1,all robots,10,6,0.1,0.4722
+day 2 -> day 1,all robots,10,6,1.0,0.471
+day 2 -> day 1,all robots,10,6,10.0,0.4746
+day 2 -> day 1,all robots,10,12,0.1,0.4517
+day 2 -> day 1,all robots,10,12,1.0,0.4517
+day 2 -> day 1,all robots,10,12,10.0,0.4541
+day 2 -> day 1,all robots,20,0,0.1,0.4469
+day 2 -> day 1,all robots,20,0,1.0,0.4457
+day 2 -> day 1,all robots,20,0,10.0,0.4481
+day 2 -> day 1,all robots,20,3,0.1,0.4469
+day 2 -> day 1,all robots,20,3,1.0,0.4457
+day 2 -> day 1,all robots,20,3,10.0,0.4481
+day 2 -> day 1,all robots,20,6,0.1,0.4396
+day 2 -> day 1,all robots,20,6,1.0,0.4384
+day 2 -> day 1,all robots,20,6,10.0,0.4396
+day 2 -> day 1,all robots,20,12,0.1,0.442
+day 2 -> day 1,all robots,20,12,1.0,0.442
+day 2 -> day 1,all robots,20,12,10.0,0.4408

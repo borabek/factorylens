@@ -489,12 +489,16 @@ def sweep_section() -> list[str]:
         rows = rows[rows["versus"].isin(["rgb", "fpfh"])]
         return " ✓" if (rows["ci_low"] > 0).all() else ""
 
+    full.insert(2, "better sensor", full[["RGB", "FPFH"]].max(axis=1))
+    above = {
+        m: int((full[m] > full["better sensor"]).sum()) for m in ("early fusion", "late fusion")
+    }
     shown = full.map(lambda v: f"{v:.3f}")
     for cat in full.index:
         shown.loc[cat, "early fusion"] += mark(cat, "early")
         shown.loc[cat, "late fusion"] += mark(cat, "late")
     shown.loc["**mean**"] = full.mean().map(lambda v: f"{v:.3f}")
-    shown.loc["**AUPRO**"] = aupro.map(lambda v: f"{v:.3f}")
+    shown.loc["**AUPRO**"] = aupro.map(lambda v: f"{v:.3f}").reindex(shown.columns).fillna("")
 
     wins = paired[paired["versus"].isin(["rgb", "fpfh"])].assign(
         win=lambda d: d["ci_low"] > 0, loss=lambda d: d["ci_high"] < 0
@@ -503,6 +507,9 @@ def sweep_section() -> list[str]:
     losses = wins.groupby("model")["loss"].sum()
     early_late = paired[(paired["model"] == "early") & (paired["versus"] == "late")]
 
+    ktests = pd.read_csv("results/analysis/sweep_kshot_tests.csv").set_index(
+        ["k", "model", "versus"]
+    )
     kshot = pd.read_csv("results/analysis/sweep_kshot.csv")
     kshot["k"] = kshot["k"].map(lambda k: "all" if k == float("inf") else str(int(k)))
     cell = kshot.apply(
@@ -572,8 +579,28 @@ def sweep_section() -> list[str]:
         "![image AUROC and AUPRO against the number of training images]"
         "(figures/data_efficiency.png)",
         "",
-        "- Both fusions beat both single sensors at every k from 5 up. With one image, "
-        "late fusion is the best model and early fusion is no better than FPFH.",
+        "Per category, which is where the averages come from:",
+        "",
+        "![image AUROC against training images, one panel per category]"
+        "(figures/data_efficiency_categories.png)",
+        "",
+        "- Against either sensor used on every category, both fusions are ahead from five "
+        "images up. With one image, late fusion is the best model and early fusion is no "
+        "better than FPFH.",
+        "- The harder baseline is *better sensor*: whichever of RGB and FPFH scores higher on "
+        "that category, which is only known after seeing the test results. On the full "
+        f"training set late fusion matches it ({full['late fusion'].mean():.3f} vs "
+        f"{full['better sensor'].mean():.3f}) without having to know which sensor to trust, "
+        f"and early fusion is above it on {above['early fusion']} of {len(full)} categories. "
+        "With ten images or fewer neither fusion beats it: comparing category means (the "
+        "five draws share images, so they are averaged first), early fusion is "
+        f"{ktests.loc[(10, 'early', 'best single'), 'mean_diff']:+.3f} at k = 10 "
+        f"(Wilcoxon p = {ktests.loc[(10, 'early', 'best single'), 'wilcoxon_p']:.2f}). "
+        "At k = 50 it pulls ahead, "
+        f"{ktests.loc[(50, 'early', 'best single'), 'mean_diff']:+.3f} "
+        f"(p = {ktests.loc[(50, 'early', 'best single'), 'wilcoxon_p']:.2f}, better on "
+        f"{ktests.loc[(50, 'early', 'best single'), 'categories_better']} of 10). "
+        "All tests: `results/analysis/sweep_kshot_tests.csv`.",
         f"- Early fusion is fragile with little data: at k ≤ 10 it falls more than 0.05 "
         f"below the better single sensor in {fails['early']:.0%} of runs, late fusion in "
         f"{fails['late']:.0%}. Its spread over draws is about twice late fusion's.",

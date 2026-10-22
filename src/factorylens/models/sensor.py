@@ -135,9 +135,8 @@ class Forecast:
         n, s, c = z.shape
         t = np.arange(self.lags, s)
         phase = 2 * np.pi * t / s
-        fourier = np.column_stack(
-            [f(k * phase) for k in range(1, self.harmonics + 1) for f in (np.sin, np.cos)]
-        )
+        k = np.arange(1, self.harmonics + 1)
+        fourier = np.concatenate([np.sin(np.outer(phase, k)), np.cos(np.outer(phase, k))], axis=1)
         lagged = np.stack([z[:, self.lags - j : s - j] for j in range(1, self.lags + 1)], axis=-1)
         x = np.concatenate(
             [

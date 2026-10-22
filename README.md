@@ -26,7 +26,7 @@ This is a work in progress (started October 2026). The research question, the da
 ![image AUROC and AUPRO against the number of training images](docs/figures/data_efficiency.png)
 
 - On the full training set, balanced early fusion scores 0.910 and late fusion 0.876, against 0.800 for RGB and 0.793 for 3D. In 40 paired comparisons with a single sensor, fusion is never significantly worse.
-- From 5 training images up, both fusions beat both sensors. Late fusion localises defects best (AUPRO 0.970).
+- From 5 training images up, both fusions beat either sensor used everywhere. Against the harder baseline of picking the better sensor per category after the fact, late fusion matches it with all the data (0.876 vs 0.877) and early fusion beats it once there are 50 or more images (9 of 10 categories, Wilcoxon p = 0.04). Late fusion localises defects best (AUPRO 0.970).
 - Early fusion is fragile with little data. At k ≤ 10 it drops more than 0.05 below the better sensor in a quarter of runs, sometimes below chance. That is because a few images don't cover the combinations of appearance and geometry a joint nearest neighbour needs. The size of that gap predicts the failure (Spearman −0.94 on bagel).
 
 Findings from the data itself, each with the script that produces it:

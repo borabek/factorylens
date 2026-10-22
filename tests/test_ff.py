@@ -83,3 +83,15 @@ def test_load_analog_masks_impossible_temperatures(tmp_path):
     loaded = ff.load_analog(tmp_path, files=ff.FILES[:2])
     assert loaded["Q_VFD2_Temperature"].isna().sum() == 3
     assert loaded["Q_VFD2_Temperature"].dropna().eq(68.0).all()
+
+
+def test_joint_dropouts_are_masked_per_arm():
+    cols = [f"M_R01_{j}JointAngle_Degree" for j in ff.JOINTS]
+    df = pd.DataFrame(0.0, index=range(3), columns=cols)
+    df.loc[1, cols[0]] = 5.0  # one joint moving: a real pose, not a dropout
+    df["I_R01_Gripper_Load"] = [400.0, 410.0, 420.0]
+    out = ff.mask_joint_dropouts(df)
+    assert out.loc[[0, 2], cols].isna().all().all()
+    assert out.loc[1, cols].notna().all()
+    assert out["I_R01_Gripper_Load"].notna().all()
+    assert df.notna().all().all()  # input untouched

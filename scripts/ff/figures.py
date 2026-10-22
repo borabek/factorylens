@@ -21,6 +21,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from factorylens.data import ff  # noqa: E402
+from factorylens.models import sensor  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).parent))
 from confound_check import IMAGE_WINDOW  # noqa: E402
@@ -105,19 +106,6 @@ def timeline(cycles: pd.DataFrame, out: Path) -> None:
     plt.close(fig)
 
 
-def cycle_profiles(df: pd.DataFrame, cycles: pd.DataFrame, column: str) -> np.ndarray:
-    """(n_cycles, seconds) median of `column` in 1 s bins since cycle start."""
-    seconds = int(cycles["duration_s"].median())
-    ids = ff.cycle_ids(df["Q_Cell_CycleCount"])
-    rows = []
-    for cid, c in cycles.iterrows():
-        part = df.loc[(ids == cid).to_numpy(), column]
-        t = (part.index - c["start"]).total_seconds().astype(int)
-        binned = part.groupby(t).median().reindex(range(seconds))
-        rows.append(binned.to_numpy())
-    return np.array(rows, dtype=float)
-
-
 def gripper(df: pd.DataFrame, cycles: pd.DataFrame, out: Path) -> None:
     day1 = cycles[cycles["day"] == 1]
     groups = {"normal": day1[day1["label"] == "normal"], "NoNose": day1[day1["label"] == "NoNose"]}
@@ -125,7 +113,7 @@ def gripper(df: pd.DataFrame, cycles: pd.DataFrame, out: Path) -> None:
     for ax, robot in zip(axes, ("R01", "R02", "R03", "R04"), strict=True):
         column = f"I_{robot}_Gripper_Load"
         for label, part in groups.items():
-            prof = cycle_profiles(df, part, column)
+            prof = sensor.cycle_profiles(df, part, (column,))[..., 0]
             med = np.nanmedian(prof, axis=0)
             lo, hi = np.nanpercentile(prof, [10, 90], axis=0)
             x = np.arange(len(med))

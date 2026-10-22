@@ -111,6 +111,8 @@ Both figures come from `scripts/ff/figures.py`.
 
 Conveyor drives 2–4 report about 1% of their temperatures as corrupted values, from 1e-30 up to 1e38 and many negative. These look like misread registers. Drive 1 never leaves 68–94 °F, so `load_analog` treats temperatures outside 40–140 °F as missing. After that, all four drives sit between 68 and 93 °F.
 
+R01's six joint angles read exactly 0 for the whole day-1 normal block, 22% of day 1, while its gripper load keeps changing. The arm was working and its angles were not logged. `load_analog` treats any row where all six joints of an arm read exactly 0 as missing for that arm. No other arm does this for more than 0.1% of a day. Left in, the zeros are a perfect label leak inside day 1: "R01 joints at zero" means normal.
+
 ### The cycle, without the PLC counter
 
 The signals alone recover the cycle length. `scripts/ff/periods.py` bins each gripper-load and base-joint signal to 1 s and keeps the longest gap-free stretch (16.9 h). It then reads the period from the autocorrelation. All eight signals give 294.8–295.2 s, against a PLC median of 295.0 s, so the counter-based segmentation is not an artefact of the counter.
@@ -123,10 +125,41 @@ The periodogram is not the right tool for picking the period, although it confir
 
 A straight-line fit to each signal's per-cycle mean over normal cycles (`results/analysis/ff_trends.csv`):
 
-- The base joint of R01 drifts the most cleanly, by -0.155° per hour (R² 0.69). Its gripper load falls too (R² 0.59). This is the drift behind the R01 shortcut above.
+- R01's gripper load falls by 4.8 per hour (R² 0.59). This is the drift behind the R01 shortcut above. The other three gripper loads fall too, less cleanly (R² 0.28–0.42).
 - All four conveyor drive temperatures rise by about 0.2 °F per hour (R² about 0.41). The room or the drives warm up over the run.
-- The base joints of R02–R04 do not drift (R² ≤ 0.01).
+- No base joint drifts (R² ≤ 0.01).
+
+<sub>Corrected on 2026-10-22. The first version said R01's base joint drifts by -0.155° per hour (R² 0.69). That trend was the logging dropout described under Cleaning: the zeros of the day-1 normal block pulled the fit. With them masked the slope is -0.005° per hour, R² 0.001.</sub>
 
 Over the 29 hours these trends add up to 2–3 times the normal cycle-to-cycle spread. That is why anything that follows time can look like a defect detector on this data.
+
+### Detecting a missing nose cone from the robot signals
+
+`scripts/ff/detectors.py` turns every cycle into a 295 s × channels profile (1 s medians since the cycle started) and fits three detectors on normal cycles only (`factorylens/models/sensor.py`):
+
+- **profile z-score**: mean distance from the normal profile, second by second, in normal standard deviations;
+- **Isolation Forest** on 10 s averages;
+- **forecast residual**: a ridge model predicts each second from the five before it and from the phase of the cycle (six Fourier pairs); the score is the mean squared error.
+
+Each is trained on day-1 normal cycles and scored on day 2, and then the other way round. On each test day, normal and NoNose cycles form two contiguous blocks, so *time of day alone scores AUROC 1.0 in both directions*. A score here means nothing without checking that the detector is not just following drift. Two baselines check that: time of day, and a "level" detector that only sees each channel's mean over the cycle.
+
+| channels | profiles | profile z | Isolation Forest | forecast | level |
+|---|---|---|---|---|---|
+| all four robots (26) | raw | 0.15 / 0.15 | 0.53 / 0.61 | 0.33 / 0.22 | 0.17 / 0.10 |
+| all four robots (26) | de-meaned | 0.77 / 0.46 | 0.68 / 0.44 | 0.78 / 0.54 | |
+| R01 (gripper only) | raw | 0.07 / 0.00 | 0.50 / 0.37 | 0.06 / 0.07 | 0.04 / 0.01 |
+| R02 | raw | 0.12 / 0.13 | 0.34 / 0.16 | 0.10 / 0.13 | 0.14 / 0.04 |
+| R02 | de-meaned | 0.66 / 0.47 | 0.65 / 0.35 | 0.57 / 0.43 | |
+| **R03** | raw | 0.80 / 0.73 | 0.75 / 0.82 | **0.85 / 0.81** | 0.87 / 0.40 |
+| **R03** | de-meaned | 0.86 / 0.61 | 0.76 / 0.62 | **0.85 / 0.81** | |
+| R04 | raw | 0.56 / 0.38 | 0.53 / 0.50 | 0.50 / 0.73 | 0.43 / 0.50 |
+
+AUROC, normal vs NoNose, *day 1 → day 2 / day 2 → day 1*. R01's joints are left out because they were not logged in the day-1 normal block (see Cleaning). Full table with bootstrap intervals and the temperature runs: `results/analysis/ff_detectors.csv`.
+
+![forecast detector per channel set, and where R03's residual differs](figures/ff_detectors.png)
+
+- **Pooling every robot is far worse than chance.** R01's gripper load drifts, R02 also differs between the blocks, and with every channel in one score that difference wins (0.15 both ways). In the day 2 → day 1 direction, the profile z-score on R01 alone ranks every normal cycle above every NoNose cycle. Removing each cycle's mean lifts the pooled forecast detector to 0.78, but only one way: the reverse gives 0.54.
+- **R03 alone works in both directions.** The forecast detector scores 0.85 and 0.81 and is the only one that holds up when each cycle's mean is removed. The level baseline on R03 drops to 0.40 in the reverse direction, so it is the shape of R03's motion that carries the signal, not its level. Second by second (right panel), the residual separates the two classes best in the few seconds around the load pulse from the gripper figure, up to AUROC 0.97 for a single second; away from it, it sits near chance.
+- R03 was picked from the day-1 gripper figure, before any day-2 cycle was scored. With only 23 NoNose cycles in the test day the intervals are wide (0.79–0.90 for R03 forecast).
 
 > Harik et al. *Analog and Multi-modal Manufacturing Datasets Acquired on the Future Factories Platform.* arXiv:2401.15544, 2024.

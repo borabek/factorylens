@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 FILES = (
@@ -38,6 +39,12 @@ DAY_BOUNDARY = pd.Timestamp("2023-12-12T00:00:00Z")
 # between 68 and 94 F, so anything outside 40-140 F is treated as missing.
 TEMPERATURE_RANGE_F = (40.0, 140.0)
 
+# R01's six joint angles read exactly 0 through the whole day-1 normal block
+# (22% of day 1) while its gripper load keeps moving, so the arm was working
+# and the angles were not logged. A row with every joint of an arm at exactly
+# zero is treated as missing for that arm.
+JOINTS = ("S", "L", "U", "R", "B", "T")
+
 
 def load_analog(root: str | Path, files: tuple[str, ...] = FILES) -> pd.DataFrame:
     """All signals in one frame indexed by UTC time, plus a `label` column."""
@@ -59,7 +66,20 @@ def load_analog(root: str | Path, files: tuple[str, ...] = FILES) -> pd.DataFram
     lo, hi = TEMPERATURE_RANGE_F
     for col in [c for c in out.columns if c.endswith("_Temperature")]:
         out[col] = out[col].where(out[col].between(lo, hi))
-    return out.sort_index()
+    return mask_joint_dropouts(out).sort_index()
+
+
+def mask_joint_dropouts(df: pd.DataFrame) -> pd.DataFrame:
+    """Set an arm's joint angles to NaN where all of them read exactly 0."""
+    df = df.copy()
+    robots = sorted({c.split("_")[1] for c in df.columns if c.endswith("JointAngle_Degree")})
+    for robot in robots:
+        cols = [f"M_{robot}_{j}JointAngle_Degree" for j in JOINTS]
+        if not set(cols) <= set(df.columns):
+            continue
+        dead = (df[cols] == 0).all(axis=1)
+        df.loc[dead, cols] = np.nan
+    return df
 
 
 def cycle_ids(counter: pd.Series) -> pd.Series:

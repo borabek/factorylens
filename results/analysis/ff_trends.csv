@@ -1,5 +1,4 @@
 signal,slope_per_hour,r2,drift_over_run_in_sd
-M_R01_SJointAngle_Degree,-0.1549,0.6902,-3.1497
 I_R01_Gripper_Load,-4.7994,0.5872,-2.9051
 Q_VFD2_Temperature,0.1749,0.4298,2.4855
 I_R04_Gripper_Load,-50.9798,0.4205,-2.4584
@@ -10,4 +9,5 @@ I_R02_Gripper_Load,-0.3550,0.3718,-2.3117
 I_R03_Gripper_Load,-2.2040,0.2819,-2.0131
 M_R04_SJointAngle_Degree,0.0392,0.0071,0.3192
 M_R02_SJointAngle_Degree,-0.0027,0.0013,-0.1342
+M_R01_SJointAngle_Degree,-0.0052,0.0007,-0.2263
 M_R03_SJointAngle_Degree,0.0006,0.0000,0.0204

@@ -105,3 +105,14 @@ class _InlinePool:
 
     def map(self, fn, jobs):
         return map(fn, jobs)
+
+
+def test_sweep_command(root, tmp_path, monkeypatch, capsys):
+    from factorylens import sweep
+
+    calls = []
+    monkeypatch.setattr(sweep, "run_category", lambda *a, **kw: calls.append(kw))
+    args = ["sweep", str(root), "--category", "bagel", "--k", "1", "--k", "all", "--seed", "3"]
+    assert cli.main([*args, "--model", "late"]) == 0
+    assert calls[0]["ks"] == [1, None] and calls[0]["seeds"] == [3]
+    assert calls[0]["models"] == ("late",)

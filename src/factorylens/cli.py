@@ -10,7 +10,7 @@ from concurrent.futures import ProcessPoolExecutor
 from dataclasses import replace
 from pathlib import Path
 
-from factorylens import __version__, experiments
+from factorylens import __version__, experiments, sweep
 from factorylens.data import cache, ff, mvtec3d, subsets
 from factorylens.models import fpfh
 from factorylens.models.detectors import (
@@ -193,6 +193,25 @@ def run_models(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_sweep(args: argparse.Namespace) -> int:
+    ks = [None if k == "all" else int(k) for k in (args.k or ["1", "5", "10", "50", "all"])]
+    models = tuple(args.model or sweep.MODELS)
+    for category in args.category or mvtec3d.CATEGORIES:
+        sweep.run_category(
+            args.root,
+            args.cache,
+            category,
+            ks=ks,
+            seeds=args.seed or [0, 1, 2, 3, 4],
+            models=models,
+            results_dir=args.results,
+            feature_cache=args.features,
+            device=args.device,
+            log=lambda line: print(line, flush=True),
+        )
+    return 0
+
+
 def ff_blocks(args: argparse.Namespace) -> int:
     cycles = ff.segment_cycles(ff.load_analog(args.root))
     blocks = ff.label_blocks(cycles)
@@ -290,6 +309,18 @@ def build_parser() -> argparse.ArgumentParser:
     runner.add_argument("--no-scores", action="store_true")
     runner.add_argument("--device")
     runner.set_defaults(func=run_models)
+
+    sw = groups.add_parser("sweep", help="rgb/fpfh/early/late over k-shot and seeds")
+    sw.add_argument("root", nargs="?", default=DEFAULT_ROOT)
+    sw.add_argument("--cache", default=DEFAULT_CACHE)
+    sw.add_argument("--features", default=DEFAULT_FEATURES)
+    sw.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
+    sw.add_argument("--k", action="append", help="1, 5, 10, 50 or all (default: all of them)")
+    sw.add_argument("--seed", type=int, action="append")
+    sw.add_argument("--model", action="append", choices=[*sweep.MODELS, "rgb_aug"])
+    sw.add_argument("--results", default="results/sweep")
+    sw.add_argument("--device")
+    sw.set_defaults(func=run_sweep)
 
     ff_group = groups.add_parser("ff", help="Future Factories analog data")
     ff_cmds = ff_group.add_subparsers(dest="command", required=True)

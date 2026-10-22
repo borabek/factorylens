@@ -61,6 +61,12 @@ def test_forecast_residuals_are_small_on_normal_cycles():
     assert np.abs(res).mean() < 0.5
 
 
+def test_forecast_without_phase_terms():
+    # lags only: the plain autoregressive model
+    det = sensor.Forecast(lags=2, harmonics=0).fit(profiles(10))
+    assert det.score(profiles(3, seed=5)).shape == (3,)
+
+
 def test_cycle_profiles_from_the_fake_line():
     df = make_ff_frame()
     df["I_R01_Gripper_Load"] = np.arange(len(df), dtype=float)

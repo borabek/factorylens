@@ -102,3 +102,36 @@ def bootstrap_ci(
     alpha = (1 - level) / 2
     lo, hi = np.quantile(stats, [alpha, 1 - alpha])
     return float(lo), float(hi)
+
+
+def paired_bootstrap(
+    labels: np.ndarray,
+    scores_a: np.ndarray,
+    scores_b: np.ndarray,
+    metric: Callable[[np.ndarray, np.ndarray], float] = image_auroc,
+    n_boot: int = 1000,
+    level: float = 0.95,
+    seed: int = 0,
+) -> dict[str, float]:
+    """Difference metric(a) - metric(b) on the same test images, with a paired CI.
+
+    Both detectors are evaluated on the same resample each time, so the image-
+    to-image variation they share cancels out. `p_le_zero` is the share of
+    resamples where a did not beat b, a one-sided bootstrap p-value.
+    """
+    labels = np.asarray(labels).astype(bool)
+    a, b = np.asarray(scores_a), np.asarray(scores_b)
+    pos, neg = np.flatnonzero(labels), np.flatnonzero(~labels)
+    rng = np.random.default_rng(seed)
+    diffs = np.empty(n_boot)
+    for i in range(n_boot):
+        idx = np.r_[rng.choice(pos, len(pos)), rng.choice(neg, len(neg))]
+        diffs[i] = metric(labels[idx], a[idx]) - metric(labels[idx], b[idx])
+    alpha = (1 - level) / 2
+    lo, hi = np.quantile(diffs, [alpha, 1 - alpha])
+    return {
+        "diff": metric(labels, a) - metric(labels, b),
+        "ci_low": float(lo),
+        "ci_high": float(hi),
+        "p_le_zero": float((diffs <= 0).mean()),
+    }

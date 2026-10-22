@@ -544,8 +544,17 @@ def sweep_section() -> list[str]:
     best = grid[["rgb", "fpfh"]].max(axis=1)
     small = grid.index.get_level_values("k") <= 10
     fails = {m: float((grid[m] < best - 0.05)[small].mean()) for m in ("early", "late")}
-    coverage = pd.read_csv("results/analysis/early_fusion_coverage_bagel.csv")
-    rho = coverage[["excess_normal", "joint_auroc"]].corr("spearman").iloc[0, 1]
+    cov = pd.read_csv("results/analysis/coverage_gap.csv")
+
+    def rho(d: pd.DataFrame, gap: str = "gap_val") -> float:
+        return float(d[[gap, "early_auroc"]].corr("spearman").iloc[0, 1])
+
+    within = cov.groupby("category").apply(rho)
+    bagel = cov[cov["category"] == "bagel"]
+    rescue = (
+        (cov["separate_auroc"] - cov["early_auroc"]).groupby([cov["category"], cov["k"]]).mean()
+    )
+    joint_gain = -rescue.loc[["cookie", "peach"]].xs(10, level="k")
 
     return [
         "## Fusion and training-set size",
@@ -604,11 +613,21 @@ def sweep_section() -> list[str]:
         f"- Early fusion is fragile with little data: at k ≤ 10 it falls more than 0.05 "
         f"below the better single sensor in {fails['early']:.0%} of runs, late fusion in "
         f"{fails['late']:.0%}. Its spread over draws is about twice late fusion's.",
-        "- The reason is coverage. A joint neighbour has to match appearance and geometry "
-        "in the same training patch, and a few images do not contain enough combinations. "
-        "On bagel, how much farther the joint neighbour of a normal test patch is than the "
-        f"two separate ones has a Spearman correlation of {rho:.2f} with early fusion's "
-        "AUROC over the 20 k-shot runs (`scripts/early_fusion_coverage.py`).",
+        "- Why it fails is not one thing. `scripts/early_fusion_coverage.py` matches each "
+        "test patch once against the joint bank and once against each sensor's bank, and "
+        "measures the *coverage gap*: how much farther the joint neighbour is than the two "
+        "separate ones. On bagel it explains the failures: with one image, matching the "
+        f"halves separately scores {rescue.loc[('bagel', 1)]:.2f} higher than joint "
+        f"matching, and the gap on the validation normals has Spearman {rho(bagel):.2f} with "
+        "early fusion's AUROC over the 20 draws. A few bagels do not contain the "
+        "combinations of colour and shape the joint space needs.",
+        "- It does not generalise. Within a category the same correlation ranges from "
+        f"{within.min():+.2f} ({within.idxmin()}) to {within.max():+.2f} "
+        f"({within.idxmax()}). On cookie and peach, joint matching is *better* than "
+        f"separate by {joint_gain.min():.2f}-{joint_gain.max():.2f} at k = 10: there, which "
+        "shape goes with which colour is itself the information that finds defects. So the "
+        "gap cannot be used to choose between early and late fusion in advance, which was "
+        f"the plan. <sub>{len(cov)} runs from commit fff4be0, clean checkout.</sub>",
         "- Flips and rotations of the training images help RGB a little at k = 1 and 10 and "
         "not at 5. They do not close the gap to either fusion.",
         "",

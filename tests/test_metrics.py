@@ -132,3 +132,22 @@ def test_aupro_agrees_with_the_official_style_computation():
     for seed in range(3):
         masks, maps = toy(seed, n=6, size=48)
         assert metrics.aupro(masks, maps) == pytest.approx(official_aupro(masks, maps), abs=0.02)
+
+
+def test_paired_bootstrap_sees_a_real_difference():
+    rng = np.random.default_rng(0)
+    labels = np.r_[np.zeros(80), np.ones(40)].astype(bool)
+    shared = rng.normal(0, 1, 120)  # both detectors share most of their noise
+    weak = shared + labels * 0.5
+    strong = shared + labels * 1.5
+    out = metrics.paired_bootstrap(labels, strong, weak, n_boot=400)
+    assert out["diff"] > 0 and out["ci_low"] > 0 and out["p_le_zero"] < 0.05
+
+
+def test_paired_bootstrap_of_a_detector_with_itself_is_zero():
+    rng = np.random.default_rng(1)
+    labels = np.r_[np.zeros(30), np.ones(30)].astype(bool)
+    s = rng.normal(0, 1, 60) + labels
+    out = metrics.paired_bootstrap(labels, s, s, n_boot=200)
+    assert out["diff"] == 0 and out["ci_low"] == 0 and out["ci_high"] == 0
+    assert out["p_le_zero"] == 1.0

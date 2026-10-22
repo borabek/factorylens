@@ -155,20 +155,20 @@ Reading the numbers:
 
 `factorylens sweep`: the same RGB and FPFH patch features in four detectors, with this repo's preprocessing. *early*: the two halves concatenated, FPFH scaled per run so that both have the same spread on the training patches. *late*: one memory bank per sensor, each score standardised on the validation normals, then summed. Image AUROC on the full training set, seed 0; ✓ = better than both single sensors, paired bootstrap 95% interval above zero.
 
-| category    | RGB   | FPFH   | early fusion   | late fusion   |
-|:------------|:------|:-------|:---------------|:--------------|
-| bagel       | 0.894 | 0.845  | 0.971 ✓        | 0.925         |
-| cable_gland | 0.905 | 0.609  | 0.914          | 0.880         |
-| carrot      | 0.874 | 0.964  | 0.993 ✓        | 0.974         |
-| cookie      | 0.641 | 0.819  | 0.869          | 0.822         |
-| dowel       | 0.963 | 0.868  | 0.999 ✓        | 0.983 ✓       |
-| foam        | 0.771 | 0.609  | 0.816          | 0.804         |
-| peach       | 0.667 | 0.780  | 0.874 ✓        | 0.761         |
-| potato      | 0.566 | 0.946  | 0.943          | 0.929         |
-| rope        | 0.963 | 0.971  | 0.989          | 0.980         |
-| tire        | 0.755 | 0.526  | 0.728          | 0.702         |
-| **mean**    | 0.800 | 0.793  | 0.910          | 0.876         |
-| **AUPRO**   | 0.906 | 0.929  | 0.961          | 0.970         |
+| category    | RGB   | FPFH   | better sensor   | early fusion   | late fusion   |
+|:------------|:------|:-------|:----------------|:---------------|:--------------|
+| bagel       | 0.894 | 0.845  | 0.894           | 0.971 ✓        | 0.925         |
+| cable_gland | 0.905 | 0.609  | 0.905           | 0.914          | 0.880         |
+| carrot      | 0.874 | 0.964  | 0.964           | 0.993 ✓        | 0.974         |
+| cookie      | 0.641 | 0.819  | 0.819           | 0.869          | 0.822         |
+| dowel       | 0.963 | 0.868  | 0.963           | 0.999 ✓        | 0.983 ✓       |
+| foam        | 0.771 | 0.609  | 0.771           | 0.816          | 0.804         |
+| peach       | 0.667 | 0.780  | 0.780           | 0.874 ✓        | 0.761         |
+| potato      | 0.566 | 0.946  | 0.946           | 0.943          | 0.929         |
+| rope        | 0.963 | 0.971  | 0.971           | 0.989          | 0.980         |
+| tire        | 0.755 | 0.526  | 0.755           | 0.728          | 0.702         |
+| **mean**    | 0.800 | 0.793  | 0.877           | 0.910          | 0.876         |
+| **AUPRO**   | 0.906 | 0.929  |                 | 0.961          | 0.970         |
 
 <sub>990 runs from commit e09149b (clean checkout), all k and draws.</sub>
 
@@ -187,7 +187,12 @@ Mean image AUROC over the 10 categories for k normal training images, ± the spr
 
 ![image AUROC and AUPRO against the number of training images](figures/data_efficiency.png)
 
-- Both fusions beat both single sensors at every k from 5 up. With one image, late fusion is the best model and early fusion is no better than FPFH.
+Per category, which is where the averages come from:
+
+![image AUROC against training images, one panel per category](figures/data_efficiency_categories.png)
+
+- Against either sensor used on every category, both fusions are ahead from five images up. With one image, late fusion is the best model and early fusion is no better than FPFH.
+- The harder baseline is *better sensor*: whichever of RGB and FPFH scores higher on that category, which is only known after seeing the test results. On the full training set late fusion matches it (0.876 vs 0.877) without having to know which sensor to trust, and early fusion is above it on 8 of 10 categories. With ten images or fewer neither fusion beats it: comparing category means (the five draws share images, so they are averaged first), early fusion is +0.002 at k = 10 (Wilcoxon p = 0.92). At k = 50 it pulls ahead, +0.035 (p = 0.04, better on 9 of 10). All tests: `results/analysis/sweep_kshot_tests.csv`.
 - Early fusion is fragile with little data: at k ≤ 10 it falls more than 0.05 below the better single sensor in 25% of runs, late fusion in 13%. Its spread over draws is about twice late fusion's.
 - The reason is coverage. A joint neighbour has to match appearance and geometry in the same training patch, and a few images do not contain enough combinations. On bagel, how much farther the joint neighbour of a normal test patch is than the two separate ones has a Spearman correlation of -0.94 with early fusion's AUROC over the 20 k-shot runs (`scripts/early_fusion_coverage.py`).
 - Flips and rotations of the training images help RGB a little at k = 1 and 10 and not at 5. They do not close the gap to either fusion.

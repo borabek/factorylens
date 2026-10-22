@@ -1,0 +1,13 @@
+k,model,versus,mean_diff,categories_better,runs_better,runs,wilcoxon_p
+1,early,late,-0.0248,2,18,50,0.3223
+1,early,best single,-0.036,2,17,50,0.2324
+1,late,best single,-0.0113,4,20,50,0.1934
+5,early,late,0.0109,7,29,50,0.5566
+5,early,best single,-0.0009,5,29,50,0.9219
+5,late,best single,-0.0117,3,20,50,0.2754
+10,early,late,0.0122,8,36,50,0.3223
+10,early,best single,0.0023,5,33,50,0.9219
+10,late,best single,-0.0099,3,20,50,0.4258
+50,early,late,0.0383,9,40,50,0.0195
+50,early,best single,0.0353,9,35,50,0.0371
+50,late,best single,-0.003,6,30,50,0.8457

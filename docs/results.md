@@ -198,6 +198,37 @@ Per category, which is where the averages come from:
 - It does not generalise. Within a category the same correlation ranges from -0.82 (bagel) to +0.82 (cable_gland). On cookie and peach, joint matching is *better* than separate by 0.11-0.14 at k = 10: there, which shape goes with which colour is itself the information that finds defects. So the gap cannot be used to choose between early and late fusion in advance, which was the plan. <sub>200 runs from commit fff4be0, clean checkout.</sub>
 - Flips and rotations of the training images help RGB a little at k = 1 and 10 and not at 5. They do not close the gap to either fusion.
 
+## Robustness: one sensor corrupted (FactoryLens-C)
+
+Every model is fitted on clean training data; only the test set is corrupted, one sensor at a time ([corruptions.md](corruptions.md)). Image AUROC averaged over the five severities and 10 categories. *healthy sensor* is the clean score of the sensor that was not corrupted, i.e. what a system that knew which sensor broke could get by switching it off.
+
+|                      | healthy sensor   | RGB   | FPFH   | early fusion   | late fusion   |
+|:---------------------|:-----------------|:------|:-------|:---------------|:--------------|
+| brightness (RGB)     | 0.793            | 0.709 | 0.793  | 0.846          | 0.813         |
+| defocus blur (RGB)   | 0.793            | 0.551 | 0.793  | 0.757          | 0.764         |
+| gaussian noise (RGB) | 0.793            | 0.555 | 0.793  | 0.760          | 0.776         |
+| jpeg (RGB)           | 0.793            | 0.531 | 0.793  | 0.684          | 0.710         |
+| occlusion (RGB)      | 0.793            | 0.460 | 0.793  | 0.573          | 0.726         |
+| rgb missing (RGB)    | 0.793            | 0.500 | 0.793  | 0.639          | 0.793         |
+| depth noise (3D)     | 0.800            | 0.800 | 0.551  | 0.629          | 0.795         |
+| holes (3D)           | 0.800            | 0.800 | 0.689  | 0.571          | 0.834         |
+| misregister (3D)     | 0.800            | 0.800 | 0.816  | 0.900          | 0.887         |
+| quantise (3D)        | 0.800            | 0.800 | 0.581  | 0.666          | 0.793         |
+| tilt (3D)            | 0.800            | 0.800 | 0.795  | 0.906          | 0.876         |
+| xyz missing (3D)     | 0.800            | 0.800 | 0.500  | 0.466          | 0.800         |
+| **clean**            |                  | 0.800 | 0.793  | 0.909          | 0.876         |
+
+<sub>2120 runs from commit 9175185 (clean checkout).</sub>
+
+![image AUROC against severity for every corruption](figures/robustness.png)
+
+- Early fusion is the best model on clean data (0.909) and the most fragile one. It ends up below the healthy sensor on 9 of 12 corruptions: 0.710 on average when the RGB image is corrupted (FPFH alone: 0.793), 0.690 when the point cloud is (RGB alone: 0.800). With no 3D at all it scores 0.466.
+- Late fusion degrades more gracefully (0.764 and 0.831) and loses a whole missing sensor without cost: a dead sensor gives every image the same score, so the sum is ranked by the other one. A *noisy* sensor is different. Its scores vary from image to image without meaning anything, and late fusion still falls below the healthy sensor on 4 corruptions, mostly on the RGB side.
+- That gap, between what late fusion gets and what switching off the broken sensor would get, is what a reliability-aware fusion has to close without being told which sensor broke.
+- The JPEG and brightness rows need care. They change global image statistics, and in several categories those statistics already separate normal from defective test images before any detector looks: on cable_gland the mean brightness of the *background* alone gives AUROC 1.00, on cookie the whole image 0.98, on peach the background 0.94 (`scripts/check_acquisition_confound.py`, AUROC folded so that 0.5 means no separation). JPEG error follows brightness and texture, so it can push a detector's scores along that difference or against it; single categories swing between 0 and 1 across JPEG severities for that reason, not because of the code.
+- The clean row reproduces the sweep's full-data runs to four decimals (0.9095, 0.8759), through a separate code path.
+- Tilt barely changes FPFH, as expected for a rotation-invariant descriptor, and a shift of up to 8 px is at most one 8 px patch of the 28x28 feature grid, so misregistration costs little at this resolution.
+
 ## Which backbone layers (RGB)
 
 Same detector, every layer combination on the same 28x28 patch grid (`scripts/run_layer_ablation.py`), full training set.

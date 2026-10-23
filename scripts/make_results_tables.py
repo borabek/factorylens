@@ -6,6 +6,7 @@ usage: uv run python scripts/make_results_tables.py
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from factorylens import experiments
@@ -634,6 +635,121 @@ def sweep_section() -> list[str]:
     ]
 
 
+def robustness_section() -> list[str]:
+    path = Path("results/analysis/robustness_summary.csv")
+    if not path.exists():
+        return []
+    summ = pd.read_csv(path)
+    names = {"rgb": "RGB", "fpfh": "FPFH", "early": "early fusion", "late": "late fusion"}
+    table = summ.pivot(index="corruption", columns="model", values="mean")[list(names)]
+    sensor = summ.drop_duplicates("corruption").set_index("corruption")["sensor"]
+    clean = summ.drop_duplicates("model").set_index("model")["clean"]
+    # the sensor that was not corrupted, at its clean score
+    table.insert(
+        0, "healthy sensor", [clean["fpfh" if sensor[c] == "rgb" else "rgb"] for c in table.index]
+    )
+    order = sensor.sort_values(kind="stable").index
+    table = table.loc[order].rename(columns=names)
+    table.index = [
+        f"{c.replace('_', ' ')} ({'RGB' if sensor[c] == 'rgb' else '3D'})" for c in order
+    ]
+    shown = table.map(lambda v: f"{v:.3f}")
+    shown.loc["**clean**"] = ["", *[f"{clean[m]:.3f}" for m in names]]
+
+    runs = pd.concat(
+        [
+            experiments.collect(f"results/robustness/{m}").assign(
+                file=lambda d, m=m: m + "/" + d["file"]
+            )
+            for m in names
+        ]
+    )
+    per_cat = runs.groupby("category").size()
+    n_cat = int((per_cat == per_cat.max()).sum())  # the summary only uses finished categories
+    healthy = table["healthy sensor"]
+    below = {m: int((table[names[m]] < healthy - 0.01).sum()) for m in ("early", "late")}
+    by = summ.groupby(["sensor", "model"])["mean"].mean()
+    missing = table.loc[[i for i in table.index if "missing" in i]]
+    conf = pd.read_csv("results/analysis/acquisition_confound.csv").set_index("category")
+    stats = pd.read_csv("results/analysis/robustness_tests.csv")
+    aupro = summ.groupby(["sensor", "model"])["aupro_mean"].mean()
+
+    def significant(model: str, versus: str, sign: int) -> pd.DataFrame:
+        d = stats[(stats["model"] == model) & (stats["versus"] == versus)]
+        return d[(d["wilcoxon_p"] < 0.05) & (np.sign(d["mean_diff"]) == sign)]
+
+    def sig(model: str, versus: str, sign: int) -> int:
+        return len(significant(model, versus, sign))
+
+    def names_of(model: str, versus: str, sign: int) -> list[str]:
+        return [c.replace("_", " ") for c in significant(model, versus, sign)["corruption"]]
+
+    def sep(auroc: float) -> float:
+        return max(auroc, 1 - auroc)
+
+    return [
+        "## Robustness: one sensor corrupted (FactoryLens-C)",
+        "",
+        "Every model is fitted on clean training data; only the test set is corrupted, one "
+        "sensor at a time ([corruptions.md](corruptions.md)). Image AUROC averaged over the "
+        f"five severities and {n_cat} categories. *healthy sensor* is the clean score of the "
+        "sensor that was not corrupted, i.e. what a system that knew which sensor broke could "
+        "get by switching it off.",
+        "",
+        shown.to_markdown(disable_numparse=True),
+        "",
+        f"<sub>{provenance(runs, 'results/robustness')}.</sub>",
+        "",
+        "![image AUROC against severity for every corruption](figures/robustness.png)",
+        "",
+        f"- Early fusion is the best model on clean data ({clean['early']:.3f}) and the most "
+        f"fragile one. It ends up below the healthy sensor on {below['early']} of "
+        f"{len(table)} corruptions: {by[('rgb', 'early')]:.3f} on average when the RGB image "
+        f"is corrupted (FPFH alone: {clean['fpfh']:.3f}), {by[('xyz', 'early')]:.3f} when "
+        f"the point cloud is (RGB alone: {clean['rgb']:.3f}). With no 3D at all it scores "
+        f"{missing.loc['xyz missing (3D)', 'early fusion']:.3f}.",
+        f"- Late fusion degrades more gracefully ({by[('rgb', 'late')]:.3f} and "
+        f"{by[('xyz', 'late')]:.3f}) and loses a whole missing sensor without cost: a dead "
+        "sensor gives every image the same score, so the sum is ranked by the other one. "
+        "A *noisy* sensor is different. Its scores vary from image to image without meaning "
+        f"anything, and late fusion still falls below the healthy sensor on {below['late']} "
+        "corruptions, mostly on the RGB side.",
+        "- That gap, between what late fusion gets and what switching off the broken sensor "
+        "would get, is what a reliability-aware fusion has to close without being told "
+        "which sensor broke.",
+        "- Which differences are real: comparing category means (severities averaged) over "
+        f"the {n_cat} categories with a Wilcoxon test, late fusion beats early fusion on "
+        f"{sig('late', 'early', 1)} corruptions ({', '.join(names_of('late', 'early', 1))}) "
+        f"and loses on {sig('late', 'early', -1)} ({', '.join(names_of('late', 'early', -1))}). "
+        f"Early fusion is significantly below the healthy sensor on "
+        f"{sig('early', 'healthy sensor', -1)} corruptions, late fusion on "
+        f"{sig('late', 'healthy sensor', -1)} "
+        f"({', '.join(names_of('late', 'healthy sensor', -1))}). "
+        "p < 0.05 everywhere, `results/analysis/robustness_tests.csv`.",
+        "- Localisation follows the same pattern. AUPRO averaged over the RGB corruptions: "
+        f"FPFH {aupro[('rgb', 'fpfh')]:.3f}, late {aupro[('rgb', 'late')]:.3f}, early "
+        f"{aupro[('rgb', 'early')]:.3f}; over the 3D corruptions: RGB "
+        f"{aupro[('xyz', 'rgb')]:.3f}, late {aupro[('xyz', 'late')]:.3f}, early "
+        f"{aupro[('xyz', 'early')]:.3f}.",
+        "- The JPEG and brightness rows need care. They change global image statistics, "
+        "and in several categories those statistics already separate normal from defective "
+        f"test images before any detector looks: on cable_gland the mean brightness of the "
+        f"*background* alone gives AUROC {sep(conf.loc['cable_gland', 'background_mean']):.2f}, "
+        f"on cookie the whole image {sep(conf.loc['cookie', 'rgb_mean']):.2f}, on peach the "
+        f"background {sep(conf.loc['peach', 'background_mean']):.2f} "
+        "(`scripts/check_acquisition_confound.py`, AUROC folded so that 0.5 means no "
+        "separation). JPEG error follows brightness and texture, so it can push a "
+        "detector's scores along that difference or against it; single categories swing "
+        "between 0 and 1 across JPEG severities for that reason, not because of the code.",
+        f"- The clean row reproduces the sweep's full-data runs to four decimals "
+        f"({clean['early']:.4f}, {clean['late']:.4f}), through a separate code path.",
+        "- Tilt barely changes FPFH, as expected for a rotation-invariant descriptor, and a "
+        "shift of up to 8 px is at most one 8 px patch of the 28x28 feature grid, so "
+        "misregistration costs little at this resolution.",
+        "",
+    ]
+
+
 def main() -> None:
     lines = [
         "# Results",
@@ -647,6 +763,7 @@ def main() -> None:
         *btf_section(),
         *balance_section(),
         *sweep_section(),
+        *robustness_section(),
         *layer_section(),
         *checks_section(),
     ]

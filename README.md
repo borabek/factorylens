@@ -29,10 +29,18 @@ This is a work in progress (started October 2026). The research question, the da
 - From 5 training images up, both fusions beat either sensor used everywhere. Against the harder baseline of picking the better sensor per category after the fact, late fusion matches it with all the data (0.876 vs 0.877) and early fusion beats it once there are 50 or more images (9 of 10 categories, Wilcoxon p = 0.04). Late fusion localises defects best (AUPRO 0.970).
 - Early fusion is fragile with little data. At k ≤ 10 it drops more than 0.05 below the better sensor in a quarter of runs, sometimes below chance. On bagel this is because a few images don't hold the combinations of appearance and geometry a joint nearest neighbour needs. But that doesn't generalise: on cookie and peach, joint matching is clearly better than matching the two sensors separately, so a label-free coverage check can't pick the fusion in advance.
 
+**When one sensor breaks** (FactoryLens-C, 2,120 runs: 10 corruptions × 5 severities and a missing sensor for each, details in [docs/corruptions.md](docs/corruptions.md)):
+
+![image AUROC against corruption severity](docs/figures/robustness.png)
+
+- Early fusion, the best model on clean data (0.910), is the most fragile. Averaged over severities it falls below the uncorrupted sensor on its own for 9 of 12 corruptions, and below chance (0.466) when the 3D sensor is missing.
+- Late fusion survives a dead sensor at no cost, because a constant score doesn't change the ranking. A *noisy* sensor still drags it down: 0.764 when the RGB image is corrupted, against 0.793 for FPFH alone. Closing that gap without being told which sensor broke is the next step.
+
 Findings from the data itself, each with the script that produces it:
 
 - **The obvious multimodal dataset is confounded with time.** In Future Factories, almost every anomalous cycle in the camera period comes before every normal one, and elapsed time alone gives an AUROC of 0.986 (`scripts/ff/confound_check.py`). That is why the main study uses MVTec 3D-AD.
 - **The 3D sensor is often blind exactly at the defect.** On bagel, cookie and peach, 12–13% of defect pixels have no 3D point (`scripts/eda_mvtec3d.py`). Only the camera can see those.
+- **Normal and defective test images differ in lighting.** On cable_gland, the brightness of the *background* alone separates normal from defective test images perfectly; on cookie the whole image does so at 0.98 (`scripts/check_acquisition_confound.py`). It turned up because JPEG compression made single categories swing between AUROC 0 and 1.
 - **A standard preprocessing threshold deletes defects on thin objects.** BTF's 5 mm background cut removes 38% of the annotated defect pixels on dowel. This repo uses 2 mm (`scripts/check_background_removal.py`).
 - **A sensor shortcut that flips sign across days.** In the FF robot data, R01's gripper load separates normal and missing-part cycles on day 1, but only because it drifts, and on day 2 the relationship reverses. R03 shows the real signature of a missing nose cone on both days (`scripts/ff/figures.py`).
 - **A detector on every robot signal is worse than guessing.** Trained on day-1 normal cycles and tested on day 2, a forecast-residual detector over all four robots scores 0.33, because the drift outweighs the fault. The same detector on R03 alone scores 0.85, and 0.81 with the days swapped. Time of day scores 1.0 on both test days, so every result is checked against it (`scripts/ff/detectors.py`).

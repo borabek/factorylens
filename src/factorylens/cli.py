@@ -10,7 +10,7 @@ from concurrent.futures import ProcessPoolExecutor
 from dataclasses import replace
 from pathlib import Path
 
-from factorylens import __version__, experiments, sweep
+from factorylens import __version__, corruptions, experiments, robustness, sweep
 from factorylens.data import cache, ff, mvtec3d, subsets
 from factorylens.models import fpfh
 from factorylens.models.detectors import (
@@ -212,6 +212,25 @@ def run_sweep(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_robustness(args: argparse.Namespace) -> int:
+    conditions = robustness.all_conditions()
+    if args.corruption:
+        conditions = [(n, s) for n, s in conditions if n in args.corruption]
+    for category in args.category or mvtec3d.CATEGORIES:
+        robustness.run_category(
+            args.root,
+            args.cache,
+            category,
+            conditions=conditions,
+            seed=args.seed,
+            results_dir=args.results,
+            feature_cache=args.features,
+            device=args.device,
+            log=lambda line: print(line, flush=True),
+        )
+    return 0
+
+
 def ff_blocks(args: argparse.Namespace) -> int:
     cycles = ff.segment_cycles(ff.load_analog(args.root))
     blocks = ff.label_blocks(cycles)
@@ -321,6 +340,17 @@ def build_parser() -> argparse.ArgumentParser:
     sw.add_argument("--results", default="results/sweep")
     sw.add_argument("--device")
     sw.set_defaults(func=run_sweep)
+
+    rb = groups.add_parser("robustness", help="the sweep detectors on FactoryLens-C")
+    rb.add_argument("root", nargs="?", default=DEFAULT_ROOT)
+    rb.add_argument("--cache", default=DEFAULT_CACHE)
+    rb.add_argument("--features", default=DEFAULT_FEATURES)
+    rb.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
+    rb.add_argument("--corruption", action="append", choices=list(corruptions.CORRUPTIONS))
+    rb.add_argument("--seed", type=int, default=0)
+    rb.add_argument("--results", default="results/robustness")
+    rb.add_argument("--device")
+    rb.set_defaults(func=run_robustness)
 
     ff_group = groups.add_parser("ff", help="Future Factories analog data")
     ff_cmds = ff_group.add_subparsers(dest="command", required=True)

@@ -116,3 +116,15 @@ def test_sweep_command(root, tmp_path, monkeypatch, capsys):
     assert cli.main([*args, "--model", "late"]) == 0
     assert calls[0]["ks"] == [1, None] and calls[0]["seeds"] == [3]
     assert calls[0]["models"] == ("late",)
+
+
+def test_robustness_command(root, monkeypatch):
+    from factorylens import robustness
+
+    calls = []
+    monkeypatch.setattr(robustness, "run_category", lambda *a, **kw: calls.append((a, kw)))
+    args = ["robustness", str(root), "--category", "bagel", "--corruption", "holes"]
+    assert cli.main([*args, "--corruption", "rgb_missing", "--seed", "2"]) == 0
+    ((a, kw),) = calls
+    assert a[2] == "bagel" and kw["seed"] == 2
+    assert kw["conditions"] == [("rgb_missing", 1), *[("holes", s) for s in range(1, 6)]]

@@ -6,6 +6,7 @@ usage: uv run python scripts/make_results_tables.py
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from factorylens import experiments
@@ -670,6 +671,18 @@ def robustness_section() -> list[str]:
     by = summ.groupby(["sensor", "model"])["mean"].mean()
     missing = table.loc[[i for i in table.index if "missing" in i]]
     conf = pd.read_csv("results/analysis/acquisition_confound.csv").set_index("category")
+    stats = pd.read_csv("results/analysis/robustness_tests.csv")
+    aupro = summ.groupby(["sensor", "model"])["aupro_mean"].mean()
+
+    def significant(model: str, versus: str, sign: int) -> pd.DataFrame:
+        d = stats[(stats["model"] == model) & (stats["versus"] == versus)]
+        return d[(d["wilcoxon_p"] < 0.05) & (np.sign(d["mean_diff"]) == sign)]
+
+    def sig(model: str, versus: str, sign: int) -> int:
+        return len(significant(model, versus, sign))
+
+    def names_of(model: str, versus: str, sign: int) -> list[str]:
+        return [c.replace("_", " ") for c in significant(model, versus, sign)["corruption"]]
 
     def sep(auroc: float) -> float:
         return max(auroc, 1 - auroc)
@@ -704,6 +717,20 @@ def robustness_section() -> list[str]:
         "- That gap, between what late fusion gets and what switching off the broken sensor "
         "would get, is what a reliability-aware fusion has to close without being told "
         "which sensor broke.",
+        "- Which differences are real: comparing category means (severities averaged) over "
+        f"the {n_cat} categories with a Wilcoxon test, late fusion beats early fusion on "
+        f"{sig('late', 'early', 1)} corruptions ({', '.join(names_of('late', 'early', 1))}) "
+        f"and loses on {sig('late', 'early', -1)} ({', '.join(names_of('late', 'early', -1))}). "
+        f"Early fusion is significantly below the healthy sensor on "
+        f"{sig('early', 'healthy sensor', -1)} corruptions, late fusion on "
+        f"{sig('late', 'healthy sensor', -1)} "
+        f"({', '.join(names_of('late', 'healthy sensor', -1))}). "
+        "p < 0.05 everywhere, `results/analysis/robustness_tests.csv`.",
+        "- Localisation follows the same pattern. AUPRO averaged over the RGB corruptions: "
+        f"FPFH {aupro[('rgb', 'fpfh')]:.3f}, late {aupro[('rgb', 'late')]:.3f}, early "
+        f"{aupro[('rgb', 'early')]:.3f}; over the 3D corruptions: RGB "
+        f"{aupro[('xyz', 'rgb')]:.3f}, late {aupro[('xyz', 'late')]:.3f}, early "
+        f"{aupro[('xyz', 'early')]:.3f}.",
         "- The JPEG and brightness rows need care. They change global image statistics, "
         "and in several categories those statistics already separate normal from defective "
         f"test images before any detector looks: on cable_gland the mean brightness of the "

@@ -1,0 +1,37 @@
+corruption,sensor,model,versus,mean_diff,categories_better,categories_worse,wilcoxon_p
+gaussian_noise,rgb,late,early,0.016,6,4,0.5566
+gaussian_noise,rgb,late,healthy sensor,-0.0178,2,8,0.2324
+gaussian_noise,rgb,early,healthy sensor,-0.0338,4,6,0.2754
+defocus_blur,rgb,late,early,0.0073,6,4,0.8457
+defocus_blur,rgb,late,healthy sensor,-0.0292,1,9,0.0488
+defocus_blur,rgb,early,healthy sensor,-0.0365,3,7,0.1934
+brightness,rgb,late,early,-0.0335,2,8,0.1055
+brightness,rgb,late,healthy sensor,0.0195,7,3,0.2754
+brightness,rgb,early,healthy sensor,0.053,8,2,0.1309
+jpeg,rgb,late,early,0.0254,6,4,0.3223
+jpeg,rgb,late,healthy sensor,-0.0836,2,8,0.0137
+jpeg,rgb,early,healthy sensor,-0.1089,2,8,0.0273
+occlusion,rgb,late,early,0.1532,9,1,0.0059
+occlusion,rgb,late,healthy sensor,-0.0672,0,10,0.002
+occlusion,rgb,early,healthy sensor,-0.2204,0,10,0.002
+rgb_missing,rgb,late,early,0.1547,9,1,0.0059
+rgb_missing,rgb,late,healthy sensor,0.0,0,0,1.0
+rgb_missing,rgb,early,healthy sensor,-0.1547,1,9,0.0059
+depth_noise,xyz,late,early,0.1658,9,1,0.0059
+depth_noise,xyz,late,healthy sensor,-0.0053,3,7,0.1934
+depth_noise,xyz,early,healthy sensor,-0.1711,1,9,0.0195
+holes,xyz,late,early,0.2623,10,0,0.002
+holes,xyz,late,healthy sensor,0.0336,6,4,0.4316
+holes,xyz,early,healthy sensor,-0.2287,1,9,0.0059
+quantise,xyz,late,early,0.127,7,3,0.084
+quantise,xyz,late,healthy sensor,-0.0067,4,6,0.625
+quantise,xyz,early,healthy sensor,-0.1336,2,8,0.0645
+tilt,xyz,late,early,-0.0291,0,10,0.002
+tilt,xyz,late,healthy sensor,0.0765,8,2,0.0645
+tilt,xyz,early,healthy sensor,0.1057,8,2,0.0137
+misregister,xyz,late,early,-0.0128,3,7,0.1602
+misregister,xyz,late,healthy sensor,0.0872,8,2,0.0371
+misregister,xyz,early,healthy sensor,0.1001,8,2,0.0273
+xyz_missing,xyz,late,early,0.3338,10,0,0.002
+xyz_missing,xyz,late,healthy sensor,0.0,0,0,1.0
+xyz_missing,xyz,early,healthy sensor,-0.3338,0,10,0.002

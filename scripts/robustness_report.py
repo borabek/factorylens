@@ -5,7 +5,11 @@
 2. results/analysis/robustness_summary.csv: one row per model and corruption:
    clean score, mean over the five severities, worst severity, and the share
    of the clean score that is kept.
-3. docs/figures/robustness.png: image AUROC against severity, one panel per
+3. results/analysis/robustness_tests.csv: per corruption, late vs early fusion
+   and each fusion vs the healthy sensor (the uncorrupted sensor alone, at its
+   clean score in that category). Scores are averaged over severities per
+   category and compared over the 10 categories (Wilcoxon signed-rank).
+4. docs/figures/robustness.png: image AUROC against severity, one panel per
    corruption, the clean score as a dotted line.
 
 usage: uv run python scripts/robustness_report.py
@@ -19,6 +23,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
+from scipy.stats import wilcoxon  # noqa: E402
 
 from factorylens import corruptions, experiments  # noqa: E402
 
@@ -65,6 +70,38 @@ def summary(table: pd.DataFrame) -> pd.DataFrame:
                 "aupro_mean": part["aupro"].mean(),
             }
         )
+    return pd.DataFrame(rows)
+
+
+def tests(runs: pd.DataFrame) -> pd.DataFrame:
+    auroc = runs.pivot_table(
+        index=["category", "corruption", "severity"], columns="detector", values="image_auroc"
+    )
+    clean = auroc.xs("clean", level="corruption").droplevel("severity")
+    rows = []
+    for name, c in corruptions.CORRUPTIONS.items():
+        per_cat = auroc.xs(name, level="corruption").groupby(level="category").mean()
+        healthy = clean["fpfh" if c.sensor == "rgb" else "rgb"]
+        pairs = {
+            ("late", "early"): per_cat["late"] - per_cat["early"],
+            ("late", "healthy sensor"): per_cat["late"] - healthy,
+            ("early", "healthy sensor"): per_cat["early"] - healthy,
+        }
+        for (a, b), diff in pairs.items():
+            # a dead sensor makes late fusion equal the healthy one exactly
+            p = float(wilcoxon(diff).pvalue) if (diff != 0).any() else 1.0
+            rows.append(
+                {
+                    "corruption": name,
+                    "sensor": c.sensor,
+                    "model": a,
+                    "versus": b,
+                    "mean_diff": diff.mean(),
+                    "categories_better": int((diff > 0).sum()),
+                    "categories_worse": int((diff < 0).sum()),
+                    "wilcoxon_p": p,
+                }
+            )
     return pd.DataFrame(rows)
 
 
@@ -135,6 +172,9 @@ def main() -> None:
     args.out.mkdir(parents=True, exist_ok=True)
     table.round(4).to_csv(args.out / "robustness.csv", index=False)
     summ.round(4).to_csv(args.out / "robustness_summary.csv", index=False)
+    stats = tests(runs)
+    stats.round(4).to_csv(args.out / "robustness_tests.csv", index=False)
+    print(stats.pivot(index="corruption", columns=["model", "versus"], values="mean_diff").round(3))
     figure(table, n, args.figure)
 
     print(f"{n} categories")

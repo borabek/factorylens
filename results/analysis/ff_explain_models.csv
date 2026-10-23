@@ -1,0 +1,5 @@
+features,test_auroc
+time only,1.0
+time + sensors,1.0
+sensors,0.9698
+R03 only,0.9644

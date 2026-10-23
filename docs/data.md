@@ -163,4 +163,26 @@ AUROC, normal vs NoNose, *day 1 → day 2 / day 2 → day 1*. R01's joints are l
 - **The R03 result is not a lucky setting.** `scripts/ff/forecast_grid.py` reruns the forecast detector over 60 settings (1–20 lags, 0–12 Fourier pairs, ridge alpha 0.1–10). What matters is the number of lags. With 5 or more, R03 scores 0.82–0.88 in both directions. With a single lag it drops to 0.74 and 0.56: one second of context is not enough to expect the five-second load pulse. The Fourier phase terms and alpha change the median by less than 0.01, so the "seasonal" part of the model adds nothing here. The reported setting (5 lags) was fixed before the first run. 10 lags would score a little higher, but choosing it now would be tuning on the test day. Pooling all robots stays at or below 0.58 in the reverse direction for every setting.
 - R03 was picked from the day-1 gripper figure, before any day-2 cycle was scored. With only 23 NoNose cycles in the test day the intervals are wide (0.79–0.90 for R03 forecast).
 
+### What the detectors rely on
+
+The detectors above are unsupervised. To see what a model with labels would pick up, `scripts/ff/explain.py` trains random forests on day 1 (normal vs NoNose) with per-cycle features: mean and standard deviation of every logged robot channel, plus, for some models, two time features (hour of day, hours since the run started). It then tests them on day 2 and explains each one in three ways.
+
+| features | AUROC on day 2 |
+|---|---|
+| time only | 1.000 |
+| time + sensors | 1.000 |
+| sensors | 0.970 |
+| R03 only | 0.964 |
+
+- **A model that only knows the clock is perfect on the test day.** On both days the NoNose block ran in the afternoon, after the normal block. "Later than 15:30" separates the classes on day 2 as well as on day 1, by coincidence of the schedule. No test score can tell this model apart from a real detector. Its explanation can: permutation importance puts all of it (0.51 AUROC) on hour of day.
+- **The three explanations disagree, and the disagreement is the finding.** For the sensor-only forest:
+  - *Impurity importance* is measured on the training day. It ranks R01's mean gripper load first, because on day 1 that feature separates the classes through drift.
+  - *Mean |SHAP|* on day 2 also ranks R01 first. SHAP measures how much a feature moves the predictions. On day 2 every R01 value sits below the day-1 range, in the flat part of the partial dependence, so it shifts every prediction by the same amount without changing their order.
+  - *Permutation importance of the day-2 AUROC* is the only one that asks whether a feature helps the detector. It gives R01 exactly 0 and puts R03's gripper load first (0.18), followed by R03's gripper position.
+- **The pooled forecast detector is explained by its own sum.** Its score is a mean of per-channel squared residuals, so each robot's share is exact. R01 has 2 of 26 channels but 39% of the score. Shuffling R01's profiles across test cycles *raises* the AUROC by 0.40, while shuffling R03 lowers it. This is the drift from earlier, now measured as a contribution.
+
+![impurity vs SHAP vs permutation importance; partial dependence with each day's values; per-robot permutation importance of the forecast detector](figures/ff_explain.png)
+
+So feature attributions computed on training data, or attributions of the model output alone, would both have pointed at the drifting robot. Only the importance of held-out *performance* points at the robot that handles the missing part.
+
 > Harik et al. *Analog and Multi-modal Manufacturing Datasets Acquired on the Future Factories Platform.* arXiv:2401.15544, 2024.

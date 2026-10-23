@@ -1,0 +1,5 @@
+robot,channels,share_of_score,contribution_nonose_minus_normal,auroc_alone,permutation_drop,permutation_drop_sd
+R01,2,0.3861,-0.0182,0.069,-0.4007,0.0425
+R02,8,0.2737,0.0052,0.8475,0.0301,0.0418
+R03,8,0.0921,0.0036,0.8475,0.0465,0.0424
+R04,8,0.2481,-0.0001,0.5079,-0.0099,0.0169

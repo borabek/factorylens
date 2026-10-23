@@ -1,0 +1,125 @@
+model,feature,impurity_train,permutation_test,permutation_test_sd,mean_abs_shap_test
+time only,hour of day,0.454,0.5109,0.042,0.2502
+time only,hours since start,0.546,0.0,0.0,0.2131
+time + sensors,R01 load mean,0.1064,0.0,0.0,0.0443
+time + sensors,R01 load std,0.0026,0.0,0.0,0.0012
+time + sensors,R01 gripper pos mean,0.0824,0.0,0.0,0.0329
+time + sensors,R01 gripper pos std,0.0028,0.0,0.0,0.002
+time + sensors,R02 load mean,0.0634,0.0,0.0,0.0308
+time + sensors,R02 load std,0.001,0.0,0.0,0.0002
+time + sensors,R02 gripper pos mean,0.0867,0.0,0.0,0.0372
+time + sensors,R02 gripper pos std,0.0003,0.0,0.0,0.0002
+time + sensors,R02 S joint mean,0.0024,0.0,0.0,0.0002
+time + sensors,R02 S joint std,0.0011,0.0,0.0,0.0007
+time + sensors,R02 L joint mean,0.0013,0.0,0.0,0.0006
+time + sensors,R02 L joint std,0.0009,0.0,0.0,0.0007
+time + sensors,R02 U joint mean,0.0007,0.0,0.0,0.0007
+time + sensors,R02 U joint std,0.0043,0.0,0.0,0.003
+time + sensors,R02 R joint mean,0.0019,0.0,0.0,0.0019
+time + sensors,R02 R joint std,0.0003,0.0,0.0,0.0004
+time + sensors,R02 B joint mean,0.0032,0.0,0.0,0.0013
+time + sensors,R02 B joint std,0.0178,0.0,0.0,0.0075
+time + sensors,R02 T joint mean,0.0004,0.0,0.0,0.0001
+time + sensors,R02 T joint std,0.0015,0.0,0.0,0.0017
+time + sensors,R03 load mean,0.0989,0.0029,0.0019,0.0378
+time + sensors,R03 load std,0.0089,0.0,0.0,0.0059
+time + sensors,R03 gripper pos mean,0.0071,0.0,0.0,0.0064
+time + sensors,R03 gripper pos std,0.0093,0.0,0.0,0.0093
+time + sensors,R03 S joint mean,0.0033,0.0,0.0,0.0025
+time + sensors,R03 S joint std,0.0054,0.0,0.0,0.0047
+time + sensors,R03 L joint mean,0.0248,0.0,0.0,0.0145
+time + sensors,R03 L joint std,0.0052,0.0,0.0,0.0054
+time + sensors,R03 U joint mean,0.0143,0.0,0.0,0.0069
+time + sensors,R03 U joint std,0.022,0.0,0.0,0.0096
+time + sensors,R03 R joint mean,0.0083,0.0,0.0,0.0031
+time + sensors,R03 R joint std,0.0007,0.0,0.0,0.0008
+time + sensors,R03 B joint mean,0.0251,0.0,0.0,0.0105
+time + sensors,R03 B joint std,0.014,0.0,0.0,0.0064
+time + sensors,R03 T joint mean,0.0006,0.0,0.0,0.0002
+time + sensors,R03 T joint std,0.0014,0.0,0.0,0.0002
+time + sensors,R04 load mean,0.0258,0.0,0.0,0.0207
+time + sensors,R04 load std,0.0025,0.0,0.0,0.0001
+time + sensors,R04 gripper pos mean,0.0074,0.0,0.0,0.0023
+time + sensors,R04 gripper pos std,0.0085,0.0,0.0,0.0072
+time + sensors,R04 S joint mean,0.0016,0.0,0.0,0.0004
+time + sensors,R04 S joint std,0.0002,0.0,0.0,0.0001
+time + sensors,R04 L joint mean,0.0009,0.0,0.0,0.0004
+time + sensors,R04 L joint std,0.0013,0.0,0.0,0.0008
+time + sensors,R04 U joint mean,0.0018,0.0,0.0,0.0005
+time + sensors,R04 U joint std,0.0015,0.0,0.0,0.0001
+time + sensors,R04 R joint mean,0.0006,0.0,0.0,0.0004
+time + sensors,R04 R joint std,0.0004,0.0,0.0,0.0003
+time + sensors,R04 B joint mean,0.0013,0.0,0.0,0.0005
+time + sensors,R04 B joint std,0.0008,0.0,0.0,0.0001
+time + sensors,R04 T joint mean,0.0014,0.0,0.0,0.0006
+time + sensors,R04 T joint std,0.0019,0.0,0.0,0.0006
+time + sensors,hour of day,0.1558,0.1878,0.0232,0.0945
+time + sensors,hours since start,0.1554,0.0,0.0,0.0664
+sensors,R01 load mean,0.1557,0.0,0.0,0.0637
+sensors,R01 load std,0.0014,-0.0002,0.0007,0.0005
+sensors,R01 gripper pos mean,0.1093,0.0,0.0,0.0466
+sensors,R01 gripper pos std,0.0051,-0.0006,0.0015,0.0037
+sensors,R02 load mean,0.1057,0.0,0.0,0.0489
+sensors,R02 load std,0.002,0.0009,0.0007,0.0004
+sensors,R02 gripper pos mean,0.1426,0.0,0.0,0.0608
+sensors,R02 gripper pos std,0.0012,-0.0004,0.0006,0.0005
+sensors,R02 S joint mean,0.0043,0.0018,0.0007,0.0006
+sensors,R02 S joint std,0.0011,0.0,0.0,0.0002
+sensors,R02 L joint mean,0.0016,0.0009,0.001,0.001
+sensors,R02 L joint std,0.0006,0.0,0.0003,0.0003
+sensors,R02 U joint mean,0.0028,0.0011,0.0008,0.0009
+sensors,R02 U joint std,0.0062,0.002,0.0017,0.003
+sensors,R02 R joint mean,0.0016,-0.0018,0.0012,0.0018
+sensors,R02 R joint std,0.0006,-0.0005,0.0008,0.0005
+sensors,R02 B joint mean,0.006,-0.0005,0.0023,0.0038
+sensors,R02 B joint std,0.0194,-0.0001,0.0063,0.0111
+sensors,R02 T joint mean,0.0006,0.0,0.0,0.0002
+sensors,R02 T joint std,0.0027,0.0022,0.0011,0.002
+sensors,R03 load mean,0.1337,0.1788,0.0443,0.0555
+sensors,R03 load std,0.0089,0.0001,0.0008,0.0041
+sensors,R03 gripper pos mean,0.0112,0.0161,0.0065,0.0082
+sensors,R03 gripper pos std,0.0199,0.0714,0.0187,0.0193
+sensors,R03 S joint mean,0.0037,0.0004,0.0007,0.0019
+sensors,R03 S joint std,0.0076,0.0092,0.0062,0.0065
+sensors,R03 L joint mean,0.0358,0.0129,0.0061,0.0243
+sensors,R03 L joint std,0.0066,0.0106,0.0047,0.0079
+sensors,R03 U joint mean,0.0206,0.008,0.0044,0.008
+sensors,R03 U joint std,0.0188,0.0263,0.0111,0.0131
+sensors,R03 R joint mean,0.0124,0.0077,0.0061,0.0058
+sensors,R03 R joint std,0.0013,0.0004,0.0003,0.0004
+sensors,R03 B joint mean,0.0349,0.0217,0.0148,0.0135
+sensors,R03 B joint std,0.0172,0.0047,0.0024,0.0124
+sensors,R03 T joint mean,0.0027,0.0024,0.0008,0.0011
+sensors,R03 T joint std,0.0036,0.0001,0.001,0.0008
+sensors,R04 load mean,0.0394,0.0,0.0,0.0325
+sensors,R04 load std,0.0026,0.0,0.0,0.0008
+sensors,R04 gripper pos mean,0.0115,0.001,0.0004,0.0039
+sensors,R04 gripper pos std,0.0104,-0.0007,0.0014,0.0052
+sensors,R04 S joint mean,0.0018,-0.0013,0.0017,0.0013
+sensors,R04 S joint std,0.0051,0.0002,0.0011,0.0014
+sensors,R04 L joint mean,0.0011,0.0001,0.0003,0.0006
+sensors,R04 L joint std,0.0033,-0.0011,0.001,0.0012
+sensors,R04 U joint mean,0.0026,0.0001,0.0004,0.0008
+sensors,R04 U joint std,0.0016,-0.0001,0.0006,0.0006
+sensors,R04 R joint mean,0.0013,-0.0004,0.0008,0.0004
+sensors,R04 R joint std,0.0019,0.0,0.0012,0.0011
+sensors,R04 B joint mean,0.0015,0.0006,0.0005,0.0003
+sensors,R04 B joint std,0.0031,0.0002,0.0007,0.0005
+sensors,R04 T joint mean,0.0008,-0.0001,0.0003,0.0003
+sensors,R04 T joint std,0.0025,0.0015,0.0011,0.0012
+R03 only,R03 load mean,0.3425,0.176,0.0417,0.1479
+R03 only,R03 load std,0.0318,0.0001,0.0016,0.0146
+R03 only,R03 gripper pos mean,0.0207,0.0086,0.0057,0.0178
+R03 only,R03 gripper pos std,0.0618,0.0616,0.0155,0.0582
+R03 only,R03 S joint mean,0.0166,-0.0007,0.0011,0.0104
+R03 only,R03 S joint std,0.0385,0.0078,0.004,0.0185
+R03 only,R03 L joint mean,0.1126,0.0069,0.0062,0.0794
+R03 only,R03 L joint std,0.0237,0.004,0.0026,0.013
+R03 only,R03 U joint mean,0.0742,0.0166,0.0156,0.0418
+R03 only,R03 U joint std,0.0668,0.0176,0.0095,0.0408
+R03 only,R03 R joint mean,0.0269,0.0034,0.0024,0.0084
+R03 only,R03 R joint std,0.0106,0.0022,0.0024,0.0088
+R03 only,R03 B joint mean,0.0975,0.0241,0.0119,0.0351
+R03 only,R03 B joint std,0.0535,0.0094,0.0038,0.0414
+R03 only,R03 T joint mean,0.0136,0.0016,0.0011,0.0054
+R03 only,R03 T joint std,0.0087,-0.0015,0.0007,0.0027

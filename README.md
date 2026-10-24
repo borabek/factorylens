@@ -29,12 +29,13 @@ This is a work in progress (started October 2026). The research question, the da
 - From 5 training images up, both fusions beat either sensor used everywhere. Against the harder baseline of picking the better sensor per category after the fact, late fusion matches it with all the data (0.876 vs 0.877) and early fusion beats it once there are 50 or more images (9 of 10 categories, Wilcoxon p = 0.04). Late fusion localises defects best (AUPRO 0.970).
 - Early fusion is fragile with little data. At k ≤ 10 it drops more than 0.05 below the better sensor in a quarter of runs, sometimes below chance. On bagel this is because a few images don't hold the combinations of appearance and geometry a joint nearest neighbour needs. But that doesn't generalise: on cookie and peach, joint matching is clearly better than matching the two sensors separately, so a label-free coverage check can't pick the fusion in advance.
 
-**When one sensor breaks** (FactoryLens-C, 2,120 runs: 10 corruptions × 5 severities and a missing sensor for each, details in [docs/corruptions.md](docs/corruptions.md)):
+**When one sensor breaks** (FactoryLens-C: 10 corruptions × 5 severities and a missing sensor for each, 10 categories, details in [docs/corruptions.md](docs/corruptions.md)):
 
 ![image AUROC against corruption severity](docs/figures/robustness.png)
 
 - Early fusion, the best model on clean data (0.910), is the most fragile. Averaged over severities it falls below the uncorrupted sensor on its own for 9 of 12 corruptions, and below chance (0.466) when the 3D sensor is missing.
-- Late fusion survives a dead sensor at no cost, because a constant score doesn't change the ranking. A *noisy* sensor still drags it down: 0.764 when the RGB image is corrupted, against 0.793 for FPFH alone. Closing that gap without being told which sensor broke is the next step.
+- Late fusion survives a dead sensor at no cost, because a constant score doesn't change the ranking. A *noisy* sensor still drags it down: 0.764 when the RGB image is corrupted, against 0.793 for FPFH alone.
+- **Reliability fusion** ([src/factorylens/fusion.py](src/factorylens/fusion.py)) reads each sensor's health without labels, from the background level of its anomaly map against the validation normals over the last 16 parts, and down-weights the one that looks off. It keeps the clean score (0.876, same as late fusion), reaches 0.788 with the RGB image corrupted and 0.832 with the point cloud corrupted, and has the best localisation under 3D corruption (AUPRO 0.930). It beats late fusion significantly on blur and JPEG and loses on nothing. Occlusion is the one corruption it doesn't fix: a local occluder looks like a defect.
 
 Findings from the data itself, each with the script that produces it:
 

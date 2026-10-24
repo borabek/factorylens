@@ -78,6 +78,25 @@ def test_models_can_be_chosen(root, tmp_path):
     assert not (tmp_path / "results" / "early").exists()
 
 
+def test_log_names_the_corruption(root, tmp_path):
+    lines = []
+    robustness.run_category(
+        root,
+        tmp_path / "cache",
+        "bagel",
+        conditions=[("holes", 2)],
+        models=("late",),
+        config=TINY,
+        results_dir=tmp_path / "results",
+        scores_dir=tmp_path / "scores",
+        feature_cache=None,
+        device="cpu",
+        pretrained=False,
+        log=lines.append,
+    )
+    assert "clean" in lines[0] and "holes" in lines[1]
+
+
 def test_all_conditions_lists_every_severity():
     conditions = robustness.all_conditions()
     assert ("rgb_missing", 1) in conditions and ("rgb_missing", 2) not in conditions

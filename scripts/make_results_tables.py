@@ -640,7 +640,13 @@ def robustness_section() -> list[str]:
     if not path.exists():
         return []
     summ = pd.read_csv(path)
-    names = {"rgb": "RGB", "fpfh": "FPFH", "early": "early fusion", "late": "late fusion"}
+    names = {
+        "rgb": "RGB",
+        "fpfh": "FPFH",
+        "early": "early fusion",
+        "late": "late fusion",
+        "reliable_window": "reliability fusion",
+    }
     table = summ.pivot(index="corruption", columns="model", values="mean")[list(names)]
     sensor = summ.drop_duplicates("corruption").set_index("corruption")["sensor"]
     clean = summ.drop_duplicates("model").set_index("model")["clean"]
@@ -661,13 +667,21 @@ def robustness_section() -> list[str]:
             experiments.collect(f"results/robustness/{m}").assign(
                 file=lambda d, m=m: m + "/" + d["file"]
             )
-            for m in names
+            for m in [*names, "reliable"]
         ]
     )
     per_cat = runs.groupby("category").size()
     n_cat = int((per_cat == per_cat.max()).sum())  # the summary only uses finished categories
     healthy = table["healthy sensor"]
-    below = {m: int((table[names[m]] < healthy - 0.01).sum()) for m in ("early", "late")}
+    below = {
+        m: int((table[names[m]] < healthy - 0.01).sum())
+        for m in ("early", "late", "reliable_window")
+    }
+    per_image = summ.pivot(index="corruption", columns="model", values="mean")["reliable"]
+    sens = pd.read_csv("results/analysis/reliability_sensitivity.csv")
+    sens = sens.groupby(["sensor", "ramp", "window"])["auroc"].mean()
+    rgb_sens = sens.xs("rgb", level="sensor")
+    rgb_wide = rgb_sens[rgb_sens.index.get_level_values("window") >= 8]
     by = summ.groupby(["sensor", "model"])["mean"].mean()
     missing = table.loc[[i for i in table.index if "missing" in i]]
     conf = pd.read_csv("results/analysis/acquisition_confound.csv").set_index("category")
@@ -715,8 +729,27 @@ def robustness_section() -> list[str]:
         f"anything, and late fusion still falls below the healthy sensor on {below['late']} "
         "corruptions, mostly on the RGB side.",
         "- That gap, between what late fusion gets and what switching off the broken sensor "
-        "would get, is what a reliability-aware fusion has to close without being told "
-        "which sensor broke.",
+        "would get, is what reliability fusion (`src/factorylens/fusion.py`) is for. It reads "
+        "each sensor's health from the background level of its anomaly map (and, for 3D, the "
+        "point count) against the validation normals, over a window of the last 16 parts, and "
+        "down-weights a sensor that looks off. No labels and no test data go into it. "
+        f"Clean: {clean['reliable_window']:.3f} (late fusion {clean['late']:.3f}). RGB "
+        f"corrupted: {by[('rgb', 'reliable_window')]:.3f} against late fusion's "
+        f"{by[('rgb', 'late')]:.3f} and FPFH alone at {clean['fpfh']:.3f}. 3D corrupted: "
+        f"{by[('xyz', 'reliable_window')]:.3f}. It is below the healthy sensor on "
+        f"{below['reliable_window']} of {len(table)} corruptions.",
+        f"- Judging each image on its own instead fails on occlusion "
+        f"({per_image['occlusion']:.3f}, worse than late fusion's "
+        f"{table.loc['occlusion (RGB)', 'late fusion']:.3f}): a grey square crosses the "
+        "threshold in some images and not in others, so the scores split by weight instead "
+        "of by defect. A real sensor fault lasts for many parts, and a 16-part window gives "
+        f"{table.loc['occlusion (RGB)', 'reliability fusion']:.3f}. Occlusion is still the one "
+        "corruption it does not handle well, because a local occluder looks like a defect.",
+        f"- The settings (3-SD ramp, 16-part window) were fixed before any run. Over ramps "
+        f"1-8 and windows of 8 parts or more, the RGB-corrupted mean stays between "
+        f"{rgb_wide.min():.3f} and {rgb_wide.max():.3f}; without a window it drops to "
+        f"{rgb_sens.xs(1, level='window').min():.3f}-{rgb_sens.xs(1, level='window').max():.3f} "
+        "(`scripts/reliability_sensitivity.py`).",
         "- Which differences are real: comparing category means (severities averaged) over "
         f"the {n_cat} categories with a Wilcoxon test, late fusion beats early fusion on "
         f"{sig('late', 'early', 1)} corruptions ({', '.join(names_of('late', 'early', 1))}) "
@@ -725,12 +758,17 @@ def robustness_section() -> list[str]:
         f"{sig('early', 'healthy sensor', -1)} corruptions, late fusion on "
         f"{sig('late', 'healthy sensor', -1)} "
         f"({', '.join(names_of('late', 'healthy sensor', -1))}). "
+        f"Reliability fusion beats late fusion on {sig('reliable_window', 'late', 1)} "
+        f"({', '.join(names_of('reliable_window', 'late', 1))}) and loses on "
+        f"{sig('reliable_window', 'late', -1)}. "
         "p < 0.05 everywhere, `results/analysis/robustness_tests.csv`.",
         "- Localisation follows the same pattern. AUPRO averaged over the RGB corruptions: "
         f"FPFH {aupro[('rgb', 'fpfh')]:.3f}, late {aupro[('rgb', 'late')]:.3f}, early "
         f"{aupro[('rgb', 'early')]:.3f}; over the 3D corruptions: RGB "
         f"{aupro[('xyz', 'rgb')]:.3f}, late {aupro[('xyz', 'late')]:.3f}, early "
-        f"{aupro[('xyz', 'early')]:.3f}.",
+        f"{aupro[('xyz', 'early')]:.3f}. Reliability fusion: "
+        f"{aupro[('rgb', 'reliable_window')]:.3f} "
+        f"and {aupro[('xyz', 'reliable_window')]:.3f}, the best of all models on the 3D side.",
         "- The JPEG and brightness rows need care. They change global image statistics, "
         "and in several categories those statistics already separate normal from defective "
         f"test images before any detector looks: on cable_gland the mean brightness of the "

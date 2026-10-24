@@ -1,0 +1,72 @@
+{
+  "config": {
+    "model": "robust_reliable_window",
+    "category": "dowel",
+    "corruption": "rgb_missing",
+    "severity": 1,
+    "seed": 0,
+    "k": null,
+    "preprocess": {
+      "size": 224,
+      "threshold": 0.002,
+      "min_component": 0.0002
+    },
+    "rgb": {
+      "arch": "wide_resnet50_2",
+      "layers": [
+        "layer2",
+        "layer3"
+      ],
+      "neighbourhood": 3,
+      "embed_dim": 1024,
+      "coreset_ratio": 0.1,
+      "keep_all_below": 10000,
+      "projection_dim": 128,
+      "blur_sigma": 4.0,
+      "seed": 0,
+      "grid": null,
+      "pad": true,
+      "reweight": false
+    },
+    "fpfh": {
+      "voxel_size": 0.05,
+      "normal_nn": 30,
+      "feature_nn": 100,
+      "grid": 28,
+      "pad": false
+    },
+    "pretrained": true,
+    "corruptions_version": 1,
+    "reliability": {
+      "quantile": 0.25,
+      "ramp": 3.0,
+      "window": 16,
+      "order_seed": 0
+    }
+  },
+  "config_hash": "c1d0338e4c90",
+  "metrics": {
+    "image_auroc": 0.8683431952662722,
+    "image_auroc_ci_low": 0.7865939349112426,
+    "image_auroc_ci_high": 0.9371671597633137,
+    "pixel_auroc": 0.9842100552076934,
+    "aupro": 0.939584129930979
+  },
+  "run": {
+    "time": "2026-10-24T12:33:58+00:00",
+    "git": {
+      "commit": "22e253304210a10d7743ad8abe4449efad53e897",
+      "dirty": false
+    },
+    "python": "3.12.15",
+    "platform": "Darwin arm64",
+    "packages": {
+      "factorylens": "0.1.0",
+      "numpy": "2.5.4",
+      "pillow": "13.0.0",
+      "tifffile": "2026.10.15",
+      "torch": "2.14.1",
+      "scikit-learn": "1.9.1"
+    }
+  }
+}

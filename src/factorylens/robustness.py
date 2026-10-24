@@ -185,8 +185,8 @@ def run_category(
             path = Path(scores_dir) / f"{category}_{name}{severity}_s{seed}.npz"
             path.parent.mkdir(parents=True, exist_ok=True)
             arrays: dict[str, Any] = {m: s for m, (s, _) in scored.items()}
-            for name, w in fitted.weights.items():
-                suffix = name.removeprefix("reliable")
+            for fusion, w in fitted.weights.items():
+                suffix = fusion.removeprefix("reliable")
                 arrays |= {
                     f"w_rgb{suffix}": w.rgb,
                     f"w_fpfh{suffix}": w.geo,

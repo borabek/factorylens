@@ -48,6 +48,10 @@ class ReliabilityConfig:
     ramp: float = 3.0  # SDs beyond the worst validation image at which a weight reaches 0
     window: int | None = None  # images; None = every image on its own
     order_seed: int = 0
+    # a second, high quantile: how much of the object is lit up. Catches local
+    # corruptions (an occluder) that leave the background level alone. A large
+    # real defect lifts it too, which is why it is only safe with a window.
+    extent: float | None = None
 
 
 def running_median(values: np.ndarray, window: int, order: np.ndarray) -> np.ndarray:
@@ -111,6 +115,10 @@ class ReliabilityFusion:
         self.ref_rgb = Reference.fit(background_level(rgb_val[1], foreground, q))
         self.ref_geo = Reference.fit(background_level(geo_val[1], foreground, q))
         self.ref_points = Reference.fit(-points.astype(float))  # fewer points = higher
+        if self.config.extent is not None:
+            e = self.config.extent
+            self.ext_rgb = Reference.fit(background_level(rgb_val[1], foreground, e))
+            self.ext_geo = Reference.fit(background_level(geo_val[1], foreground, e))
         return self
 
     def _weight(self, u: np.ndarray) -> np.ndarray:
@@ -127,6 +135,14 @@ class ReliabilityFusion:
             self.ref_geo.z(background_level(geo[1], foreground, q)) - self.ref_geo.worst,
             self.ref_points.z(-points.astype(float)) - self.ref_points.worst,
         )
+        if self.config.extent is not None:
+            e = self.config.extent
+            u_rgb = np.maximum(
+                u_rgb, self.ext_rgb.z(background_level(rgb[1], foreground, e)) - self.ext_rgb.worst
+            )
+            u_geo = np.maximum(
+                u_geo, self.ext_geo.z(background_level(geo[1], foreground, e)) - self.ext_geo.worst
+            )
         if self.config.window:
             order = np.random.default_rng(self.config.order_seed).permutation(len(u_rgb))
             u_rgb = running_median(u_rgb, self.config.window, order)

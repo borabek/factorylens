@@ -42,8 +42,9 @@ from factorylens.sweep import (
 )
 
 CLEAN = ("clean", 0)
-ALL_MODELS = (*MODELS, "reliable", "reliable_window")
+ALL_MODELS = (*MODELS, "reliable", "reliable_window", "reliable_extent")
 WINDOW = 16  # parts over which reliable_window judges a sensor
+EXTENT = 0.9  # high quantile for reliable_extent
 
 
 def all_conditions() -> list[tuple[str, int]]:
@@ -93,6 +94,7 @@ class Fitted:
             for name, cfg in [
                 ("reliable", reliability),
                 ("reliable_window", replace(reliability, window=WINDOW)),
+                ("reliable_extent", replace(reliability, window=WINDOW, extent=EXTENT)),
             ]
         }
         self.weights: dict[str, Weights] = {}  # of the last call to score()
@@ -176,6 +178,8 @@ def run_category(
                 cfg["reliability"] = asdict(reliability)
             if model == "reliable_window":
                 cfg["reliability"] = asdict(replace(reliability, window=WINDOW))
+            if model == "reliable_extent":
+                cfg["reliability"] = asdict(replace(reliability, window=WINDOW, extent=EXTENT))
             scores, maps = scored[model]
             result = evaluate(test.is_anomalous, scores, test.mask, maps)
             path = Path(results_dir) / model / f"{run_name(category, name, severity, cfg)}.json"

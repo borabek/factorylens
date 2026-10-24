@@ -788,6 +788,115 @@ def robustness_section() -> list[str]:
     ]
 
 
+def stream_section() -> list[str]:
+    path = Path("results/analysis/fault_stream.csv")
+    if not path.exists():
+        return []
+    t = pd.read_csv(path)
+    global_ = ["gaussian_noise", "defocus_blur", "jpeg", "depth_noise", "quantise"]
+    g = (
+        t[t["corruption"].isin(global_)]
+        .groupby("fusion")
+        .agg(
+            after=("auroc_after", "mean"),
+            before=("auroc_before", "mean"),
+            delay=("delay", "median"),
+            false=("false_switch", "mean"),
+        )
+    )
+    order = ["late", *[f"window {w}" for w in (1, 4, 8, 16, 32)]]
+    g = g.loc[order]
+    shown = pd.DataFrame(
+        {
+            "AUROC before the fault": g["before"].map(lambda v: f"{v:.3f}"),
+            "AUROC after": g["after"].map(lambda v: f"{v:.3f}"),
+            "parts to notice (median)": g["delay"].map(lambda v: "" if pd.isna(v) else f"{v:.0f}"),
+            "false switch-offs per stream": g["false"].map(lambda v: f"{v:.2f}"),
+        }
+    )
+    shown.index = ["late fusion", "per part (window 1)", *[f"window {w}" for w in (4, 8, 16, 32)]]
+    return [
+        "## A sensor that fails mid-run",
+        "",
+        "The benchmark above corrupts a whole test set at once. `scripts/fault_stream.py` "
+        "replays each category's test parts in a random order: clean for the first half, "
+        "then the same parts from a corrupted run (severity 3). Five orders per category, "
+        "averaged over the five global corruptions (noise, blur, JPEG, depth noise, "
+        "quantisation). Reliability fusion with a 3-SD ramp; only the window changes.",
+        "",
+        shown.to_markdown(disable_numparse=True),
+        "",
+        "![AUROC after the fault per window, and delay vs false switch-offs]"
+        "(figures/fault_stream.png)",
+        "",
+        "- The window trades reaction time for calm. With 16 parts, the setting used in "
+        "the benchmark, a broken sensor is noticed after 7 parts, and the parts in between "
+        f"pull the AUROC after the fault down to {g.loc['window 16', 'after']:.3f}. "
+        f"With 4 parts it takes 1 part ({g.loc['window 4', 'after']:.3f}), at the cost of "
+        f"{g.loc['window 4', 'false']:.1f} false switch-offs per stream of about 55 clean "
+        "parts. Judging every part alone reacts at once but switches a healthy sensor off "
+        f"{g.loc['window 1', 'false']:.1f} times per stream.",
+        "- None of the false switch-offs costs anything measurable before the fault "
+        f"(AUROC {g['before'].min():.3f}-{g['before'].max():.3f}).",
+        "- So the right window depends on how long faults last compared with how fast they "
+        "must be caught. 16 was fixed before any run and is kept in the main table; 4-8 "
+        "parts is the better choice when faults start in the middle of a run.",
+        "",
+    ]
+
+
+def modality_section() -> list[str]:
+    path = Path("results/analysis/modality_importance.csv")
+    if not path.exists():
+        return []
+    t = pd.read_csv(path)
+    by = t.groupby("defect").agg(
+        types=("category", "size"),
+        images=("n", "sum"),
+        rgb=("rgb_importance", "mean"),
+        fpfh=("fpfh_importance", "mean"),
+    )
+    by = by.sort_values("images", ascending=False)
+    shown = by.assign(
+        rgb=by["rgb"].map(lambda v: f"{v:+.3f}"), fpfh=by["fpfh"].map(lambda v: f"{v:+.3f}")
+    ).rename(
+        columns={
+            "types": "categories",
+            "images": "defective images",
+            "rgb": "lost without RGB",
+            "fpfh": "lost without 3D",
+        }
+    )
+    needs = t["needs"].value_counts()
+    best = t[["rgb_only", "fpfh_only"]].max(axis=1)
+    worse = int((t["late"] < best - 0.02).sum())
+    return [
+        "## Which sensor each defect type needs",
+        "",
+        "`scripts/modality_importance.py` drops one sensor's term from late fusion (full "
+        "training set) and measures the image AUROC each defect type loses, against all "
+        "normal test images of its category. Averaged here over the categories that have "
+        "the defect type:",
+        "",
+        shown.to_markdown(disable_numparse=True),
+        "",
+        "![AUROC lost without RGB vs without 3D, per defect type](figures/modality_importance.png)",
+        "",
+        f"- Of {len(t)} category/defect types, {needs.get('both', 0)} need both sensors "
+        f"(each adds at least 0.02), {needs.get('RGB', 0)} lean on RGB and "
+        f"{needs.get('3D', 0)} on 3D.",
+        f"- Colour defects are all RGB: they lose {by.loc['color', 'rgb']:.2f} without it and "
+        "nothing without 3D. Holes and cuts lean on 3D, as expected. Contamination does too, "
+        "which I did not expect: on average it loses more without 3D than without RGB. "
+        "Probably the material sitting on the surface changes its shape as well; I have not "
+        "checked that sample by sample.",
+        f"- On {worse} types the fusion is more than 0.02 below the better sensor alone, "
+        "where the other sensor only adds noise (tire contamination, potato holes). "
+        "That is the same problem as a corrupted sensor, inside clean data.",
+        "",
+    ]
+
+
 def main() -> None:
     lines = [
         "# Results",
@@ -802,6 +911,8 @@ def main() -> None:
         *balance_section(),
         *sweep_section(),
         *robustness_section(),
+        *stream_section(),
+        *modality_section(),
         *layer_section(),
         *checks_section(),
     ]

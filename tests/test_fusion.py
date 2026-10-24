@@ -116,3 +116,16 @@ def test_a_window_treats_a_partly_detected_corruption_consistently():
     windowed = fitted(config).fuse(scored(rgb), scored(VAL_GEO), fg(30), POINTS)[1]
     assert 0.6 < (per_image.rgb == 0).mean() < 0.7
     assert (windowed.rgb == 0).mean() > 0.9
+
+
+def test_extent_catches_a_large_local_corruption():
+    # an occluder: a seventh of the object lit up, the rest untouched
+    rgb = VAL_RGB.copy()
+    rgb[:, 8:14, 8:14] += 3.0
+    plain = fitted().fuse(scored(rgb), scored(VAL_GEO), fg(30), POINTS)[1]
+    extent = fitted(ReliabilityConfig(extent=0.9)).fuse(
+        scored(rgb), scored(VAL_GEO), fg(30), POINTS
+    )[1]
+    assert (plain.rgb > 0.9).all()  # the background level barely moves
+    assert (extent.rgb == 0).all()
+    assert (extent.geo == 1).all()

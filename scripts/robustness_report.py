@@ -27,9 +27,23 @@ from scipy.stats import wilcoxon  # noqa: E402
 
 from factorylens import corruptions, experiments  # noqa: E402
 
-MODELS = ("rgb", "fpfh", "early", "late")
-NAMES = {"rgb": "RGB", "fpfh": "3D (FPFH)", "early": "early fusion", "late": "late fusion"}
-COLORS = {"rgb": "#2a78d6", "fpfh": "#eb6834", "early": "#1baf7a", "late": "#7a5bd6"}
+MODELS = ("rgb", "fpfh", "early", "late", "reliable", "reliable_window")
+NAMES = {
+    "rgb": "RGB",
+    "fpfh": "3D (FPFH)",
+    "early": "early fusion",
+    "late": "late fusion",
+    "reliable": "reliability, per image",
+    "reliable_window": "reliability, 16-part window",
+}
+COLORS = {
+    "rgb": "#2a78d6",
+    "fpfh": "#eb6834",
+    "early": "#1baf7a",
+    "late": "#7a5bd6",
+    "reliable": "#e3a008",
+    "reliable_window": "#0b0b0b",
+}
 SURFACE, INK, INK_2, MUTED = "#fcfcfb", "#0b0b0b", "#52514e", "#898781"
 
 
@@ -86,6 +100,10 @@ def tests(runs: pd.DataFrame) -> pd.DataFrame:
             ("late", "early"): per_cat["late"] - per_cat["early"],
             ("late", "healthy sensor"): per_cat["late"] - healthy,
             ("early", "healthy sensor"): per_cat["early"] - healthy,
+            ("reliable", "late"): per_cat["reliable"] - per_cat["late"],
+            ("reliable_window", "late"): per_cat["reliable_window"] - per_cat["late"],
+            ("reliable_window", "reliable"): per_cat["reliable_window"] - per_cat["reliable"],
+            ("reliable_window", "healthy sensor"): per_cat["reliable_window"] - healthy,
         }
         for (a, b), diff in pairs.items():
             # a dead sensor makes late fusion equal the healthy one exactly
@@ -118,7 +136,7 @@ def figure(table: pd.DataFrame, n_categories: int, out: Path) -> None:
                 part = table[(table["detector"] == model) & table["corruption"].isin(missing)]
                 part = part.set_index("corruption").loc[missing]
                 # side by side: late fusion often lands exactly on the healthy sensor
-                dx = (MODELS.index(model) - 1.5) * 0.12
+                dx = (MODELS.index(model) - (len(MODELS) - 1) / 2) * 0.08
                 ax.plot([0 + dx, 1 + dx], part["image_auroc"], "o", color=COLORS[model], ms=5)
                 ax.set_xticks(range(2), ["no RGB", "no 3D"])
                 ax.set_xlim(-0.5, 1.5)
@@ -149,11 +167,16 @@ def figure(table: pd.DataFrame, n_categories: int, out: Path) -> None:
         ax.set_visible(False)
     handles = [plt.Line2D([], [], color=COLORS[m], lw=1.6) for m in MODELS]
     fig.legend(
-        handles, [NAMES[m] for m in MODELS], ncol=4, frameon=False, fontsize=8.5, loc="lower center"
+        handles,
+        [NAMES[m] for m in MODELS],
+        ncol=len(MODELS),
+        frameon=False,
+        fontsize=8,
+        loc="lower center",
     )
     fig.supylabel(f"image AUROC, mean of {n_categories} categories", fontsize=8.5, color=INK_2)
-    fig.supxlabel("severity (dotted: clean score)", fontsize=8.5, color=INK_2, y=0.07)
-    fig.tight_layout(rect=(0, 0.07, 1, 1))
+    fig.supxlabel("severity (dotted: clean score)", fontsize=8.5, color=INK_2, y=0.065)
+    fig.tight_layout(rect=(0, 0.08, 1, 1))
     fig.savefig(out, dpi=150, facecolor=SURFACE)
     plt.close(fig)
 

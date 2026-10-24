@@ -2,36 +2,84 @@ corruption,sensor,model,versus,mean_diff,categories_better,categories_worse,wilc
 gaussian_noise,rgb,late,early,0.016,6,4,0.5566
 gaussian_noise,rgb,late,healthy sensor,-0.0178,2,8,0.2324
 gaussian_noise,rgb,early,healthy sensor,-0.0338,4,6,0.2754
+gaussian_noise,rgb,reliable,late,0.0178,8,2,0.2324
+gaussian_noise,rgb,reliable_window,late,0.0178,8,2,0.2324
+gaussian_noise,rgb,reliable_window,reliable,0.0,0,0,1.0
+gaussian_noise,rgb,reliable_window,healthy sensor,0.0,1,1,1.0
 defocus_blur,rgb,late,early,0.0073,6,4,0.8457
 defocus_blur,rgb,late,healthy sensor,-0.0292,1,9,0.0488
 defocus_blur,rgb,early,healthy sensor,-0.0365,3,7,0.1934
+defocus_blur,rgb,reliable,late,0.0296,9,1,0.0488
+defocus_blur,rgb,reliable_window,late,0.0292,9,1,0.0488
+defocus_blur,rgb,reliable_window,reliable,-0.0004,0,2,0.5
+defocus_blur,rgb,reliable_window,healthy sensor,0.0,1,1,1.0
 brightness,rgb,late,early,-0.0335,2,8,0.1055
 brightness,rgb,late,healthy sensor,0.0195,7,3,0.2754
 brightness,rgb,early,healthy sensor,0.053,8,2,0.1309
+brightness,rgb,reliable,late,-0.0031,3,7,0.625
+brightness,rgb,reliable_window,late,-0.0025,3,7,0.625
+brightness,rgb,reliable_window,reliable,0.0006,6,4,0.8457
+brightness,rgb,reliable_window,healthy sensor,0.017,7,2,0.0703
 jpeg,rgb,late,early,0.0254,6,4,0.3223
 jpeg,rgb,late,healthy sensor,-0.0836,2,8,0.0137
 jpeg,rgb,early,healthy sensor,-0.1089,2,8,0.0273
+jpeg,rgb,reliable,late,0.0828,7,3,0.0273
+jpeg,rgb,reliable_window,late,0.0836,8,2,0.0137
+jpeg,rgb,reliable_window,reliable,0.0008,2,0,0.5
+jpeg,rgb,reliable_window,healthy sensor,0.0,1,1,1.0
 occlusion,rgb,late,early,0.1532,9,1,0.0059
 occlusion,rgb,late,healthy sensor,-0.0672,0,10,0.002
 occlusion,rgb,early,healthy sensor,-0.2204,0,10,0.002
+occlusion,rgb,reliable,late,-0.0905,1,9,0.0059
+occlusion,rgb,reliable_window,late,0.019,7,3,0.2324
+occlusion,rgb,reliable_window,reliable,0.1096,9,1,0.0039
+occlusion,rgb,reliable_window,healthy sensor,-0.0481,1,9,0.0039
 rgb_missing,rgb,late,early,0.1547,9,1,0.0059
 rgb_missing,rgb,late,healthy sensor,0.0,0,0,1.0
 rgb_missing,rgb,early,healthy sensor,-0.1547,1,9,0.0059
+rgb_missing,rgb,reliable,late,0.0,0,0,1.0
+rgb_missing,rgb,reliable_window,late,0.0,0,0,1.0
+rgb_missing,rgb,reliable_window,reliable,0.0,0,0,1.0
+rgb_missing,rgb,reliable_window,healthy sensor,0.0,0,0,1.0
 depth_noise,xyz,late,early,0.1658,9,1,0.0059
 depth_noise,xyz,late,healthy sensor,-0.0053,3,7,0.1934
 depth_noise,xyz,early,healthy sensor,-0.1711,1,9,0.0195
+depth_noise,xyz,reliable,late,0.0017,7,3,0.1934
+depth_noise,xyz,reliable_window,late,0.0019,7,3,0.1934
+depth_noise,xyz,reliable_window,reliable,0.0002,1,2,1.0
+depth_noise,xyz,reliable_window,healthy sensor,-0.0034,2,1,1.0
 holes,xyz,late,early,0.2623,10,0,0.002
 holes,xyz,late,healthy sensor,0.0336,6,4,0.4316
 holes,xyz,early,healthy sensor,-0.2287,1,9,0.0059
+holes,xyz,reliable,late,-0.0086,4,6,0.625
+holes,xyz,reliable_window,late,-0.0012,5,5,0.9219
+holes,xyz,reliable_window,reliable,0.0074,9,0,0.0039
+holes,xyz,reliable_window,healthy sensor,0.0323,6,2,0.0781
 quantise,xyz,late,early,0.127,7,3,0.084
 quantise,xyz,late,healthy sensor,-0.0067,4,6,0.625
 quantise,xyz,early,healthy sensor,-0.1336,2,8,0.0645
+quantise,xyz,reliable,late,0.0039,6,4,0.4922
+quantise,xyz,reliable_window,late,0.0064,6,4,0.4316
+quantise,xyz,reliable_window,reliable,0.0025,2,3,0.8125
+quantise,xyz,reliable_window,healthy sensor,-0.0003,5,2,0.5469
 tilt,xyz,late,early,-0.0291,0,10,0.002
 tilt,xyz,late,healthy sensor,0.0765,8,2,0.0645
 tilt,xyz,early,healthy sensor,0.1057,8,2,0.0137
+tilt,xyz,reliable,late,-0.0005,5,5,0.7695
+tilt,xyz,reliable_window,late,0.0001,4,1,0.4375
+tilt,xyz,reliable_window,reliable,0.0006,6,4,0.5566
+tilt,xyz,reliable_window,healthy sensor,0.0767,8,2,0.0645
 misregister,xyz,late,early,-0.0128,3,7,0.1602
 misregister,xyz,late,healthy sensor,0.0872,8,2,0.0371
 misregister,xyz,early,healthy sensor,0.1001,8,2,0.0273
+misregister,xyz,reliable,late,-0.0013,3,6,0.3008
+misregister,xyz,reliable_window,late,-0.0002,2,2,0.625
+misregister,xyz,reliable_window,reliable,0.0011,6,3,0.25
+misregister,xyz,reliable_window,healthy sensor,0.087,8,2,0.0371
 xyz_missing,xyz,late,early,0.3338,10,0,0.002
 xyz_missing,xyz,late,healthy sensor,0.0,0,0,1.0
 xyz_missing,xyz,early,healthy sensor,-0.3338,0,10,0.002
+xyz_missing,xyz,reliable,late,0.0,0,0,1.0
+xyz_missing,xyz,reliable_window,late,0.0,0,0,1.0
+xyz_missing,xyz,reliable_window,reliable,0.0,0,0,1.0
+xyz_missing,xyz,reliable_window,healthy sensor,0.0,0,0,1.0

@@ -222,7 +222,9 @@ def run_robustness(args: argparse.Namespace) -> int:
             args.cache,
             category,
             conditions=conditions,
+            models=tuple(args.model or robustness.ALL_MODELS),
             seed=args.seed,
+            scores_dir=args.scores,
             results_dir=args.results,
             feature_cache=args.features,
             device=args.device,
@@ -347,6 +349,8 @@ def build_parser() -> argparse.ArgumentParser:
     rb.add_argument("--features", default=DEFAULT_FEATURES)
     rb.add_argument("--category", action="append", choices=mvtec3d.CATEGORIES)
     rb.add_argument("--corruption", action="append", choices=list(corruptions.CORRUPTIONS))
+    rb.add_argument("--model", action="append", choices=list(robustness.ALL_MODELS))
+    rb.add_argument("--scores", default="outputs/scores/robustness")
     rb.add_argument("--seed", type=int, default=0)
     rb.add_argument("--results", default="results/robustness")
     rb.add_argument("--device")

@@ -92,8 +92,10 @@ def control(root: str, cache_dir: str, features: str, device: str | None) -> pd.
             rgb = rgb_model.embed(equalise(p, target).rgb)
             feats[s] = SplitFeatures(rgb, geo.to(rgb.device), p.stem)
         test = splits["test"]
-        fitted = Fitted(feats["train"], feats["validation"], config, test.rgb.shape[1:3])
-        scored = fitted.score(feats["test"].rgb, feats["test"].geo)
+        fitted = Fitted(
+            feats["train"], feats["validation"], splits["validation"], config, test.rgb.shape[1:3]
+        )
+        scored = fitted.score(feats["test"].rgb, feats["test"].geo, test)
         y = test.is_anomalous
         for model in MODELS:
             rows.append(

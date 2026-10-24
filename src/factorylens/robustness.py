@@ -8,11 +8,13 @@ half is recomputed.
 
 Image scores of every model are kept for every condition, together with the
 validation statistics late fusion uses, so a new fusion rule can be tried on
-them later without touching the features again.
+them later without touching the features again. For the reliability-aware
+fusion (`factorylens.fusion`) the per-image sensor weights are kept as well.
 """
 
 from __future__ import annotations
 
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -21,7 +23,10 @@ import torch
 
 from factorylens import corruptions
 from factorylens.data import cache
+from factorylens.data.cache import Prepared
+from factorylens.data.mvtec3d import valid_points
 from factorylens.experiments import evaluate
+from factorylens.fusion import ReliabilityConfig, ReliabilityFusion, Weights
 from factorylens.models import fpfh
 from factorylens.models.detectors import spread
 from factorylens.models.memory_bank import MemoryBank
@@ -37,6 +42,7 @@ from factorylens.sweep import (
 )
 
 CLEAN = ("clean", 0)
+ALL_MODELS = (*MODELS, "reliable")
 
 
 def all_conditions() -> list[tuple[str, int]]:
@@ -49,27 +55,49 @@ def run_name(category: str, name: str, severity: int, config: dict[str, Any]) ->
     return f"{category}_{name}{severity}_{config_hash(config)}"
 
 
+def points(p: Prepared) -> np.ndarray:
+    return np.asarray(valid_points(p.xyz).sum(axis=(1, 2)))
+
+
 class Fitted:
     """Banks for every model, fitted once on the clean training features."""
 
     def __init__(
-        self, train: SplitFeatures, val: SplitFeatures, config: SweepConfig, size: tuple[int, int]
+        self,
+        train: SplitFeatures,
+        val: SplitFeatures,
+        val_split: Prepared,
+        config: SweepConfig,
+        size: tuple[int, int],
+        early: bool = True,
+        reliability: ReliabilityConfig | None = None,
     ):
         bank = config.rgb.bank_config()
         self.size = size
         self.weight = spread(train.rgb) / spread(train.geo)
         self.rgb = MemoryBank(bank).fit(train.rgb)
         self.geo = MemoryBank(bank).fit(train.geo)
-        self.early = MemoryBank(bank).fit(torch.cat([train.rgb, train.geo * self.weight], -1))
+        self.early = (
+            MemoryBank(bank).fit(torch.cat([train.rgb, train.geo * self.weight], -1))
+            if early
+            else None
+        )
         self.rgb_val = self.rgb.score(val.rgb, size)
         self.geo_val = self.geo.score(val.geo, size)
+        self.reliable = ReliabilityFusion(reliability).fit(
+            self.rgb_val, self.geo_val, val_split.foreground, points(val_split)
+        )
+        self.weights: Weights | None = None  # of the last call to score()
 
-    def score(self, rgb: torch.Tensor, geo: torch.Tensor) -> dict[str, Scored]:
+    def score(self, rgb: torch.Tensor, geo: torch.Tensor, test: Prepared) -> dict[str, Scored]:
         r = self.rgb.score(rgb, self.size)
         g = self.geo.score(geo, self.size)
-        e = self.early.score(torch.cat([rgb, geo * self.weight], -1), self.size)
         zr, zg = standardise(r, self.rgb_val), standardise(g, self.geo_val)
-        return {"rgb": r, "fpfh": g, "early": e, "late": (zr[0] + zg[0], zr[1] + zg[1])}
+        out = {"rgb": r, "fpfh": g, "late": (zr[0] + zg[0], zr[1] + zg[1])}
+        if self.early is not None:
+            out["early"] = self.early.score(torch.cat([rgb, geo * self.weight], -1), self.size)
+        out["reliable"], self.weights = self.reliable.fuse(r, g, test.foreground, points(test))
+        return out
 
 
 def run_category(
@@ -77,7 +105,9 @@ def run_category(
     cache_dir: str | Path,
     category: str,
     conditions: list[tuple[str, int]] | None = None,
+    models: tuple[str, ...] = ALL_MODELS,
     config: SweepConfig | None = None,
+    reliability: ReliabilityConfig | None = None,
     seed: int = 0,
     results_dir: str | Path = "results/robustness",
     scores_dir: str | Path | None = "outputs/scores/robustness",
@@ -96,21 +126,28 @@ def run_category(
     rgb_model = PatchCore(config.rgb, device=device, pretrained=pretrained)
     feats = {s: split_features(p, rgb_model, config.fpfh, feature_cache) for s, p in splits.items()}
     test = splits["test"]
+    reliability = reliability or ReliabilityConfig()
     fitted = Fitted(
-        feats["train"], feats["validation"], config, (test.rgb.shape[1], test.rgb.shape[2])
+        feats["train"],
+        feats["validation"],
+        splits["validation"],
+        config,
+        (test.rgb.shape[1], test.rgb.shape[2]),
+        early="early" in models,
+        reliability=reliability,
     )
 
     out = []
     for name, severity in conditions:
-        rgb, geo = feats["test"].rgb, feats["test"].geo
+        rgb, geo, shown = feats["test"].rgb, feats["test"].geo, test
         if name != "clean":
-            bad = corruptions.corrupt(test, name, severity, seed)
+            shown = corruptions.corrupt(test, name, severity, seed)
             if corruptions.CORRUPTIONS[name].sensor == "rgb":
-                rgb = rgb_model.embed(bad.rgb)
+                rgb = rgb_model.embed(shown.rgb)
             else:
-                geo = fpfh.patches_for(bad, config.fpfh, feature_cache).to(rgb.device)
-        scored = fitted.score(rgb, geo)
-        for model in MODELS:
+                geo = fpfh.patches_for(shown, config.fpfh, feature_cache).to(rgb.device)
+        scored = fitted.score(rgb, geo, shown)
+        for model in models:
             cfg = {
                 "model": f"robust_{model}",
                 "category": category,
@@ -126,6 +163,8 @@ def run_category(
             }
             if model == "early":
                 cfg["fpfh_weight_fitted"] = fitted.weight
+            if model == "reliable":
+                cfg["reliability"] = asdict(reliability)
             scores, maps = scored[model]
             result = evaluate(test.is_anomalous, scores, test.mask, maps)
             path = Path(results_dir) / model / f"{run_name(category, name, severity, cfg)}.json"
@@ -135,7 +174,12 @@ def run_category(
             path = Path(scores_dir) / f"{category}_{name}{severity}_s{seed}.npz"
             path.parent.mkdir(parents=True, exist_ok=True)
             arrays: dict[str, Any] = {m: s for m, (s, _) in scored.items()}
+            assert fitted.weights is not None
             arrays |= {
+                "w_rgb": fitted.weights.rgb,
+                "w_fpfh": fitted.weights.geo,
+                "u_rgb": fitted.weights.u_rgb,
+                "u_fpfh": fitted.weights.u_geo,
                 "rgb_val": fitted.rgb_val[0],
                 "fpfh_val": fitted.geo_val[0],
                 "labels": test.is_anomalous,
@@ -143,8 +187,8 @@ def run_category(
                 "stem": np.array(test.stem),
             }
             np.savez_compressed(path, **arrays)
-        row = {r["model"]: r["image_auroc"] for r in out[-len(MODELS) :]}
+        row = {r["model"]: r["image_auroc"] for r in out[-len(models) :]}
         log(
-            f"{category:12s} {name:15s} {severity} " + " ".join(f"{m} {row[m]:.3f}" for m in MODELS)
+            f"{category:12s} {name:15s} {severity} " + " ".join(f"{m} {row[m]:.3f}" for m in models)
         )
     return out

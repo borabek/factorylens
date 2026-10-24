@@ -233,6 +233,47 @@ Every model is fitted on clean training data; only the test set is corrupted, on
 - The clean row reproduces the sweep's full-data runs to four decimals (0.9095, 0.8759), through a separate code path.
 - Tilt barely changes FPFH, as expected for a rotation-invariant descriptor, and a shift of up to 8 px is at most one 8 px patch of the 28x28 feature grid, so misregistration costs little at this resolution.
 
+## A sensor that fails mid-run
+
+The benchmark above corrupts a whole test set at once. `scripts/fault_stream.py` replays each category's test parts in a random order: clean for the first half, then the same parts from a corrupted run (severity 3). Five orders per category, averaged over the five global corruptions (noise, blur, JPEG, depth noise, quantisation). Reliability fusion with a 3-SD ramp; only the window changes.
+
+|                     | AUROC before the fault   | AUROC after   | parts to notice (median)   | false switch-offs per stream   |
+|:--------------------|:-------------------------|:--------------|:---------------------------|:-------------------------------|
+| late fusion         | 0.874                    | 0.751         |                            | 0.00                           |
+| per part (window 1) | 0.874                    | 0.797         | 0                          | 3.78                           |
+| window 4            | 0.873                    | 0.792         | 1                          | 0.80                           |
+| window 8            | 0.874                    | 0.775         | 3                          | 0.18                           |
+| window 16           | 0.874                    | 0.759         | 7                          | 0.10                           |
+| window 32           | 0.874                    | 0.728         | 15                         | 0.10                           |
+
+![AUROC after the fault per window, and delay vs false switch-offs](figures/fault_stream.png)
+
+- The window trades reaction time for calm. With 16 parts, the setting used in the benchmark, a broken sensor is noticed after 7 parts, and the parts in between pull the AUROC after the fault down to 0.759. With 4 parts it takes 1 part (0.792), at the cost of 0.8 false switch-offs per stream of about 55 clean parts. Judging every part alone reacts at once but switches a healthy sensor off 3.8 times per stream.
+- None of the false switch-offs costs anything measurable before the fault (AUROC 0.873-0.874).
+- So the right window depends on how long faults last compared with how fast they must be caught. 16 was fixed before any run and is kept in the main table; 4-8 parts is the better choice when faults start in the middle of a run.
+
+## Which sensor each defect type needs
+
+`scripts/modality_importance.py` drops one sensor's term from late fusion (full training set) and measures the image AUROC each defect type loses, against all normal test images of its category. Averaged here over the categories that have the defect type:
+
+| defect        | categories   | defective images   | lost without RGB   | lost without 3D   |
+|:--------------|:-------------|:-------------------|:-------------------|:------------------|
+| contamination | 9            | 223                | +0.053             | +0.079            |
+| cut           | 8            | 195                | +0.083             | +0.108            |
+| combined      | 8            | 174                | +0.056             | +0.091            |
+| hole          | 7            | 174                | +0.062             | +0.116            |
+| crack         | 3            | 75                 | +0.068             | +0.026            |
+| bent          | 2            | 48                 | +0.123             | +0.010            |
+| thread        | 1            | 22                 | +0.273             | -0.045            |
+| color         | 1            | 20                 | +0.517             | -0.003            |
+| open          | 1            | 17                 | +0.007             | +0.000            |
+
+![AUROC lost without RGB vs without 3D, per defect type](figures/modality_importance.png)
+
+- Of 40 category/defect types, 8 need both sensors (each adds at least 0.02), 15 lean on RGB and 14 on 3D.
+- Colour defects are all RGB: they lose 0.52 without it and nothing without 3D. Holes and cuts lean on 3D, as expected. Contamination does too, which I did not expect: on average it loses more without 3D than without RGB. Probably the material sitting on the surface changes its shape as well; I have not checked that sample by sample.
+- On 11 types the fusion is more than 0.02 below the better sensor alone, where the other sensor only adds noise (tire contamination, potato holes). That is the same problem as a corrupted sensor, inside clean data.
+
 ## Which backbone layers (RGB)
 
 Same detector, every layer combination on the same 28x28 patch grid (`scripts/run_layer_ablation.py`), full training set.

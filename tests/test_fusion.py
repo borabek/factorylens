@@ -1,7 +1,12 @@
 import numpy as np
 from scipy.stats import rankdata
 
-from factorylens.fusion import ReliabilityConfig, ReliabilityFusion, background_level
+from factorylens.fusion import (
+    ReliabilityConfig,
+    ReliabilityFusion,
+    background_level,
+    running_median,
+)
 
 RNG = np.random.default_rng(0)
 SIZE = 16
@@ -83,9 +88,7 @@ def test_both_sensors_off_falls_back_to_both():
 
 def test_weight_ramps_down_over_the_configured_width():
     f = fitted(ReliabilityConfig(ramp=2.0))
-    worst = f.ref_rgb.worst
-    u = np.array([worst - 1, worst, worst + 1, worst + 2, worst + 5])
-    np.testing.assert_allclose(f._weight(u, worst), [1, 1, 0.5, 0, 0], atol=1e-12)
+    np.testing.assert_allclose(f._weight(np.array([-1, 0, 1, 2, 5])), [1, 1, 0.5, 0, 0], atol=1e-12)
 
 
 def test_objects_without_foreground_use_the_whole_map():
@@ -93,3 +96,23 @@ def test_objects_without_foreground_use_the_whole_map():
     np.testing.assert_allclose(
         background_level(m, np.zeros((1, SIZE, SIZE), bool), 0.25), [np.quantile(m[0], 0.25)]
     )
+
+
+def test_running_median_only_looks_back():
+    values = np.array([0.0, 10.0, 0.0, 10.0, 10.0])
+    out = running_median(values, 3, np.arange(5))
+    np.testing.assert_allclose(out, [0, 5, 0, 10, 10])
+    # in another order each image still sees only what came before it
+    order = np.array([4, 3, 2, 1, 0])
+    np.testing.assert_allclose(running_median(values, 2, order)[[4, 3]], [10, 10])
+
+
+def test_a_window_treats_a_partly_detected_corruption_consistently():
+    # a local corruption that pushes two images in three over the threshold
+    rgb = VAL_RGB.copy()
+    rgb[np.arange(30) % 3 != 0] += 1.0
+    per_image = fitted().fuse(scored(rgb), scored(VAL_GEO), fg(30), POINTS)[1]
+    config = ReliabilityConfig(window=10)
+    windowed = fitted(config).fuse(scored(rgb), scored(VAL_GEO), fg(30), POINTS)[1]
+    assert 0.6 < (per_image.rgb == 0).mean() < 0.7
+    assert (windowed.rgb == 0).mean() > 0.9

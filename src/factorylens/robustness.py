@@ -14,7 +14,7 @@ fusion (`factorylens.fusion`) the per-image sensor weights are kept as well.
 
 from __future__ import annotations
 
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import Path
 from typing import Any
 
@@ -42,7 +42,8 @@ from factorylens.sweep import (
 )
 
 CLEAN = ("clean", 0)
-ALL_MODELS = (*MODELS, "reliable")
+ALL_MODELS = (*MODELS, "reliable", "reliable_window")
+WINDOW = 16  # parts over which reliable_window judges a sensor
 
 
 def all_conditions() -> list[tuple[str, int]]:
@@ -84,10 +85,17 @@ class Fitted:
         )
         self.rgb_val = self.rgb.score(val.rgb, size)
         self.geo_val = self.geo.score(val.geo, size)
-        self.reliable = ReliabilityFusion(reliability).fit(
-            self.rgb_val, self.geo_val, val_split.foreground, points(val_split)
-        )
-        self.weights: Weights | None = None  # of the last call to score()
+        reliability = reliability or ReliabilityConfig()
+        self.fusions = {
+            name: ReliabilityFusion(cfg).fit(
+                self.rgb_val, self.geo_val, val_split.foreground, points(val_split)
+            )
+            for name, cfg in [
+                ("reliable", reliability),
+                ("reliable_window", replace(reliability, window=WINDOW)),
+            ]
+        }
+        self.weights: dict[str, Weights] = {}  # of the last call to score()
 
     def score(self, rgb: torch.Tensor, geo: torch.Tensor, test: Prepared) -> dict[str, Scored]:
         r = self.rgb.score(rgb, self.size)
@@ -96,7 +104,8 @@ class Fitted:
         out = {"rgb": r, "fpfh": g, "late": (zr[0] + zg[0], zr[1] + zg[1])}
         if self.early is not None:
             out["early"] = self.early.score(torch.cat([rgb, geo * self.weight], -1), self.size)
-        out["reliable"], self.weights = self.reliable.fuse(r, g, test.foreground, points(test))
+        for name, fusion in self.fusions.items():
+            out[name], self.weights[name] = fusion.fuse(r, g, test.foreground, points(test))
         return out
 
 
@@ -165,6 +174,8 @@ def run_category(
                 cfg["fpfh_weight_fitted"] = fitted.weight
             if model == "reliable":
                 cfg["reliability"] = asdict(reliability)
+            if model == "reliable_window":
+                cfg["reliability"] = asdict(replace(reliability, window=WINDOW))
             scores, maps = scored[model]
             result = evaluate(test.is_anomalous, scores, test.mask, maps)
             path = Path(results_dir) / model / f"{run_name(category, name, severity, cfg)}.json"
@@ -174,12 +185,15 @@ def run_category(
             path = Path(scores_dir) / f"{category}_{name}{severity}_s{seed}.npz"
             path.parent.mkdir(parents=True, exist_ok=True)
             arrays: dict[str, Any] = {m: s for m, (s, _) in scored.items()}
-            assert fitted.weights is not None
+            for name, w in fitted.weights.items():
+                suffix = name.removeprefix("reliable")
+                arrays |= {
+                    f"w_rgb{suffix}": w.rgb,
+                    f"w_fpfh{suffix}": w.geo,
+                    f"u_rgb{suffix}": w.u_rgb,
+                    f"u_fpfh{suffix}": w.u_geo,
+                }
             arrays |= {
-                "w_rgb": fitted.weights.rgb,
-                "w_fpfh": fitted.weights.geo,
-                "u_rgb": fitted.weights.u_rgb,
-                "u_fpfh": fitted.weights.u_geo,
                 "rgb_val": fitted.rgb_val[0],
                 "fpfh_val": fitted.geo_val[0],
                 "labels": test.is_anomalous,

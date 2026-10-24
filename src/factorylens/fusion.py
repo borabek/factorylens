@@ -19,6 +19,14 @@ sensor's weight is 1 while its z-score is within what the validation images
 themselves reach, and falls linearly to 0 over `ramp` standard deviations
 beyond that. Nothing is fitted on test data or labels.
 
+With `window` set, a sensor's state is read from the median signal over the
+current image and the previous window-1 images instead of the current image
+alone. A real sensor fault lasts for many parts, and a defect-like local
+corruption (a smudge, an occluder) then switches the sensor off for the whole
+stretch instead of for some images and not others. Test images are processed
+in a fixed random order (`order_seed`), because the dataset groups them by
+defect type and a window over that order would mix the classes.
+
 The two standardised scores are combined with weighted Stouffer:
 (w_r z_r + w_g z_g) / sqrt(w_r^2 + w_g^2). With equal weights this ranks
 images exactly like plain late fusion, so on clean data nothing changes
@@ -38,6 +46,17 @@ Scored = tuple[np.ndarray, np.ndarray]  # image scores (N,), maps (N, H, W)
 class ReliabilityConfig:
     quantile: float = 0.25  # of the anomaly map over the object
     ramp: float = 3.0  # SDs beyond the worst validation image at which a weight reaches 0
+    window: int | None = None  # images; None = every image on its own
+    order_seed: int = 0
+
+
+def running_median(values: np.ndarray, window: int, order: np.ndarray) -> np.ndarray:
+    """Median of each value and the window-1 values before it, visiting them in `order`."""
+    out = np.empty(len(values))
+    seq = values[order]
+    for i in range(len(seq)):
+        out[order[i]] = np.median(seq[max(0, i - window + 1) : i + 1])
+    return out
 
 
 def background_level(maps: np.ndarray, foreground: np.ndarray, quantile: float) -> np.ndarray:
@@ -94,24 +113,29 @@ class ReliabilityFusion:
         self.ref_points = Reference.fit(-points.astype(float))  # fewer points = higher
         return self
 
-    def _weight(self, u: np.ndarray, worst: float) -> np.ndarray:
-        return np.clip(1 - (u - worst) / self.config.ramp, 0.0, 1.0)
+    def _weight(self, u: np.ndarray) -> np.ndarray:
+        """1 up to the worst validation image (u = 0), 0 at `ramp` SDs beyond it."""
+        return np.clip(1 - u / self.config.ramp, 0.0, 1.0)
 
     def weights(
         self, rgb: Scored, geo: Scored, foreground: np.ndarray, points: np.ndarray
     ) -> Weights:
         q = self.config.quantile
-        u_rgb = self.ref_rgb.z(background_level(rgb[1], foreground, q))
-        u_level = self.ref_geo.z(background_level(geo[1], foreground, q))
-        u_points = self.ref_points.z(-points.astype(float))
-        w_rgb = self._weight(u_rgb, self.ref_rgb.worst)
-        w_geo = np.minimum(
-            self._weight(u_level, self.ref_geo.worst), self._weight(u_points, self.ref_points.worst)
+        # how far each image is beyond anything seen on the validation normals
+        u_rgb = self.ref_rgb.z(background_level(rgb[1], foreground, q)) - self.ref_rgb.worst
+        u_geo = np.maximum(
+            self.ref_geo.z(background_level(geo[1], foreground, q)) - self.ref_geo.worst,
+            self.ref_points.z(-points.astype(float)) - self.ref_points.worst,
         )
+        if self.config.window:
+            order = np.random.default_rng(self.config.order_seed).permutation(len(u_rgb))
+            u_rgb = running_median(u_rgb, self.config.window, order)
+            u_geo = running_median(u_geo, self.config.window, order)
+        w_rgb = self._weight(u_rgb)
+        w_geo = self._weight(u_geo)
         both_off = (w_rgb == 0) & (w_geo == 0)
         w_rgb[both_off], w_geo[both_off] = 1.0, 1.0
-        u_geo = np.maximum(u_level - self.ref_geo.worst, u_points - self.ref_points.worst)
-        return Weights(w_rgb, w_geo, u_rgb - self.ref_rgb.worst, u_geo)
+        return Weights(w_rgb, w_geo, u_rgb, u_geo)
 
     def fuse(
         self, rgb: Scored, geo: Scored, foreground: np.ndarray, points: np.ndarray

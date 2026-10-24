@@ -27,7 +27,7 @@ from scipy.stats import wilcoxon  # noqa: E402
 
 from factorylens import corruptions, experiments  # noqa: E402
 
-MODELS = ("rgb", "fpfh", "early", "late", "reliable", "reliable_window")
+MODELS = ("rgb", "fpfh", "early", "late", "reliable", "reliable_window", "reliable_extent")
 NAMES = {
     "rgb": "RGB",
     "fpfh": "3D (FPFH)",
@@ -35,6 +35,7 @@ NAMES = {
     "late": "late fusion",
     "reliable": "reliability, per image",
     "reliable_window": "reliability, 16-part window",
+    "reliable_extent": "reliability, window + extent",
 }
 COLORS = {
     "rgb": "#2a78d6",
@@ -43,6 +44,7 @@ COLORS = {
     "late": "#7a5bd6",
     "reliable": "#e3a008",
     "reliable_window": "#0b0b0b",
+    "reliable_extent": "#d6336c",
 }
 SURFACE, INK, INK_2, MUTED = "#fcfcfb", "#0b0b0b", "#52514e", "#898781"
 
@@ -104,6 +106,9 @@ def tests(runs: pd.DataFrame) -> pd.DataFrame:
             ("reliable_window", "late"): per_cat["reliable_window"] - per_cat["late"],
             ("reliable_window", "reliable"): per_cat["reliable_window"] - per_cat["reliable"],
             ("reliable_window", "healthy sensor"): per_cat["reliable_window"] - healthy,
+            ("reliable_extent", "reliable_window"): per_cat["reliable_extent"]
+            - per_cat["reliable_window"],
+            ("reliable_extent", "healthy sensor"): per_cat["reliable_extent"] - healthy,
         }
         for (a, b), diff in pairs.items():
             # a dead sensor makes late fusion equal the healthy one exactly

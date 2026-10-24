@@ -681,6 +681,12 @@ def robustness_section() -> list[str]:
     sens = pd.read_csv("results/analysis/reliability_sensitivity.csv")
     sens = sens.groupby(["sensor", "ramp", "window"])["auroc"].mean()
     rgb_sens = sens.xs("rgb", level="sensor")
+
+    def ext(corruption: str) -> pd.Series:
+        return summ[(summ["model"] == "reliable_extent") & (summ["corruption"] == corruption)].iloc[
+            0
+        ]
+
     rgb_wide = rgb_sens[rgb_sens.index.get_level_values("window") >= 8]
     by = summ.groupby(["sensor", "model"])["mean"].mean()
     missing = table.loc[[i for i in table.index if "missing" in i]]
@@ -745,6 +751,17 @@ def robustness_section() -> list[str]:
         "of by defect. A real sensor fault lasts for many parts, and a 16-part window gives "
         f"{table.loc['occlusion (RGB)', 'reliability fusion']:.3f}. Occlusion is still the one "
         "corruption it does not handle well, because a local occluder looks like a defect.",
+        "- An occluder lights up a large part of the object without moving its background "
+        "level. A second signal, the 90% quantile of the map over the object (*extent*, "
+        "judged over the same window), catches it: occlusion goes to "
+        f"{ext('occlusion')['mean']:.3f}, the healthy sensor's score, with AUPRO "
+        f"{ext('occlusion')['aupro_mean']:.3f}. With extent, the fusion is not significantly "
+        "below the healthy sensor on any corruption. The price is on clean data: "
+        f"{clean['reliable_extent']:.3f} instead of {clean['reliable_window']:.3f}, because "
+        "the high quantile also reacts to ordinary differences between validation and test "
+        "parts, and it is significantly worse than the window alone on "
+        f"{' and '.join(names_of('reliable_extent', 'reliable_window', -1))}. It is kept as an "
+        "option for lines where occluders are a real risk, not as the default.",
         f"- The settings (3-SD ramp, 16-part window) were fixed before any run. Over ramps "
         f"1-8 and windows of 8 parts or more, the RGB-corrupted mean stays between "
         f"{rgb_wide.min():.3f} and {rgb_wide.max():.3f}; without a window it drops to "

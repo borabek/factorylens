@@ -275,6 +275,33 @@ The benchmark above corrupts a whole test set at once. `scripts/fault_stream.py`
 - Colour defects are all RGB: they lose 0.52 without it and nothing without 3D. Holes and cuts lean on 3D, as expected. Contamination does too, which I did not expect: on average it loses more without 3D than without RGB. Probably the material sitting on the surface changes its shape as well; I have not checked that sample by sample.
 - On 11 types the fusion is more than 0.02 below the better sensor alone, where the other sensor only adds noise (tire contamination, potato holes). That is the same problem as a corrupted sensor, inside clean data.
 
+## Alarm thresholds
+
+A score needs a threshold before it can stop a line. `src/factorylens/conformal.py` sets it split-conformally from the validation normals: alarm above the k-th largest calibration score, k = floor(alpha (n + 1)), which keeps the false alarm rate at most alpha on average if new normal parts are exchangeable with the calibration parts (`scripts/conformal_alarms.py`, all from saved scores). False alarm rate on the normal test parts / share of defective parts caught, mean of 10 categories:
+
+|                    | alpha = 0.05   | alpha = 0.1   | alpha = 0.2   |
+|:-------------------|:---------------|:--------------|:--------------|
+| RGB                | 0.042 / 0.409  | 0.090 / 0.510 | 0.217 / 0.609 |
+| FPFH               | 0.031 / 0.334  | 0.147 / 0.553 | 0.295 / 0.707 |
+| late fusion        | 0.022 / 0.545  | 0.094 / 0.667 | 0.222 / 0.804 |
+| reliability fusion | 0.022 / 0.545  | 0.089 / 0.668 | 0.222 / 0.804 |
+
+![alarm rate vs target; vs calibration size; with one sensor broken](figures/conformal.png)
+
+- On clean data the promise holds on average for RGB and both fusions. FPFH runs over at alpha = 0.1 (0.147, about two standard errors above the target over 10 categories): its normal test parts look less like the validation parts than they should, which is the kind of shift the guarantee does not cover. The fused scores use validation statistics for their z-scores, so for them calibration and test are only approximately exchangeable.
+- With the 29 validation parts a category has, a target of 10% means a false alarm rate anywhere between 3% and 20% for a given calibration set (5-95%, Beta distribution). Cutting the RGB calibration set to 5 parts at alpha = 0.2 gives 0%-45% in practice, 20 parts 5%-32%. Keeping a 5% target within 2 points, 9 times out of 10, takes 32 normal parts.
+
+Thresholds from the clean validation parts, test parts corrupted, alpha = 0.1, all corruptions and severities:
+
+|                      | RGB corrupted   | 3D corrupted   |
+|:---------------------|:----------------|:---------------|
+| late fusion          | 0.939 / 0.981   | 0.416 / 0.763  |
+| reliability fusion   | 0.185 / 0.578   | 0.105 / 0.582  |
+| reliability + extent | 0.127 / 0.542   | 0.118 / 0.566  |
+| healthy sensor       | 0.147 / 0.553   | 0.090 / 0.510  |
+
+- This is where the difference between the fusions shows in a way AUROC does not. With the RGB image corrupted, late fusion raises an alarm on 94% of normal parts: the line stops. Reliability fusion keeps it at 19% (13% with extent) and catches about as many defects as the healthy sensor. With the point cloud corrupted it stays at 10% and catches more than RGB alone (0.582 vs 0.510).
+
 ## Which backbone layers (RGB)
 
 Same detector, every layer combination on the same 28x28 patch grid (`scripts/run_layer_ablation.py`), full training set.

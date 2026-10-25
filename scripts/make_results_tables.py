@@ -914,6 +914,95 @@ def modality_section() -> list[str]:
     ]
 
 
+def conformal_section() -> list[str]:
+    path = Path("results/analysis/conformal_clean.csv")
+    if not path.exists():
+        return []
+    from factorylens import conformal
+
+    clean = pd.read_csv(path)
+    sizes = pd.read_csv("results/analysis/conformal_sizes.csv")
+    bad = pd.read_csv("results/analysis/conformal_broken.csv")
+    names = {
+        "rgb": "RGB",
+        "fpfh": "FPFH",
+        "late": "late fusion",
+        "reliable_window": "reliability fusion",
+        "reliable_extent": "reliability + extent",
+        "healthy sensor": "healthy sensor",
+    }
+    c = clean.groupby(["detector", "alpha"])[["false_alarm", "detection"]].mean()
+    table = pd.DataFrame(
+        {
+            f"alpha = {a}": [
+                f"{c.loc[(m, a), 'false_alarm']:.3f} / {c.loc[(m, a), 'detection']:.3f}"
+                for m in ("rgb", "fpfh", "late", "reliable_window")
+            ]
+            for a in (0.05, 0.1, 0.2)
+        },
+        index=[names[m] for m in ("rgb", "fpfh", "late", "reliable_window")],
+    )
+    b = bad.groupby(["sensor", "detector"])[["false_alarm", "detection"]].mean()
+    broken = pd.DataFrame(
+        {
+            f"{'RGB' if sensor == 'rgb' else '3D'} corrupted": [
+                f"{b.loc[(sensor, m), 'false_alarm']:.3f} / {b.loc[(sensor, m), 'detection']:.3f}"
+                for m in ("late", "reliable_window", "reliable_extent", "healthy sensor")
+            ]
+            for sensor in ("rgb", "xyz")
+        },
+        index=[names[m] for m in ("late", "reliable_window", "reliable_extent", "healthy sensor")],
+    )
+    n_val = int(clean["n"].median())
+    lo, hi = conformal.false_alarm_quantiles(n_val, 0.1, [0.05, 0.95])
+    q = sizes.groupby("n")["false_alarm"].quantile([0.05, 0.95]).unstack()
+    return [
+        "## Alarm thresholds",
+        "",
+        "A score needs a threshold before it can stop a line. `src/factorylens/conformal.py` "
+        "sets it split-conformally from the validation normals: alarm above the k-th largest "
+        "calibration score, k = floor(alpha (n + 1)), which keeps the false alarm rate at "
+        "most alpha on average if new normal parts are exchangeable with the calibration "
+        "parts (`scripts/conformal_alarms.py`, all from saved scores). False alarm rate on "
+        "the normal test parts / share of defective parts caught, mean of 10 categories:",
+        "",
+        table.to_markdown(),
+        "",
+        "![alarm rate vs target; vs calibration size; with one sensor broken]"
+        "(figures/conformal.png)",
+        "",
+        "- On clean data the promise holds on average for RGB and both fusions. FPFH runs "
+        f"over at alpha = 0.1 ({c.loc[('fpfh', 0.1), 'false_alarm']:.3f}, about two standard "
+        "errors above the target over 10 categories): its normal test parts look less like "
+        "the validation parts than they should, which is the kind of shift the guarantee "
+        "does not cover. The fused scores use validation statistics for their z-scores, so "
+        "for them calibration and test are only approximately exchangeable.",
+        f"- With the {n_val} validation parts a category has, a target of 10% means a false "
+        f"alarm rate anywhere between {lo:.0%} and {hi:.0%} for a given calibration set "
+        "(5-95%, Beta distribution). Cutting the RGB calibration set to 5 parts at "
+        f"alpha = 0.2 gives {q.loc[5, 0.05]:.0%}-{q.loc[5, 0.95]:.0%} in practice, 20 parts "
+        f"{q.loc[20, 0.05]:.0%}-{q.loc[20, 0.95]:.0%}. Keeping a 5% target within 2 points, "
+        f"9 times out of 10, takes {conformal.min_calibration(0.05, 0.02)} normal parts.",
+        "",
+        "Thresholds from the clean validation parts, test parts corrupted, alpha = 0.1, "
+        "all corruptions and severities:",
+        "",
+        broken.to_markdown(),
+        "",
+        "- This is where the difference between the fusions shows in a way AUROC does not. "
+        "With the RGB image corrupted, late fusion raises an alarm on "
+        f"{b.loc[('rgb', 'late'), 'false_alarm']:.0%} of normal parts: the line stops. "
+        "Reliability fusion keeps it at "
+        f"{b.loc[('rgb', 'reliable_window'), 'false_alarm']:.0%} "
+        f"({b.loc[('rgb', 'reliable_extent'), 'false_alarm']:.0%} with extent) and catches "
+        "about as many defects as the healthy sensor. With the point cloud corrupted it "
+        f"stays at {b.loc[('xyz', 'reliable_window'), 'false_alarm']:.0%} and catches more "
+        f"than RGB alone ({b.loc[('xyz', 'reliable_window'), 'detection']:.3f} vs "
+        f"{b.loc[('xyz', 'healthy sensor'), 'detection']:.3f}).",
+        "",
+    ]
+
+
 def main() -> None:
     lines = [
         "# Results",
@@ -930,6 +1019,7 @@ def main() -> None:
         *robustness_section(),
         *stream_section(),
         *modality_section(),
+        *conformal_section(),
         *layer_section(),
         *checks_section(),
     ]

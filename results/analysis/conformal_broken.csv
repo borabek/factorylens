@@ -1,0 +1,3121 @@
+category,corruption,severity,sensor,detector,false_alarm,detection
+bagel,brightness,1,rgb,rgb,0.0,0.6136
+bagel,brightness,1,rgb,fpfh,0.0909,0.5
+bagel,brightness,1,rgb,late,0.0909,0.75
+bagel,brightness,1,rgb,reliable_window,0.1364,0.7727
+bagel,brightness,1,rgb,reliable_extent,0.1364,0.7727
+bagel,brightness,1,rgb,healthy sensor,0.0909,0.5
+bagel,brightness,2,rgb,rgb,0.2727,0.7614
+bagel,brightness,2,rgb,fpfh,0.0909,0.5
+bagel,brightness,2,rgb,late,0.1818,0.8523
+bagel,brightness,2,rgb,reliable_window,0.1818,0.7159
+bagel,brightness,2,rgb,reliable_extent,0.1818,0.7159
+bagel,brightness,2,rgb,healthy sensor,0.0909,0.5
+bagel,brightness,3,rgb,rgb,0.7727,0.9545
+bagel,brightness,3,rgb,fpfh,0.0909,0.5
+bagel,brightness,3,rgb,late,0.5909,0.9773
+bagel,brightness,3,rgb,reliable_window,0.1818,0.7159
+bagel,brightness,3,rgb,reliable_extent,0.1818,0.7159
+bagel,brightness,3,rgb,healthy sensor,0.0909,0.5
+bagel,brightness,4,rgb,rgb,1.0,0.9886
+bagel,brightness,4,rgb,fpfh,0.0909,0.5
+bagel,brightness,4,rgb,late,1.0,0.9886
+bagel,brightness,4,rgb,reliable_window,0.1818,0.7159
+bagel,brightness,4,rgb,reliable_extent,0.1818,0.7159
+bagel,brightness,4,rgb,healthy sensor,0.0909,0.5
+bagel,brightness,5,rgb,rgb,1.0,1.0
+bagel,brightness,5,rgb,fpfh,0.0909,0.5
+bagel,brightness,5,rgb,late,1.0,1.0
+bagel,brightness,5,rgb,reliable_window,0.1818,0.7159
+bagel,brightness,5,rgb,reliable_extent,0.1818,0.7159
+bagel,brightness,5,rgb,healthy sensor,0.0909,0.5
+bagel,defocus_blur,1,rgb,rgb,1.0,1.0
+bagel,defocus_blur,1,rgb,fpfh,0.0909,0.5
+bagel,defocus_blur,1,rgb,late,0.9091,0.9886
+bagel,defocus_blur,1,rgb,reliable_window,0.1818,0.7159
+bagel,defocus_blur,1,rgb,reliable_extent,0.1818,0.7159
+bagel,defocus_blur,1,rgb,healthy sensor,0.0909,0.5
+bagel,defocus_blur,2,rgb,rgb,1.0,1.0
+bagel,defocus_blur,2,rgb,fpfh,0.0909,0.5
+bagel,defocus_blur,2,rgb,late,1.0,1.0
+bagel,defocus_blur,2,rgb,reliable_window,0.1818,0.7159
+bagel,defocus_blur,2,rgb,reliable_extent,0.1818,0.7159
+bagel,defocus_blur,2,rgb,healthy sensor,0.0909,0.5
+bagel,defocus_blur,3,rgb,rgb,1.0,1.0
+bagel,defocus_blur,3,rgb,fpfh,0.0909,0.5
+bagel,defocus_blur,3,rgb,late,1.0,1.0
+bagel,defocus_blur,3,rgb,reliable_window,0.1818,0.7159
+bagel,defocus_blur,3,rgb,reliable_extent,0.1818,0.7159
+bagel,defocus_blur,3,rgb,healthy sensor,0.0909,0.5
+bagel,defocus_blur,4,rgb,rgb,1.0,1.0
+bagel,defocus_blur,4,rgb,fpfh,0.0909,0.5
+bagel,defocus_blur,4,rgb,late,1.0,1.0
+bagel,defocus_blur,4,rgb,reliable_window,0.1818,0.7159
+bagel,defocus_blur,4,rgb,reliable_extent,0.1818,0.7159
+bagel,defocus_blur,4,rgb,healthy sensor,0.0909,0.5
+bagel,defocus_blur,5,rgb,rgb,1.0,1.0
+bagel,defocus_blur,5,rgb,fpfh,0.0909,0.5
+bagel,defocus_blur,5,rgb,late,1.0,1.0
+bagel,defocus_blur,5,rgb,reliable_window,0.1818,0.7159
+bagel,defocus_blur,5,rgb,reliable_extent,0.1818,0.7159
+bagel,defocus_blur,5,rgb,healthy sensor,0.0909,0.5
+bagel,depth_noise,1,xyz,rgb,0.0455,0.5
+bagel,depth_noise,1,xyz,fpfh,0.9545,1.0
+bagel,depth_noise,1,xyz,late,0.8182,0.9659
+bagel,depth_noise,1,xyz,reliable_window,0.0,0.4659
+bagel,depth_noise,1,xyz,reliable_extent,0.0,0.4659
+bagel,depth_noise,1,xyz,healthy sensor,0.0455,0.5
+bagel,depth_noise,2,xyz,rgb,0.0455,0.5
+bagel,depth_noise,2,xyz,fpfh,1.0,1.0
+bagel,depth_noise,2,xyz,late,1.0,1.0
+bagel,depth_noise,2,xyz,reliable_window,0.0,0.4659
+bagel,depth_noise,2,xyz,reliable_extent,0.0,0.4659
+bagel,depth_noise,2,xyz,healthy sensor,0.0455,0.5
+bagel,depth_noise,3,xyz,rgb,0.0455,0.5
+bagel,depth_noise,3,xyz,fpfh,1.0,1.0
+bagel,depth_noise,3,xyz,late,1.0,1.0
+bagel,depth_noise,3,xyz,reliable_window,0.0,0.4659
+bagel,depth_noise,3,xyz,reliable_extent,0.0,0.4659
+bagel,depth_noise,3,xyz,healthy sensor,0.0455,0.5
+bagel,depth_noise,4,xyz,rgb,0.0455,0.5
+bagel,depth_noise,4,xyz,fpfh,1.0,1.0
+bagel,depth_noise,4,xyz,late,1.0,1.0
+bagel,depth_noise,4,xyz,reliable_window,0.0,0.4659
+bagel,depth_noise,4,xyz,reliable_extent,0.0,0.4659
+bagel,depth_noise,4,xyz,healthy sensor,0.0455,0.5
+bagel,depth_noise,5,xyz,rgb,0.0455,0.5
+bagel,depth_noise,5,xyz,fpfh,1.0,1.0
+bagel,depth_noise,5,xyz,late,1.0,1.0
+bagel,depth_noise,5,xyz,reliable_window,0.0,0.4659
+bagel,depth_noise,5,xyz,reliable_extent,0.0,0.4659
+bagel,depth_noise,5,xyz,healthy sensor,0.0455,0.5
+bagel,gaussian_noise,1,rgb,rgb,1.0,1.0
+bagel,gaussian_noise,1,rgb,fpfh,0.0909,0.5
+bagel,gaussian_noise,1,rgb,late,1.0,1.0
+bagel,gaussian_noise,1,rgb,reliable_window,0.1818,0.7159
+bagel,gaussian_noise,1,rgb,reliable_extent,0.1818,0.7159
+bagel,gaussian_noise,1,rgb,healthy sensor,0.0909,0.5
+bagel,gaussian_noise,2,rgb,rgb,1.0,1.0
+bagel,gaussian_noise,2,rgb,fpfh,0.0909,0.5
+bagel,gaussian_noise,2,rgb,late,1.0,1.0
+bagel,gaussian_noise,2,rgb,reliable_window,0.1818,0.7159
+bagel,gaussian_noise,2,rgb,reliable_extent,0.1818,0.7159
+bagel,gaussian_noise,2,rgb,healthy sensor,0.0909,0.5
+bagel,gaussian_noise,3,rgb,rgb,1.0,1.0
+bagel,gaussian_noise,3,rgb,fpfh,0.0909,0.5
+bagel,gaussian_noise,3,rgb,late,1.0,1.0
+bagel,gaussian_noise,3,rgb,reliable_window,0.1818,0.7159
+bagel,gaussian_noise,3,rgb,reliable_extent,0.1818,0.7159
+bagel,gaussian_noise,3,rgb,healthy sensor,0.0909,0.5
+bagel,gaussian_noise,4,rgb,rgb,1.0,1.0
+bagel,gaussian_noise,4,rgb,fpfh,0.0909,0.5
+bagel,gaussian_noise,4,rgb,late,1.0,1.0
+bagel,gaussian_noise,4,rgb,reliable_window,0.1818,0.7159
+bagel,gaussian_noise,4,rgb,reliable_extent,0.1818,0.7159
+bagel,gaussian_noise,4,rgb,healthy sensor,0.0909,0.5
+bagel,gaussian_noise,5,rgb,rgb,1.0,1.0
+bagel,gaussian_noise,5,rgb,fpfh,0.0909,0.5
+bagel,gaussian_noise,5,rgb,late,1.0,1.0
+bagel,gaussian_noise,5,rgb,reliable_window,0.1818,0.7159
+bagel,gaussian_noise,5,rgb,reliable_extent,0.1818,0.7159
+bagel,gaussian_noise,5,rgb,healthy sensor,0.0909,0.5
+bagel,holes,1,xyz,rgb,0.0455,0.5
+bagel,holes,1,xyz,fpfh,0.0909,0.4659
+bagel,holes,1,xyz,late,0.0909,0.7273
+bagel,holes,1,xyz,reliable_window,0.0909,0.7273
+bagel,holes,1,xyz,reliable_extent,0.0909,0.7273
+bagel,holes,1,xyz,healthy sensor,0.0455,0.5
+bagel,holes,2,xyz,rgb,0.0455,0.5
+bagel,holes,2,xyz,fpfh,0.0909,0.4659
+bagel,holes,2,xyz,late,0.0909,0.7159
+bagel,holes,2,xyz,reliable_window,0.0909,0.6477
+bagel,holes,2,xyz,reliable_extent,0.0909,0.6477
+bagel,holes,2,xyz,healthy sensor,0.0455,0.5
+bagel,holes,3,xyz,rgb,0.0455,0.5
+bagel,holes,3,xyz,fpfh,0.0909,0.4545
+bagel,holes,3,xyz,late,0.0909,0.7045
+bagel,holes,3,xyz,reliable_window,0.0,0.4773
+bagel,holes,3,xyz,reliable_extent,0.0,0.4659
+bagel,holes,3,xyz,healthy sensor,0.0455,0.5
+bagel,holes,4,xyz,rgb,0.0455,0.5
+bagel,holes,4,xyz,fpfh,0.1364,0.4205
+bagel,holes,4,xyz,late,0.0909,0.6818
+bagel,holes,4,xyz,reliable_window,0.0,0.4659
+bagel,holes,4,xyz,reliable_extent,0.0,0.4659
+bagel,holes,4,xyz,healthy sensor,0.0455,0.5
+bagel,holes,5,xyz,rgb,0.0455,0.5
+bagel,holes,5,xyz,fpfh,0.1364,0.2614
+bagel,holes,5,xyz,late,0.0909,0.6818
+bagel,holes,5,xyz,reliable_window,0.0,0.4659
+bagel,holes,5,xyz,reliable_extent,0.0,0.4659
+bagel,holes,5,xyz,healthy sensor,0.0455,0.5
+bagel,jpeg,1,rgb,rgb,1.0,1.0
+bagel,jpeg,1,rgb,fpfh,0.0909,0.5
+bagel,jpeg,1,rgb,late,1.0,1.0
+bagel,jpeg,1,rgb,reliable_window,0.1818,0.7159
+bagel,jpeg,1,rgb,reliable_extent,0.1818,0.7159
+bagel,jpeg,1,rgb,healthy sensor,0.0909,0.5
+bagel,jpeg,2,rgb,rgb,1.0,1.0
+bagel,jpeg,2,rgb,fpfh,0.0909,0.5
+bagel,jpeg,2,rgb,late,1.0,1.0
+bagel,jpeg,2,rgb,reliable_window,0.1818,0.7159
+bagel,jpeg,2,rgb,reliable_extent,0.1818,0.7159
+bagel,jpeg,2,rgb,healthy sensor,0.0909,0.5
+bagel,jpeg,3,rgb,rgb,1.0,1.0
+bagel,jpeg,3,rgb,fpfh,0.0909,0.5
+bagel,jpeg,3,rgb,late,1.0,1.0
+bagel,jpeg,3,rgb,reliable_window,0.1818,0.7159
+bagel,jpeg,3,rgb,reliable_extent,0.1818,0.7159
+bagel,jpeg,3,rgb,healthy sensor,0.0909,0.5
+bagel,jpeg,4,rgb,rgb,1.0,1.0
+bagel,jpeg,4,rgb,fpfh,0.0909,0.5
+bagel,jpeg,4,rgb,late,1.0,1.0
+bagel,jpeg,4,rgb,reliable_window,0.1818,0.7159
+bagel,jpeg,4,rgb,reliable_extent,0.1818,0.7159
+bagel,jpeg,4,rgb,healthy sensor,0.0909,0.5
+bagel,jpeg,5,rgb,rgb,1.0,1.0
+bagel,jpeg,5,rgb,fpfh,0.0909,0.5
+bagel,jpeg,5,rgb,late,1.0,1.0
+bagel,jpeg,5,rgb,reliable_window,0.1818,0.7159
+bagel,jpeg,5,rgb,reliable_extent,0.1818,0.7159
+bagel,jpeg,5,rgb,healthy sensor,0.0909,0.5
+bagel,misregister,1,xyz,rgb,0.0455,0.5
+bagel,misregister,1,xyz,fpfh,0.0,0.5341
+bagel,misregister,1,xyz,late,0.0909,0.7386
+bagel,misregister,1,xyz,reliable_window,0.0909,0.7386
+bagel,misregister,1,xyz,reliable_extent,0.0909,0.7386
+bagel,misregister,1,xyz,healthy sensor,0.0455,0.5
+bagel,misregister,2,xyz,rgb,0.0455,0.5
+bagel,misregister,2,xyz,fpfh,0.0,0.5341
+bagel,misregister,2,xyz,late,0.0455,0.7727
+bagel,misregister,2,xyz,reliable_window,0.0455,0.7727
+bagel,misregister,2,xyz,reliable_extent,0.0455,0.7727
+bagel,misregister,2,xyz,healthy sensor,0.0455,0.5
+bagel,misregister,3,xyz,rgb,0.0455,0.5
+bagel,misregister,3,xyz,fpfh,0.0,0.5114
+bagel,misregister,3,xyz,late,0.0455,0.7614
+bagel,misregister,3,xyz,reliable_window,0.0455,0.7614
+bagel,misregister,3,xyz,reliable_extent,0.0455,0.7727
+bagel,misregister,3,xyz,healthy sensor,0.0455,0.5
+bagel,misregister,4,xyz,rgb,0.0455,0.5
+bagel,misregister,4,xyz,fpfh,0.0455,0.4545
+bagel,misregister,4,xyz,late,0.0909,0.7727
+bagel,misregister,4,xyz,reliable_window,0.0909,0.7727
+bagel,misregister,4,xyz,reliable_extent,0.0909,0.7841
+bagel,misregister,4,xyz,healthy sensor,0.0455,0.5
+bagel,misregister,5,xyz,rgb,0.0455,0.5
+bagel,misregister,5,xyz,fpfh,0.0909,0.5
+bagel,misregister,5,xyz,late,0.0909,0.7273
+bagel,misregister,5,xyz,reliable_window,0.0909,0.7273
+bagel,misregister,5,xyz,reliable_extent,0.0909,0.7614
+bagel,misregister,5,xyz,healthy sensor,0.0455,0.5
+bagel,occlusion,1,rgb,rgb,1.0,1.0
+bagel,occlusion,1,rgb,fpfh,0.0909,0.5
+bagel,occlusion,1,rgb,late,1.0,1.0
+bagel,occlusion,1,rgb,reliable_window,0.9545,0.9773
+bagel,occlusion,1,rgb,reliable_extent,0.1818,0.7159
+bagel,occlusion,1,rgb,healthy sensor,0.0909,0.5
+bagel,occlusion,2,rgb,rgb,1.0,1.0
+bagel,occlusion,2,rgb,fpfh,0.0909,0.5
+bagel,occlusion,2,rgb,late,1.0,1.0
+bagel,occlusion,2,rgb,reliable_window,0.4091,0.8523
+bagel,occlusion,2,rgb,reliable_extent,0.1818,0.7159
+bagel,occlusion,2,rgb,healthy sensor,0.0909,0.5
+bagel,occlusion,3,rgb,rgb,1.0,1.0
+bagel,occlusion,3,rgb,fpfh,0.0909,0.5
+bagel,occlusion,3,rgb,late,1.0,1.0
+bagel,occlusion,3,rgb,reliable_window,0.1818,0.7159
+bagel,occlusion,3,rgb,reliable_extent,0.1818,0.7159
+bagel,occlusion,3,rgb,healthy sensor,0.0909,0.5
+bagel,occlusion,4,rgb,rgb,1.0,1.0
+bagel,occlusion,4,rgb,fpfh,0.0909,0.5
+bagel,occlusion,4,rgb,late,1.0,1.0
+bagel,occlusion,4,rgb,reliable_window,0.1818,0.7159
+bagel,occlusion,4,rgb,reliable_extent,0.1818,0.7159
+bagel,occlusion,4,rgb,healthy sensor,0.0909,0.5
+bagel,occlusion,5,rgb,rgb,1.0,1.0
+bagel,occlusion,5,rgb,fpfh,0.0909,0.5
+bagel,occlusion,5,rgb,late,1.0,1.0
+bagel,occlusion,5,rgb,reliable_window,0.1818,0.7159
+bagel,occlusion,5,rgb,reliable_extent,0.1818,0.7159
+bagel,occlusion,5,rgb,healthy sensor,0.0909,0.5
+bagel,quantise,1,xyz,rgb,0.0455,0.5
+bagel,quantise,1,xyz,fpfh,0.2273,0.6136
+bagel,quantise,1,xyz,late,0.1364,0.8409
+bagel,quantise,1,xyz,reliable_window,0.0,0.4659
+bagel,quantise,1,xyz,reliable_extent,0.0,0.4659
+bagel,quantise,1,xyz,healthy sensor,0.0455,0.5
+bagel,quantise,2,xyz,rgb,0.0455,0.5
+bagel,quantise,2,xyz,fpfh,1.0,1.0
+bagel,quantise,2,xyz,late,1.0,1.0
+bagel,quantise,2,xyz,reliable_window,0.0,0.4659
+bagel,quantise,2,xyz,reliable_extent,0.0,0.4659
+bagel,quantise,2,xyz,healthy sensor,0.0455,0.5
+bagel,quantise,3,xyz,rgb,0.0455,0.5
+bagel,quantise,3,xyz,fpfh,1.0,1.0
+bagel,quantise,3,xyz,late,1.0,1.0
+bagel,quantise,3,xyz,reliable_window,0.0,0.4659
+bagel,quantise,3,xyz,reliable_extent,0.0,0.4659
+bagel,quantise,3,xyz,healthy sensor,0.0455,0.5
+bagel,quantise,4,xyz,rgb,0.0455,0.5
+bagel,quantise,4,xyz,fpfh,1.0,1.0
+bagel,quantise,4,xyz,late,1.0,1.0
+bagel,quantise,4,xyz,reliable_window,0.0,0.4659
+bagel,quantise,4,xyz,reliable_extent,0.0,0.4659
+bagel,quantise,4,xyz,healthy sensor,0.0455,0.5
+bagel,quantise,5,xyz,rgb,0.0455,0.5
+bagel,quantise,5,xyz,fpfh,1.0,1.0
+bagel,quantise,5,xyz,late,1.0,1.0
+bagel,quantise,5,xyz,reliable_window,0.0,0.4659
+bagel,quantise,5,xyz,reliable_extent,0.0,0.4659
+bagel,quantise,5,xyz,healthy sensor,0.0455,0.5
+bagel,rgb_missing,1,rgb,rgb,1.0,1.0
+bagel,rgb_missing,1,rgb,fpfh,0.0909,0.5
+bagel,rgb_missing,1,rgb,late,1.0,1.0
+bagel,rgb_missing,1,rgb,reliable_window,0.1818,0.7159
+bagel,rgb_missing,1,rgb,reliable_extent,0.1818,0.7159
+bagel,rgb_missing,1,rgb,healthy sensor,0.0909,0.5
+bagel,tilt,1,xyz,rgb,0.0455,0.5
+bagel,tilt,1,xyz,fpfh,0.0455,0.5
+bagel,tilt,1,xyz,late,0.0455,0.7273
+bagel,tilt,1,xyz,reliable_window,0.0455,0.7386
+bagel,tilt,1,xyz,reliable_extent,0.0455,0.7386
+bagel,tilt,1,xyz,healthy sensor,0.0455,0.5
+bagel,tilt,2,xyz,rgb,0.0455,0.5
+bagel,tilt,2,xyz,fpfh,0.0455,0.4886
+bagel,tilt,2,xyz,late,0.0455,0.7386
+bagel,tilt,2,xyz,reliable_window,0.0455,0.75
+bagel,tilt,2,xyz,reliable_extent,0.0455,0.75
+bagel,tilt,2,xyz,healthy sensor,0.0455,0.5
+bagel,tilt,3,xyz,rgb,0.0455,0.5
+bagel,tilt,3,xyz,fpfh,0.0455,0.4773
+bagel,tilt,3,xyz,late,0.0455,0.75
+bagel,tilt,3,xyz,reliable_window,0.0455,0.75
+bagel,tilt,3,xyz,reliable_extent,0.0455,0.75
+bagel,tilt,3,xyz,healthy sensor,0.0455,0.5
+bagel,tilt,4,xyz,rgb,0.0455,0.5
+bagel,tilt,4,xyz,fpfh,0.0455,0.4659
+bagel,tilt,4,xyz,late,0.0455,0.7045
+bagel,tilt,4,xyz,reliable_window,0.0455,0.7159
+bagel,tilt,4,xyz,reliable_extent,0.0455,0.7159
+bagel,tilt,4,xyz,healthy sensor,0.0455,0.5
+bagel,tilt,5,xyz,rgb,0.0455,0.5
+bagel,tilt,5,xyz,fpfh,0.0909,0.5
+bagel,tilt,5,xyz,late,0.0455,0.7159
+bagel,tilt,5,xyz,reliable_window,0.0455,0.7159
+bagel,tilt,5,xyz,reliable_extent,0.0455,0.7386
+bagel,tilt,5,xyz,healthy sensor,0.0455,0.5
+bagel,xyz_missing,1,xyz,rgb,0.0455,0.5
+bagel,xyz_missing,1,xyz,fpfh,0.0,0.0
+bagel,xyz_missing,1,xyz,late,0.0,0.0114
+bagel,xyz_missing,1,xyz,reliable_window,0.0,0.4659
+bagel,xyz_missing,1,xyz,reliable_extent,0.0,0.4659
+bagel,xyz_missing,1,xyz,healthy sensor,0.0455,0.5
+cable_gland,brightness,1,rgb,rgb,0.0,0.3218
+cable_gland,brightness,1,rgb,fpfh,0.0,0.046
+cable_gland,brightness,1,rgb,late,0.0,0.3563
+cable_gland,brightness,1,rgb,reliable_window,0.0,0.3563
+cable_gland,brightness,1,rgb,reliable_extent,0.0,0.3563
+cable_gland,brightness,1,rgb,healthy sensor,0.0,0.046
+cable_gland,brightness,2,rgb,rgb,0.1905,0.6092
+cable_gland,brightness,2,rgb,fpfh,0.0,0.046
+cable_gland,brightness,2,rgb,late,0.1429,0.5402
+cable_gland,brightness,2,rgb,reliable_window,0.1429,0.5287
+cable_gland,brightness,2,rgb,reliable_extent,0.1429,0.5287
+cable_gland,brightness,2,rgb,healthy sensor,0.0,0.046
+cable_gland,brightness,3,rgb,rgb,0.7143,0.9195
+cable_gland,brightness,3,rgb,fpfh,0.0,0.046
+cable_gland,brightness,3,rgb,late,0.5238,0.8161
+cable_gland,brightness,3,rgb,reliable_window,0.2857,0.4598
+cable_gland,brightness,3,rgb,reliable_extent,0.2857,0.4253
+cable_gland,brightness,3,rgb,healthy sensor,0.0,0.046
+cable_gland,brightness,4,rgb,rgb,1.0,1.0
+cable_gland,brightness,4,rgb,fpfh,0.0,0.046
+cable_gland,brightness,4,rgb,late,0.9048,0.9655
+cable_gland,brightness,4,rgb,reliable_window,0.0,0.023
+cable_gland,brightness,4,rgb,reliable_extent,0.0,0.023
+cable_gland,brightness,4,rgb,healthy sensor,0.0,0.046
+cable_gland,brightness,5,rgb,rgb,1.0,1.0
+cable_gland,brightness,5,rgb,fpfh,0.0,0.046
+cable_gland,brightness,5,rgb,late,1.0,1.0
+cable_gland,brightness,5,rgb,reliable_window,0.0,0.023
+cable_gland,brightness,5,rgb,reliable_extent,0.0,0.023
+cable_gland,brightness,5,rgb,healthy sensor,0.0,0.046
+cable_gland,defocus_blur,1,rgb,rgb,1.0,1.0
+cable_gland,defocus_blur,1,rgb,fpfh,0.0,0.046
+cable_gland,defocus_blur,1,rgb,late,1.0,1.0
+cable_gland,defocus_blur,1,rgb,reliable_window,0.0,0.023
+cable_gland,defocus_blur,1,rgb,reliable_extent,0.0,0.023
+cable_gland,defocus_blur,1,rgb,healthy sensor,0.0,0.046
+cable_gland,defocus_blur,2,rgb,rgb,1.0,1.0
+cable_gland,defocus_blur,2,rgb,fpfh,0.0,0.046
+cable_gland,defocus_blur,2,rgb,late,1.0,1.0
+cable_gland,defocus_blur,2,rgb,reliable_window,0.0,0.023
+cable_gland,defocus_blur,2,rgb,reliable_extent,0.0,0.023
+cable_gland,defocus_blur,2,rgb,healthy sensor,0.0,0.046
+cable_gland,defocus_blur,3,rgb,rgb,1.0,1.0
+cable_gland,defocus_blur,3,rgb,fpfh,0.0,0.046
+cable_gland,defocus_blur,3,rgb,late,1.0,1.0
+cable_gland,defocus_blur,3,rgb,reliable_window,0.0,0.023
+cable_gland,defocus_blur,3,rgb,reliable_extent,0.0,0.023
+cable_gland,defocus_blur,3,rgb,healthy sensor,0.0,0.046
+cable_gland,defocus_blur,4,rgb,rgb,1.0,1.0
+cable_gland,defocus_blur,4,rgb,fpfh,0.0,0.046
+cable_gland,defocus_blur,4,rgb,late,1.0,1.0
+cable_gland,defocus_blur,4,rgb,reliable_window,0.0,0.023
+cable_gland,defocus_blur,4,rgb,reliable_extent,0.0,0.023
+cable_gland,defocus_blur,4,rgb,healthy sensor,0.0,0.046
+cable_gland,defocus_blur,5,rgb,rgb,1.0,1.0
+cable_gland,defocus_blur,5,rgb,fpfh,0.0,0.046
+cable_gland,defocus_blur,5,rgb,late,1.0,1.0
+cable_gland,defocus_blur,5,rgb,reliable_window,0.0,0.023
+cable_gland,defocus_blur,5,rgb,reliable_extent,0.0,0.023
+cable_gland,defocus_blur,5,rgb,healthy sensor,0.0,0.046
+cable_gland,depth_noise,1,xyz,rgb,0.0,0.2759
+cable_gland,depth_noise,1,xyz,fpfh,0.5714,0.5862
+cable_gland,depth_noise,1,xyz,late,0.1905,0.6897
+cable_gland,depth_noise,1,xyz,reliable_window,0.0,0.4483
+cable_gland,depth_noise,1,xyz,reliable_extent,0.0,0.4483
+cable_gland,depth_noise,1,xyz,healthy sensor,0.0,0.2759
+cable_gland,depth_noise,2,xyz,rgb,0.0,0.2759
+cable_gland,depth_noise,2,xyz,fpfh,1.0,1.0
+cable_gland,depth_noise,2,xyz,late,0.381,0.908
+cable_gland,depth_noise,2,xyz,reliable_window,0.0,0.4483
+cable_gland,depth_noise,2,xyz,reliable_extent,0.0,0.4483
+cable_gland,depth_noise,2,xyz,healthy sensor,0.0,0.2759
+cable_gland,depth_noise,3,xyz,rgb,0.0,0.2759
+cable_gland,depth_noise,3,xyz,fpfh,1.0,1.0
+cable_gland,depth_noise,3,xyz,late,1.0,1.0
+cable_gland,depth_noise,3,xyz,reliable_window,0.0,0.4483
+cable_gland,depth_noise,3,xyz,reliable_extent,0.0,0.4483
+cable_gland,depth_noise,3,xyz,healthy sensor,0.0,0.2759
+cable_gland,depth_noise,4,xyz,rgb,0.0,0.2759
+cable_gland,depth_noise,4,xyz,fpfh,1.0,1.0
+cable_gland,depth_noise,4,xyz,late,1.0,1.0
+cable_gland,depth_noise,4,xyz,reliable_window,0.0,0.4483
+cable_gland,depth_noise,4,xyz,reliable_extent,0.0,0.4483
+cable_gland,depth_noise,4,xyz,healthy sensor,0.0,0.2759
+cable_gland,depth_noise,5,xyz,rgb,0.0,0.2759
+cable_gland,depth_noise,5,xyz,fpfh,1.0,1.0
+cable_gland,depth_noise,5,xyz,late,1.0,1.0
+cable_gland,depth_noise,5,xyz,reliable_window,0.0,0.4483
+cable_gland,depth_noise,5,xyz,reliable_extent,0.0,0.4483
+cable_gland,depth_noise,5,xyz,healthy sensor,0.0,0.2759
+cable_gland,gaussian_noise,1,rgb,rgb,1.0,1.0
+cable_gland,gaussian_noise,1,rgb,fpfh,0.0,0.046
+cable_gland,gaussian_noise,1,rgb,late,1.0,1.0
+cable_gland,gaussian_noise,1,rgb,reliable_window,0.0,0.023
+cable_gland,gaussian_noise,1,rgb,reliable_extent,0.0,0.023
+cable_gland,gaussian_noise,1,rgb,healthy sensor,0.0,0.046
+cable_gland,gaussian_noise,2,rgb,rgb,1.0,1.0
+cable_gland,gaussian_noise,2,rgb,fpfh,0.0,0.046
+cable_gland,gaussian_noise,2,rgb,late,1.0,1.0
+cable_gland,gaussian_noise,2,rgb,reliable_window,0.0,0.023
+cable_gland,gaussian_noise,2,rgb,reliable_extent,0.0,0.023
+cable_gland,gaussian_noise,2,rgb,healthy sensor,0.0,0.046
+cable_gland,gaussian_noise,3,rgb,rgb,1.0,1.0
+cable_gland,gaussian_noise,3,rgb,fpfh,0.0,0.046
+cable_gland,gaussian_noise,3,rgb,late,1.0,1.0
+cable_gland,gaussian_noise,3,rgb,reliable_window,0.0,0.023
+cable_gland,gaussian_noise,3,rgb,reliable_extent,0.0,0.023
+cable_gland,gaussian_noise,3,rgb,healthy sensor,0.0,0.046
+cable_gland,gaussian_noise,4,rgb,rgb,1.0,1.0
+cable_gland,gaussian_noise,4,rgb,fpfh,0.0,0.046
+cable_gland,gaussian_noise,4,rgb,late,1.0,1.0
+cable_gland,gaussian_noise,4,rgb,reliable_window,0.0,0.023
+cable_gland,gaussian_noise,4,rgb,reliable_extent,0.0,0.023
+cable_gland,gaussian_noise,4,rgb,healthy sensor,0.0,0.046
+cable_gland,gaussian_noise,5,rgb,rgb,1.0,1.0
+cable_gland,gaussian_noise,5,rgb,fpfh,0.0,0.046
+cable_gland,gaussian_noise,5,rgb,late,1.0,1.0
+cable_gland,gaussian_noise,5,rgb,reliable_window,0.0,0.023
+cable_gland,gaussian_noise,5,rgb,reliable_extent,0.0,0.023
+cable_gland,gaussian_noise,5,rgb,healthy sensor,0.0,0.046
+cable_gland,holes,1,xyz,rgb,0.0,0.2759
+cable_gland,holes,1,xyz,fpfh,0.0476,0.0575
+cable_gland,holes,1,xyz,late,0.0476,0.3333
+cable_gland,holes,1,xyz,reliable_window,0.0476,0.3333
+cable_gland,holes,1,xyz,reliable_extent,0.0476,0.3333
+cable_gland,holes,1,xyz,healthy sensor,0.0,0.2759
+cable_gland,holes,2,xyz,rgb,0.0,0.2759
+cable_gland,holes,2,xyz,fpfh,0.0952,0.069
+cable_gland,holes,2,xyz,late,0.0,0.3448
+cable_gland,holes,2,xyz,reliable_window,0.0,0.4138
+cable_gland,holes,2,xyz,reliable_extent,0.0,0.4138
+cable_gland,holes,2,xyz,healthy sensor,0.0,0.2759
+cable_gland,holes,3,xyz,rgb,0.0,0.2759
+cable_gland,holes,3,xyz,fpfh,0.0,0.092
+cable_gland,holes,3,xyz,late,0.0,0.3448
+cable_gland,holes,3,xyz,reliable_window,0.0,0.4483
+cable_gland,holes,3,xyz,reliable_extent,0.0,0.4483
+cable_gland,holes,3,xyz,healthy sensor,0.0,0.2759
+cable_gland,holes,4,xyz,rgb,0.0,0.2759
+cable_gland,holes,4,xyz,fpfh,0.1429,0.092
+cable_gland,holes,4,xyz,late,0.0476,0.4138
+cable_gland,holes,4,xyz,reliable_window,0.0,0.4483
+cable_gland,holes,4,xyz,reliable_extent,0.0,0.4483
+cable_gland,holes,4,xyz,healthy sensor,0.0,0.2759
+cable_gland,holes,5,xyz,rgb,0.0,0.2759
+cable_gland,holes,5,xyz,fpfh,0.0952,0.1264
+cable_gland,holes,5,xyz,late,0.0952,0.4253
+cable_gland,holes,5,xyz,reliable_window,0.0,0.4483
+cable_gland,holes,5,xyz,reliable_extent,0.0,0.4483
+cable_gland,holes,5,xyz,healthy sensor,0.0,0.2759
+cable_gland,jpeg,1,rgb,rgb,1.0,1.0
+cable_gland,jpeg,1,rgb,fpfh,0.0,0.046
+cable_gland,jpeg,1,rgb,late,1.0,1.0
+cable_gland,jpeg,1,rgb,reliable_window,0.0,0.023
+cable_gland,jpeg,1,rgb,reliable_extent,0.0,0.023
+cable_gland,jpeg,1,rgb,healthy sensor,0.0,0.046
+cable_gland,jpeg,2,rgb,rgb,1.0,1.0
+cable_gland,jpeg,2,rgb,fpfh,0.0,0.046
+cable_gland,jpeg,2,rgb,late,1.0,1.0
+cable_gland,jpeg,2,rgb,reliable_window,0.0,0.023
+cable_gland,jpeg,2,rgb,reliable_extent,0.0,0.023
+cable_gland,jpeg,2,rgb,healthy sensor,0.0,0.046
+cable_gland,jpeg,3,rgb,rgb,1.0,1.0
+cable_gland,jpeg,3,rgb,fpfh,0.0,0.046
+cable_gland,jpeg,3,rgb,late,1.0,1.0
+cable_gland,jpeg,3,rgb,reliable_window,0.0,0.023
+cable_gland,jpeg,3,rgb,reliable_extent,0.0,0.023
+cable_gland,jpeg,3,rgb,healthy sensor,0.0,0.046
+cable_gland,jpeg,4,rgb,rgb,1.0,1.0
+cable_gland,jpeg,4,rgb,fpfh,0.0,0.046
+cable_gland,jpeg,4,rgb,late,1.0,1.0
+cable_gland,jpeg,4,rgb,reliable_window,0.0,0.023
+cable_gland,jpeg,4,rgb,reliable_extent,0.0,0.023
+cable_gland,jpeg,4,rgb,healthy sensor,0.0,0.046
+cable_gland,jpeg,5,rgb,rgb,1.0,1.0
+cable_gland,jpeg,5,rgb,fpfh,0.0,0.046
+cable_gland,jpeg,5,rgb,late,1.0,1.0
+cable_gland,jpeg,5,rgb,reliable_window,0.0,0.023
+cable_gland,jpeg,5,rgb,reliable_extent,0.0,0.023
+cable_gland,jpeg,5,rgb,healthy sensor,0.0,0.046
+cable_gland,misregister,1,xyz,rgb,0.0,0.2759
+cable_gland,misregister,1,xyz,fpfh,0.0,0.0575
+cable_gland,misregister,1,xyz,late,0.0,0.3448
+cable_gland,misregister,1,xyz,reliable_window,0.0,0.3448
+cable_gland,misregister,1,xyz,reliable_extent,0.0,0.3448
+cable_gland,misregister,1,xyz,healthy sensor,0.0,0.2759
+cable_gland,misregister,2,xyz,rgb,0.0,0.2759
+cable_gland,misregister,2,xyz,fpfh,0.0,0.0575
+cable_gland,misregister,2,xyz,late,0.0,0.3793
+cable_gland,misregister,2,xyz,reliable_window,0.0,0.3793
+cable_gland,misregister,2,xyz,reliable_extent,0.0,0.3793
+cable_gland,misregister,2,xyz,healthy sensor,0.0,0.2759
+cable_gland,misregister,3,xyz,rgb,0.0,0.2759
+cable_gland,misregister,3,xyz,fpfh,0.0,0.0345
+cable_gland,misregister,3,xyz,late,0.0,0.2989
+cable_gland,misregister,3,xyz,reliable_window,0.0,0.2989
+cable_gland,misregister,3,xyz,reliable_extent,0.0,0.2989
+cable_gland,misregister,3,xyz,healthy sensor,0.0,0.2759
+cable_gland,misregister,4,xyz,rgb,0.0,0.2759
+cable_gland,misregister,4,xyz,fpfh,0.0476,0.046
+cable_gland,misregister,4,xyz,late,0.0,0.3218
+cable_gland,misregister,4,xyz,reliable_window,0.0,0.3218
+cable_gland,misregister,4,xyz,reliable_extent,0.0,0.3218
+cable_gland,misregister,4,xyz,healthy sensor,0.0,0.2759
+cable_gland,misregister,5,xyz,rgb,0.0,0.2759
+cable_gland,misregister,5,xyz,fpfh,0.1429,0.0345
+cable_gland,misregister,5,xyz,late,0.1429,0.2874
+cable_gland,misregister,5,xyz,reliable_window,0.1429,0.2874
+cable_gland,misregister,5,xyz,reliable_extent,0.1429,0.2874
+cable_gland,misregister,5,xyz,healthy sensor,0.0,0.2759
+cable_gland,occlusion,1,rgb,rgb,1.0,1.0
+cable_gland,occlusion,1,rgb,fpfh,0.0,0.046
+cable_gland,occlusion,1,rgb,late,1.0,1.0
+cable_gland,occlusion,1,rgb,reliable_window,1.0,1.0
+cable_gland,occlusion,1,rgb,reliable_extent,0.0,0.023
+cable_gland,occlusion,1,rgb,healthy sensor,0.0,0.046
+cable_gland,occlusion,2,rgb,rgb,1.0,1.0
+cable_gland,occlusion,2,rgb,fpfh,0.0,0.046
+cable_gland,occlusion,2,rgb,late,1.0,1.0
+cable_gland,occlusion,2,rgb,reliable_window,1.0,1.0
+cable_gland,occlusion,2,rgb,reliable_extent,0.0,0.023
+cable_gland,occlusion,2,rgb,healthy sensor,0.0,0.046
+cable_gland,occlusion,3,rgb,rgb,1.0,1.0
+cable_gland,occlusion,3,rgb,fpfh,0.0,0.046
+cable_gland,occlusion,3,rgb,late,1.0,1.0
+cable_gland,occlusion,3,rgb,reliable_window,0.7143,0.5057
+cable_gland,occlusion,3,rgb,reliable_extent,0.0,0.023
+cable_gland,occlusion,3,rgb,healthy sensor,0.0,0.046
+cable_gland,occlusion,4,rgb,rgb,1.0,1.0
+cable_gland,occlusion,4,rgb,fpfh,0.0,0.046
+cable_gland,occlusion,4,rgb,late,1.0,1.0
+cable_gland,occlusion,4,rgb,reliable_window,0.0,0.046
+cable_gland,occlusion,4,rgb,reliable_extent,0.0,0.023
+cable_gland,occlusion,4,rgb,healthy sensor,0.0,0.046
+cable_gland,occlusion,5,rgb,rgb,1.0,1.0
+cable_gland,occlusion,5,rgb,fpfh,0.0,0.046
+cable_gland,occlusion,5,rgb,late,1.0,1.0
+cable_gland,occlusion,5,rgb,reliable_window,0.0,0.023
+cable_gland,occlusion,5,rgb,reliable_extent,0.0,0.023
+cable_gland,occlusion,5,rgb,healthy sensor,0.0,0.046
+cable_gland,quantise,1,xyz,rgb,0.0,0.2759
+cable_gland,quantise,1,xyz,fpfh,0.381,0.3678
+cable_gland,quantise,1,xyz,late,0.0,0.5977
+cable_gland,quantise,1,xyz,reliable_window,0.0,0.4483
+cable_gland,quantise,1,xyz,reliable_extent,0.0,0.4483
+cable_gland,quantise,1,xyz,healthy sensor,0.0,0.2759
+cable_gland,quantise,2,xyz,rgb,0.0,0.2759
+cable_gland,quantise,2,xyz,fpfh,0.9048,0.8966
+cable_gland,quantise,2,xyz,late,0.4286,0.8736
+cable_gland,quantise,2,xyz,reliable_window,0.0,0.4483
+cable_gland,quantise,2,xyz,reliable_extent,0.0,0.4483
+cable_gland,quantise,2,xyz,healthy sensor,0.0,0.2759
+cable_gland,quantise,3,xyz,rgb,0.0,0.2759
+cable_gland,quantise,3,xyz,fpfh,1.0,1.0
+cable_gland,quantise,3,xyz,late,1.0,1.0
+cable_gland,quantise,3,xyz,reliable_window,0.0,0.4483
+cable_gland,quantise,3,xyz,reliable_extent,0.0,0.4483
+cable_gland,quantise,3,xyz,healthy sensor,0.0,0.2759
+cable_gland,quantise,4,xyz,rgb,0.0,0.2759
+cable_gland,quantise,4,xyz,fpfh,1.0,1.0
+cable_gland,quantise,4,xyz,late,1.0,1.0
+cable_gland,quantise,4,xyz,reliable_window,0.0,0.4483
+cable_gland,quantise,4,xyz,reliable_extent,0.0,0.4483
+cable_gland,quantise,4,xyz,healthy sensor,0.0,0.2759
+cable_gland,quantise,5,xyz,rgb,0.0,0.2759
+cable_gland,quantise,5,xyz,fpfh,1.0,1.0
+cable_gland,quantise,5,xyz,late,0.9524,1.0
+cable_gland,quantise,5,xyz,reliable_window,0.0,0.4483
+cable_gland,quantise,5,xyz,reliable_extent,0.0,0.4483
+cable_gland,quantise,5,xyz,healthy sensor,0.0,0.2759
+cable_gland,rgb_missing,1,rgb,rgb,1.0,1.0
+cable_gland,rgb_missing,1,rgb,fpfh,0.0,0.046
+cable_gland,rgb_missing,1,rgb,late,1.0,1.0
+cable_gland,rgb_missing,1,rgb,reliable_window,0.0,0.023
+cable_gland,rgb_missing,1,rgb,reliable_extent,0.0,0.023
+cable_gland,rgb_missing,1,rgb,healthy sensor,0.0,0.046
+cable_gland,tilt,1,xyz,rgb,0.0,0.2759
+cable_gland,tilt,1,xyz,fpfh,0.0,0.046
+cable_gland,tilt,1,xyz,late,0.0,0.3563
+cable_gland,tilt,1,xyz,reliable_window,0.0,0.3563
+cable_gland,tilt,1,xyz,reliable_extent,0.0,0.3563
+cable_gland,tilt,1,xyz,healthy sensor,0.0,0.2759
+cable_gland,tilt,2,xyz,rgb,0.0,0.2759
+cable_gland,tilt,2,xyz,fpfh,0.0,0.046
+cable_gland,tilt,2,xyz,late,0.0,0.3448
+cable_gland,tilt,2,xyz,reliable_window,0.0,0.3448
+cable_gland,tilt,2,xyz,reliable_extent,0.0,0.3448
+cable_gland,tilt,2,xyz,healthy sensor,0.0,0.2759
+cable_gland,tilt,3,xyz,rgb,0.0,0.2759
+cable_gland,tilt,3,xyz,fpfh,0.0952,0.046
+cable_gland,tilt,3,xyz,late,0.0,0.3333
+cable_gland,tilt,3,xyz,reliable_window,0.0,0.3333
+cable_gland,tilt,3,xyz,reliable_extent,0.0,0.3333
+cable_gland,tilt,3,xyz,healthy sensor,0.0,0.2759
+cable_gland,tilt,4,xyz,rgb,0.0,0.2759
+cable_gland,tilt,4,xyz,fpfh,0.0476,0.0345
+cable_gland,tilt,4,xyz,late,0.0,0.3333
+cable_gland,tilt,4,xyz,reliable_window,0.0,0.3333
+cable_gland,tilt,4,xyz,reliable_extent,0.0,0.3333
+cable_gland,tilt,4,xyz,healthy sensor,0.0,0.2759
+cable_gland,tilt,5,xyz,rgb,0.0,0.2759
+cable_gland,tilt,5,xyz,fpfh,0.0,0.069
+cable_gland,tilt,5,xyz,late,0.0,0.3793
+cable_gland,tilt,5,xyz,reliable_window,0.0,0.3793
+cable_gland,tilt,5,xyz,reliable_extent,0.0,0.3793
+cable_gland,tilt,5,xyz,healthy sensor,0.0,0.2759
+cable_gland,xyz_missing,1,xyz,rgb,0.0,0.2759
+cable_gland,xyz_missing,1,xyz,fpfh,0.0,0.0
+cable_gland,xyz_missing,1,xyz,late,0.0,0.0
+cable_gland,xyz_missing,1,xyz,reliable_window,0.0,0.4483
+cable_gland,xyz_missing,1,xyz,reliable_extent,0.0,0.4483
+cable_gland,xyz_missing,1,xyz,healthy sensor,0.0,0.2759
+carrot,brightness,1,rgb,rgb,0.4444,0.9318
+carrot,brightness,1,rgb,fpfh,0.1481,0.8864
+carrot,brightness,1,rgb,late,0.1852,0.9848
+carrot,brightness,1,rgb,reliable_window,0.1852,0.9848
+carrot,brightness,1,rgb,reliable_extent,0.2222,0.9621
+carrot,brightness,1,rgb,healthy sensor,0.1481,0.8864
+carrot,brightness,2,rgb,rgb,0.8889,1.0
+carrot,brightness,2,rgb,fpfh,0.1481,0.8864
+carrot,brightness,2,rgb,late,0.5556,1.0
+carrot,brightness,2,rgb,reliable_window,0.2593,1.0
+carrot,brightness,2,rgb,reliable_extent,0.2222,0.9773
+carrot,brightness,2,rgb,healthy sensor,0.1481,0.8864
+carrot,brightness,3,rgb,rgb,1.0,1.0
+carrot,brightness,3,rgb,fpfh,0.1481,0.8864
+carrot,brightness,3,rgb,late,0.8889,1.0
+carrot,brightness,3,rgb,reliable_window,0.1481,0.9242
+carrot,brightness,3,rgb,reliable_extent,0.1481,0.9242
+carrot,brightness,3,rgb,healthy sensor,0.1481,0.8864
+carrot,brightness,4,rgb,rgb,1.0,1.0
+carrot,brightness,4,rgb,fpfh,0.1481,0.8864
+carrot,brightness,4,rgb,late,1.0,1.0
+carrot,brightness,4,rgb,reliable_window,0.1481,0.9167
+carrot,brightness,4,rgb,reliable_extent,0.1481,0.9242
+carrot,brightness,4,rgb,healthy sensor,0.1481,0.8864
+carrot,brightness,5,rgb,rgb,1.0,1.0
+carrot,brightness,5,rgb,fpfh,0.1481,0.8864
+carrot,brightness,5,rgb,late,1.0,1.0
+carrot,brightness,5,rgb,reliable_window,0.1481,0.9167
+carrot,brightness,5,rgb,reliable_extent,0.1481,0.9242
+carrot,brightness,5,rgb,healthy sensor,0.1481,0.8864
+carrot,defocus_blur,1,rgb,rgb,1.0,1.0
+carrot,defocus_blur,1,rgb,fpfh,0.1481,0.8864
+carrot,defocus_blur,1,rgb,late,1.0,1.0
+carrot,defocus_blur,1,rgb,reliable_window,0.1481,0.9167
+carrot,defocus_blur,1,rgb,reliable_extent,0.1481,0.9242
+carrot,defocus_blur,1,rgb,healthy sensor,0.1481,0.8864
+carrot,defocus_blur,2,rgb,rgb,1.0,1.0
+carrot,defocus_blur,2,rgb,fpfh,0.1481,0.8864
+carrot,defocus_blur,2,rgb,late,1.0,1.0
+carrot,defocus_blur,2,rgb,reliable_window,0.1481,0.9167
+carrot,defocus_blur,2,rgb,reliable_extent,0.1481,0.9242
+carrot,defocus_blur,2,rgb,healthy sensor,0.1481,0.8864
+carrot,defocus_blur,3,rgb,rgb,1.0,1.0
+carrot,defocus_blur,3,rgb,fpfh,0.1481,0.8864
+carrot,defocus_blur,3,rgb,late,1.0,1.0
+carrot,defocus_blur,3,rgb,reliable_window,0.1481,0.9167
+carrot,defocus_blur,3,rgb,reliable_extent,0.1481,0.9242
+carrot,defocus_blur,3,rgb,healthy sensor,0.1481,0.8864
+carrot,defocus_blur,4,rgb,rgb,1.0,1.0
+carrot,defocus_blur,4,rgb,fpfh,0.1481,0.8864
+carrot,defocus_blur,4,rgb,late,1.0,1.0
+carrot,defocus_blur,4,rgb,reliable_window,0.1481,0.9167
+carrot,defocus_blur,4,rgb,reliable_extent,0.1481,0.9242
+carrot,defocus_blur,4,rgb,healthy sensor,0.1481,0.8864
+carrot,defocus_blur,5,rgb,rgb,1.0,1.0
+carrot,defocus_blur,5,rgb,fpfh,0.1481,0.8864
+carrot,defocus_blur,5,rgb,late,1.0,1.0
+carrot,defocus_blur,5,rgb,reliable_window,0.1481,0.9167
+carrot,defocus_blur,5,rgb,reliable_extent,0.1481,0.9242
+carrot,defocus_blur,5,rgb,healthy sensor,0.1481,0.8864
+carrot,depth_noise,1,xyz,rgb,0.2222,0.7727
+carrot,depth_noise,1,xyz,fpfh,1.0,1.0
+carrot,depth_noise,1,xyz,late,0.8889,1.0
+carrot,depth_noise,1,xyz,reliable_window,0.2222,0.7121
+carrot,depth_noise,1,xyz,reliable_extent,0.2222,0.7121
+carrot,depth_noise,1,xyz,healthy sensor,0.2222,0.7727
+carrot,depth_noise,2,xyz,rgb,0.2222,0.7727
+carrot,depth_noise,2,xyz,fpfh,1.0,1.0
+carrot,depth_noise,2,xyz,late,1.0,1.0
+carrot,depth_noise,2,xyz,reliable_window,0.2222,0.7121
+carrot,depth_noise,2,xyz,reliable_extent,0.2222,0.7121
+carrot,depth_noise,2,xyz,healthy sensor,0.2222,0.7727
+carrot,depth_noise,3,xyz,rgb,0.2222,0.7727
+carrot,depth_noise,3,xyz,fpfh,1.0,1.0
+carrot,depth_noise,3,xyz,late,1.0,1.0
+carrot,depth_noise,3,xyz,reliable_window,0.2222,0.7121
+carrot,depth_noise,3,xyz,reliable_extent,0.2222,0.7121
+carrot,depth_noise,3,xyz,healthy sensor,0.2222,0.7727
+carrot,depth_noise,4,xyz,rgb,0.2222,0.7727
+carrot,depth_noise,4,xyz,fpfh,1.0,1.0
+carrot,depth_noise,4,xyz,late,1.0,1.0
+carrot,depth_noise,4,xyz,reliable_window,0.2222,0.7121
+carrot,depth_noise,4,xyz,reliable_extent,0.2222,0.7121
+carrot,depth_noise,4,xyz,healthy sensor,0.2222,0.7727
+carrot,depth_noise,5,xyz,rgb,0.2222,0.7727
+carrot,depth_noise,5,xyz,fpfh,1.0,1.0
+carrot,depth_noise,5,xyz,late,1.0,1.0
+carrot,depth_noise,5,xyz,reliable_window,0.2222,0.7121
+carrot,depth_noise,5,xyz,reliable_extent,0.2222,0.7121
+carrot,depth_noise,5,xyz,healthy sensor,0.2222,0.7727
+carrot,gaussian_noise,1,rgb,rgb,1.0,1.0
+carrot,gaussian_noise,1,rgb,fpfh,0.1481,0.8864
+carrot,gaussian_noise,1,rgb,late,1.0,1.0
+carrot,gaussian_noise,1,rgb,reliable_window,0.1481,0.9167
+carrot,gaussian_noise,1,rgb,reliable_extent,0.1481,0.9242
+carrot,gaussian_noise,1,rgb,healthy sensor,0.1481,0.8864
+carrot,gaussian_noise,2,rgb,rgb,1.0,1.0
+carrot,gaussian_noise,2,rgb,fpfh,0.1481,0.8864
+carrot,gaussian_noise,2,rgb,late,1.0,1.0
+carrot,gaussian_noise,2,rgb,reliable_window,0.1481,0.9167
+carrot,gaussian_noise,2,rgb,reliable_extent,0.1481,0.9242
+carrot,gaussian_noise,2,rgb,healthy sensor,0.1481,0.8864
+carrot,gaussian_noise,3,rgb,rgb,1.0,1.0
+carrot,gaussian_noise,3,rgb,fpfh,0.1481,0.8864
+carrot,gaussian_noise,3,rgb,late,1.0,1.0
+carrot,gaussian_noise,3,rgb,reliable_window,0.1481,0.9167
+carrot,gaussian_noise,3,rgb,reliable_extent,0.1481,0.9242
+carrot,gaussian_noise,3,rgb,healthy sensor,0.1481,0.8864
+carrot,gaussian_noise,4,rgb,rgb,1.0,1.0
+carrot,gaussian_noise,4,rgb,fpfh,0.1481,0.8864
+carrot,gaussian_noise,4,rgb,late,1.0,1.0
+carrot,gaussian_noise,4,rgb,reliable_window,0.1481,0.9167
+carrot,gaussian_noise,4,rgb,reliable_extent,0.1481,0.9242
+carrot,gaussian_noise,4,rgb,healthy sensor,0.1481,0.8864
+carrot,gaussian_noise,5,rgb,rgb,1.0,1.0
+carrot,gaussian_noise,5,rgb,fpfh,0.1481,0.8864
+carrot,gaussian_noise,5,rgb,late,1.0,1.0
+carrot,gaussian_noise,5,rgb,reliable_window,0.1481,0.9167
+carrot,gaussian_noise,5,rgb,reliable_extent,0.1481,0.9242
+carrot,gaussian_noise,5,rgb,healthy sensor,0.1481,0.8864
+carrot,holes,1,xyz,rgb,0.2222,0.7727
+carrot,holes,1,xyz,fpfh,0.1481,0.8485
+carrot,holes,1,xyz,late,0.1481,0.9318
+carrot,holes,1,xyz,reliable_window,0.1111,0.9242
+carrot,holes,1,xyz,reliable_extent,0.1852,0.8712
+carrot,holes,1,xyz,healthy sensor,0.2222,0.7727
+carrot,holes,2,xyz,rgb,0.2222,0.7727
+carrot,holes,2,xyz,fpfh,0.2963,0.8333
+carrot,holes,2,xyz,late,0.2222,0.9545
+carrot,holes,2,xyz,reliable_window,0.1852,0.8864
+carrot,holes,2,xyz,reliable_extent,0.2222,0.803
+carrot,holes,2,xyz,healthy sensor,0.2222,0.7727
+carrot,holes,3,xyz,rgb,0.2222,0.7727
+carrot,holes,3,xyz,fpfh,0.4074,0.8485
+carrot,holes,3,xyz,late,0.3704,0.9545
+carrot,holes,3,xyz,reliable_window,0.2222,0.7576
+carrot,holes,3,xyz,reliable_extent,0.2222,0.7273
+carrot,holes,3,xyz,healthy sensor,0.2222,0.7727
+carrot,holes,4,xyz,rgb,0.2222,0.7727
+carrot,holes,4,xyz,fpfh,0.2593,0.8182
+carrot,holes,4,xyz,late,0.4444,0.9318
+carrot,holes,4,xyz,reliable_window,0.2222,0.7121
+carrot,holes,4,xyz,reliable_extent,0.2222,0.7121
+carrot,holes,4,xyz,healthy sensor,0.2222,0.7727
+carrot,holes,5,xyz,rgb,0.2222,0.7727
+carrot,holes,5,xyz,fpfh,0.7407,0.8939
+carrot,holes,5,xyz,late,0.6296,0.9848
+carrot,holes,5,xyz,reliable_window,0.2222,0.7121
+carrot,holes,5,xyz,reliable_extent,0.2222,0.7121
+carrot,holes,5,xyz,healthy sensor,0.2222,0.7727
+carrot,jpeg,1,rgb,rgb,1.0,1.0
+carrot,jpeg,1,rgb,fpfh,0.1481,0.8864
+carrot,jpeg,1,rgb,late,1.0,1.0
+carrot,jpeg,1,rgb,reliable_window,0.1481,0.9167
+carrot,jpeg,1,rgb,reliable_extent,0.1481,0.9242
+carrot,jpeg,1,rgb,healthy sensor,0.1481,0.8864
+carrot,jpeg,2,rgb,rgb,1.0,1.0
+carrot,jpeg,2,rgb,fpfh,0.1481,0.8864
+carrot,jpeg,2,rgb,late,1.0,1.0
+carrot,jpeg,2,rgb,reliable_window,0.1481,0.9167
+carrot,jpeg,2,rgb,reliable_extent,0.1481,0.9242
+carrot,jpeg,2,rgb,healthy sensor,0.1481,0.8864
+carrot,jpeg,3,rgb,rgb,1.0,1.0
+carrot,jpeg,3,rgb,fpfh,0.1481,0.8864
+carrot,jpeg,3,rgb,late,1.0,1.0
+carrot,jpeg,3,rgb,reliable_window,0.1481,0.9167
+carrot,jpeg,3,rgb,reliable_extent,0.1481,0.9242
+carrot,jpeg,3,rgb,healthy sensor,0.1481,0.8864
+carrot,jpeg,4,rgb,rgb,1.0,1.0
+carrot,jpeg,4,rgb,fpfh,0.1481,0.8864
+carrot,jpeg,4,rgb,late,1.0,1.0
+carrot,jpeg,4,rgb,reliable_window,0.1481,0.9167
+carrot,jpeg,4,rgb,reliable_extent,0.1481,0.9242
+carrot,jpeg,4,rgb,healthy sensor,0.1481,0.8864
+carrot,jpeg,5,rgb,rgb,1.0,1.0
+carrot,jpeg,5,rgb,fpfh,0.1481,0.8864
+carrot,jpeg,5,rgb,late,1.0,1.0
+carrot,jpeg,5,rgb,reliable_window,0.1481,0.9167
+carrot,jpeg,5,rgb,reliable_extent,0.1481,0.9242
+carrot,jpeg,5,rgb,healthy sensor,0.1481,0.8864
+carrot,misregister,1,xyz,rgb,0.2222,0.7727
+carrot,misregister,1,xyz,fpfh,0.1481,0.8864
+carrot,misregister,1,xyz,late,0.1481,0.947
+carrot,misregister,1,xyz,reliable_window,0.1481,0.9394
+carrot,misregister,1,xyz,reliable_extent,0.1481,0.8864
+carrot,misregister,1,xyz,healthy sensor,0.2222,0.7727
+carrot,misregister,2,xyz,rgb,0.2222,0.7727
+carrot,misregister,2,xyz,fpfh,0.1481,0.8864
+carrot,misregister,2,xyz,late,0.1852,0.9545
+carrot,misregister,2,xyz,reliable_window,0.1852,0.9545
+carrot,misregister,2,xyz,reliable_extent,0.1852,0.9015
+carrot,misregister,2,xyz,healthy sensor,0.2222,0.7727
+carrot,misregister,3,xyz,rgb,0.2222,0.7727
+carrot,misregister,3,xyz,fpfh,0.1111,0.9167
+carrot,misregister,3,xyz,late,0.1481,0.947
+carrot,misregister,3,xyz,reliable_window,0.1481,0.947
+carrot,misregister,3,xyz,reliable_extent,0.1481,0.9015
+carrot,misregister,3,xyz,healthy sensor,0.2222,0.7727
+carrot,misregister,4,xyz,rgb,0.2222,0.7727
+carrot,misregister,4,xyz,fpfh,0.0741,0.8788
+carrot,misregister,4,xyz,late,0.1852,0.9545
+carrot,misregister,4,xyz,reliable_window,0.1852,0.9545
+carrot,misregister,4,xyz,reliable_extent,0.1852,0.9318
+carrot,misregister,4,xyz,healthy sensor,0.2222,0.7727
+carrot,misregister,5,xyz,rgb,0.2222,0.7727
+carrot,misregister,5,xyz,fpfh,0.1111,0.9091
+carrot,misregister,5,xyz,late,0.1111,0.9773
+carrot,misregister,5,xyz,reliable_window,0.1111,0.9621
+carrot,misregister,5,xyz,reliable_extent,0.1111,0.9318
+carrot,misregister,5,xyz,healthy sensor,0.2222,0.7727
+carrot,occlusion,1,rgb,rgb,1.0,1.0
+carrot,occlusion,1,rgb,fpfh,0.1481,0.8864
+carrot,occlusion,1,rgb,late,1.0,1.0
+carrot,occlusion,1,rgb,reliable_window,1.0,1.0
+carrot,occlusion,1,rgb,reliable_extent,0.1481,0.9242
+carrot,occlusion,1,rgb,healthy sensor,0.1481,0.8864
+carrot,occlusion,2,rgb,rgb,1.0,1.0
+carrot,occlusion,2,rgb,fpfh,0.1481,0.8864
+carrot,occlusion,2,rgb,late,1.0,1.0
+carrot,occlusion,2,rgb,reliable_window,0.5926,0.9924
+carrot,occlusion,2,rgb,reliable_extent,0.1481,0.9242
+carrot,occlusion,2,rgb,healthy sensor,0.1481,0.8864
+carrot,occlusion,3,rgb,rgb,1.0,1.0
+carrot,occlusion,3,rgb,fpfh,0.1481,0.8864
+carrot,occlusion,3,rgb,late,1.0,1.0
+carrot,occlusion,3,rgb,reliable_window,0.2222,0.9394
+carrot,occlusion,3,rgb,reliable_extent,0.1481,0.9242
+carrot,occlusion,3,rgb,healthy sensor,0.1481,0.8864
+carrot,occlusion,4,rgb,rgb,1.0,1.0
+carrot,occlusion,4,rgb,fpfh,0.1481,0.8864
+carrot,occlusion,4,rgb,late,1.0,1.0
+carrot,occlusion,4,rgb,reliable_window,0.1481,0.9167
+carrot,occlusion,4,rgb,reliable_extent,0.1481,0.9242
+carrot,occlusion,4,rgb,healthy sensor,0.1481,0.8864
+carrot,occlusion,5,rgb,rgb,1.0,1.0
+carrot,occlusion,5,rgb,fpfh,0.1481,0.8864
+carrot,occlusion,5,rgb,late,1.0,1.0
+carrot,occlusion,5,rgb,reliable_window,0.1481,0.9167
+carrot,occlusion,5,rgb,reliable_extent,0.1481,0.9242
+carrot,occlusion,5,rgb,healthy sensor,0.1481,0.8864
+carrot,quantise,1,xyz,rgb,0.2222,0.7727
+carrot,quantise,1,xyz,fpfh,0.1852,0.9621
+carrot,quantise,1,xyz,late,0.2593,0.9924
+carrot,quantise,1,xyz,reliable_window,0.2222,0.7121
+carrot,quantise,1,xyz,reliable_extent,0.2222,0.7121
+carrot,quantise,1,xyz,healthy sensor,0.2222,0.7727
+carrot,quantise,2,xyz,rgb,0.2222,0.7727
+carrot,quantise,2,xyz,fpfh,1.0,1.0
+carrot,quantise,2,xyz,late,1.0,1.0
+carrot,quantise,2,xyz,reliable_window,0.2222,0.7121
+carrot,quantise,2,xyz,reliable_extent,0.2222,0.7121
+carrot,quantise,2,xyz,healthy sensor,0.2222,0.7727
+carrot,quantise,3,xyz,rgb,0.2222,0.7727
+carrot,quantise,3,xyz,fpfh,1.0,1.0
+carrot,quantise,3,xyz,late,1.0,1.0
+carrot,quantise,3,xyz,reliable_window,0.2222,0.7121
+carrot,quantise,3,xyz,reliable_extent,0.2222,0.7121
+carrot,quantise,3,xyz,healthy sensor,0.2222,0.7727
+carrot,quantise,4,xyz,rgb,0.2222,0.7727
+carrot,quantise,4,xyz,fpfh,1.0,1.0
+carrot,quantise,4,xyz,late,1.0,1.0
+carrot,quantise,4,xyz,reliable_window,0.2222,0.7121
+carrot,quantise,4,xyz,reliable_extent,0.2222,0.7121
+carrot,quantise,4,xyz,healthy sensor,0.2222,0.7727
+carrot,quantise,5,xyz,rgb,0.2222,0.7727
+carrot,quantise,5,xyz,fpfh,1.0,1.0
+carrot,quantise,5,xyz,late,1.0,1.0
+carrot,quantise,5,xyz,reliable_window,0.2222,0.7121
+carrot,quantise,5,xyz,reliable_extent,0.2222,0.7121
+carrot,quantise,5,xyz,healthy sensor,0.2222,0.7727
+carrot,rgb_missing,1,rgb,rgb,1.0,1.0
+carrot,rgb_missing,1,rgb,fpfh,0.1481,0.8864
+carrot,rgb_missing,1,rgb,late,1.0,1.0
+carrot,rgb_missing,1,rgb,reliable_window,0.1481,0.9167
+carrot,rgb_missing,1,rgb,reliable_extent,0.1481,0.9242
+carrot,rgb_missing,1,rgb,healthy sensor,0.1481,0.8864
+carrot,tilt,1,xyz,rgb,0.2222,0.7727
+carrot,tilt,1,xyz,fpfh,0.1481,0.8864
+carrot,tilt,1,xyz,late,0.1111,0.9394
+carrot,tilt,1,xyz,reliable_window,0.1111,0.9394
+carrot,tilt,1,xyz,reliable_extent,0.1111,0.9015
+carrot,tilt,1,xyz,healthy sensor,0.2222,0.7727
+carrot,tilt,2,xyz,rgb,0.2222,0.7727
+carrot,tilt,2,xyz,fpfh,0.1481,0.8636
+carrot,tilt,2,xyz,late,0.1111,0.9318
+carrot,tilt,2,xyz,reliable_window,0.1111,0.9318
+carrot,tilt,2,xyz,reliable_extent,0.1111,0.9091
+carrot,tilt,2,xyz,healthy sensor,0.2222,0.7727
+carrot,tilt,3,xyz,rgb,0.2222,0.7727
+carrot,tilt,3,xyz,fpfh,0.1481,0.8636
+carrot,tilt,3,xyz,late,0.1111,0.947
+carrot,tilt,3,xyz,reliable_window,0.1111,0.947
+carrot,tilt,3,xyz,reliable_extent,0.1111,0.8864
+carrot,tilt,3,xyz,healthy sensor,0.2222,0.7727
+carrot,tilt,4,xyz,rgb,0.2222,0.7727
+carrot,tilt,4,xyz,fpfh,0.1481,0.8712
+carrot,tilt,4,xyz,late,0.1111,0.947
+carrot,tilt,4,xyz,reliable_window,0.1111,0.947
+carrot,tilt,4,xyz,reliable_extent,0.1481,0.8788
+carrot,tilt,4,xyz,healthy sensor,0.2222,0.7727
+carrot,tilt,5,xyz,rgb,0.2222,0.7727
+carrot,tilt,5,xyz,fpfh,0.2222,0.8939
+carrot,tilt,5,xyz,late,0.1852,0.9318
+carrot,tilt,5,xyz,reliable_window,0.1852,0.9318
+carrot,tilt,5,xyz,reliable_extent,0.1481,0.8485
+carrot,tilt,5,xyz,healthy sensor,0.2222,0.7727
+carrot,xyz_missing,1,xyz,rgb,0.2222,0.7727
+carrot,xyz_missing,1,xyz,fpfh,0.0,0.0
+carrot,xyz_missing,1,xyz,late,0.0,0.1667
+carrot,xyz_missing,1,xyz,reliable_window,0.0,0.4091
+carrot,xyz_missing,1,xyz,reliable_extent,0.0,0.4091
+carrot,xyz_missing,1,xyz,healthy sensor,0.2222,0.7727
+cookie,brightness,1,rgb,rgb,0.5357,0.4369
+cookie,brightness,1,rgb,fpfh,0.2857,0.7573
+cookie,brightness,1,rgb,late,0.4643,0.7573
+cookie,brightness,1,rgb,reliable_window,0.4286,0.8058
+cookie,brightness,1,rgb,reliable_extent,0.4286,0.7864
+cookie,brightness,1,rgb,healthy sensor,0.2857,0.7573
+cookie,brightness,2,rgb,rgb,1.0,0.835
+cookie,brightness,2,rgb,fpfh,0.2857,0.7573
+cookie,brightness,2,rgb,late,0.8929,0.9029
+cookie,brightness,2,rgb,reliable_window,0.2857,0.7087
+cookie,brightness,2,rgb,reliable_extent,0.2857,0.7087
+cookie,brightness,2,rgb,healthy sensor,0.2857,0.7573
+cookie,brightness,3,rgb,rgb,1.0,1.0
+cookie,brightness,3,rgb,fpfh,0.2857,0.7573
+cookie,brightness,3,rgb,late,1.0,1.0
+cookie,brightness,3,rgb,reliable_window,0.2857,0.7087
+cookie,brightness,3,rgb,reliable_extent,0.2857,0.7087
+cookie,brightness,3,rgb,healthy sensor,0.2857,0.7573
+cookie,brightness,4,rgb,rgb,1.0,1.0
+cookie,brightness,4,rgb,fpfh,0.2857,0.7573
+cookie,brightness,4,rgb,late,1.0,1.0
+cookie,brightness,4,rgb,reliable_window,0.2857,0.7087
+cookie,brightness,4,rgb,reliable_extent,0.2857,0.7087
+cookie,brightness,4,rgb,healthy sensor,0.2857,0.7573
+cookie,brightness,5,rgb,rgb,1.0,1.0
+cookie,brightness,5,rgb,fpfh,0.2857,0.7573
+cookie,brightness,5,rgb,late,1.0,1.0
+cookie,brightness,5,rgb,reliable_window,0.2857,0.7087
+cookie,brightness,5,rgb,reliable_extent,0.2857,0.7087
+cookie,brightness,5,rgb,healthy sensor,0.2857,0.7573
+cookie,defocus_blur,1,rgb,rgb,1.0,1.0
+cookie,defocus_blur,1,rgb,fpfh,0.2857,0.7573
+cookie,defocus_blur,1,rgb,late,1.0,1.0
+cookie,defocus_blur,1,rgb,reliable_window,0.2857,0.7087
+cookie,defocus_blur,1,rgb,reliable_extent,0.2857,0.7087
+cookie,defocus_blur,1,rgb,healthy sensor,0.2857,0.7573
+cookie,defocus_blur,2,rgb,rgb,1.0,1.0
+cookie,defocus_blur,2,rgb,fpfh,0.2857,0.7573
+cookie,defocus_blur,2,rgb,late,1.0,1.0
+cookie,defocus_blur,2,rgb,reliable_window,0.2857,0.7087
+cookie,defocus_blur,2,rgb,reliable_extent,0.2857,0.7087
+cookie,defocus_blur,2,rgb,healthy sensor,0.2857,0.7573
+cookie,defocus_blur,3,rgb,rgb,1.0,1.0
+cookie,defocus_blur,3,rgb,fpfh,0.2857,0.7573
+cookie,defocus_blur,3,rgb,late,1.0,1.0
+cookie,defocus_blur,3,rgb,reliable_window,0.2857,0.7087
+cookie,defocus_blur,3,rgb,reliable_extent,0.2857,0.7087
+cookie,defocus_blur,3,rgb,healthy sensor,0.2857,0.7573
+cookie,defocus_blur,4,rgb,rgb,1.0,1.0
+cookie,defocus_blur,4,rgb,fpfh,0.2857,0.7573
+cookie,defocus_blur,4,rgb,late,1.0,1.0
+cookie,defocus_blur,4,rgb,reliable_window,0.2857,0.7087
+cookie,defocus_blur,4,rgb,reliable_extent,0.2857,0.7087
+cookie,defocus_blur,4,rgb,healthy sensor,0.2857,0.7573
+cookie,defocus_blur,5,rgb,rgb,1.0,1.0
+cookie,defocus_blur,5,rgb,fpfh,0.2857,0.7573
+cookie,defocus_blur,5,rgb,late,1.0,1.0
+cookie,defocus_blur,5,rgb,reliable_window,0.2857,0.7087
+cookie,defocus_blur,5,rgb,reliable_extent,0.2857,0.7087
+cookie,defocus_blur,5,rgb,healthy sensor,0.2857,0.7573
+cookie,depth_noise,1,xyz,rgb,0.1786,0.3786
+cookie,depth_noise,1,xyz,fpfh,1.0,1.0
+cookie,depth_noise,1,xyz,late,1.0,1.0
+cookie,depth_noise,1,xyz,reliable_window,0.1429,0.3495
+cookie,depth_noise,1,xyz,reliable_extent,0.1429,0.3495
+cookie,depth_noise,1,xyz,healthy sensor,0.1786,0.3786
+cookie,depth_noise,2,xyz,rgb,0.1786,0.3786
+cookie,depth_noise,2,xyz,fpfh,1.0,1.0
+cookie,depth_noise,2,xyz,late,1.0,1.0
+cookie,depth_noise,2,xyz,reliable_window,0.1429,0.3495
+cookie,depth_noise,2,xyz,reliable_extent,0.1429,0.3495
+cookie,depth_noise,2,xyz,healthy sensor,0.1786,0.3786
+cookie,depth_noise,3,xyz,rgb,0.1786,0.3786
+cookie,depth_noise,3,xyz,fpfh,1.0,1.0
+cookie,depth_noise,3,xyz,late,1.0,1.0
+cookie,depth_noise,3,xyz,reliable_window,0.1429,0.3495
+cookie,depth_noise,3,xyz,reliable_extent,0.1429,0.3495
+cookie,depth_noise,3,xyz,healthy sensor,0.1786,0.3786
+cookie,depth_noise,4,xyz,rgb,0.1786,0.3786
+cookie,depth_noise,4,xyz,fpfh,1.0,1.0
+cookie,depth_noise,4,xyz,late,1.0,1.0
+cookie,depth_noise,4,xyz,reliable_window,0.1429,0.3495
+cookie,depth_noise,4,xyz,reliable_extent,0.1429,0.3495
+cookie,depth_noise,4,xyz,healthy sensor,0.1786,0.3786
+cookie,depth_noise,5,xyz,rgb,0.1786,0.3786
+cookie,depth_noise,5,xyz,fpfh,1.0,1.0
+cookie,depth_noise,5,xyz,late,1.0,1.0
+cookie,depth_noise,5,xyz,reliable_window,0.1429,0.3495
+cookie,depth_noise,5,xyz,reliable_extent,0.1429,0.3495
+cookie,depth_noise,5,xyz,healthy sensor,0.1786,0.3786
+cookie,gaussian_noise,1,rgb,rgb,1.0,1.0
+cookie,gaussian_noise,1,rgb,fpfh,0.2857,0.7573
+cookie,gaussian_noise,1,rgb,late,1.0,1.0
+cookie,gaussian_noise,1,rgb,reliable_window,0.2857,0.7087
+cookie,gaussian_noise,1,rgb,reliable_extent,0.2857,0.7087
+cookie,gaussian_noise,1,rgb,healthy sensor,0.2857,0.7573
+cookie,gaussian_noise,2,rgb,rgb,1.0,1.0
+cookie,gaussian_noise,2,rgb,fpfh,0.2857,0.7573
+cookie,gaussian_noise,2,rgb,late,1.0,1.0
+cookie,gaussian_noise,2,rgb,reliable_window,0.2857,0.7087
+cookie,gaussian_noise,2,rgb,reliable_extent,0.2857,0.7087
+cookie,gaussian_noise,2,rgb,healthy sensor,0.2857,0.7573
+cookie,gaussian_noise,3,rgb,rgb,1.0,1.0
+cookie,gaussian_noise,3,rgb,fpfh,0.2857,0.7573
+cookie,gaussian_noise,3,rgb,late,1.0,1.0
+cookie,gaussian_noise,3,rgb,reliable_window,0.2857,0.7087
+cookie,gaussian_noise,3,rgb,reliable_extent,0.2857,0.7087
+cookie,gaussian_noise,3,rgb,healthy sensor,0.2857,0.7573
+cookie,gaussian_noise,4,rgb,rgb,1.0,1.0
+cookie,gaussian_noise,4,rgb,fpfh,0.2857,0.7573
+cookie,gaussian_noise,4,rgb,late,1.0,1.0
+cookie,gaussian_noise,4,rgb,reliable_window,0.2857,0.7087
+cookie,gaussian_noise,4,rgb,reliable_extent,0.2857,0.7087
+cookie,gaussian_noise,4,rgb,healthy sensor,0.2857,0.7573
+cookie,gaussian_noise,5,rgb,rgb,1.0,1.0
+cookie,gaussian_noise,5,rgb,fpfh,0.2857,0.7573
+cookie,gaussian_noise,5,rgb,late,1.0,1.0
+cookie,gaussian_noise,5,rgb,reliable_window,0.2857,0.7087
+cookie,gaussian_noise,5,rgb,reliable_extent,0.2857,0.7087
+cookie,gaussian_noise,5,rgb,healthy sensor,0.2857,0.7573
+cookie,holes,1,xyz,rgb,0.1786,0.3786
+cookie,holes,1,xyz,fpfh,0.4643,0.8058
+cookie,holes,1,xyz,late,0.3929,0.7573
+cookie,holes,1,xyz,reliable_window,0.3929,0.7282
+cookie,holes,1,xyz,reliable_extent,0.3571,0.5825
+cookie,holes,1,xyz,healthy sensor,0.1786,0.3786
+cookie,holes,2,xyz,rgb,0.1786,0.3786
+cookie,holes,2,xyz,fpfh,0.5357,0.8155
+cookie,holes,2,xyz,late,0.3214,0.7767
+cookie,holes,2,xyz,reliable_window,0.1786,0.3689
+cookie,holes,2,xyz,reliable_extent,0.1429,0.3495
+cookie,holes,2,xyz,healthy sensor,0.1786,0.3786
+cookie,holes,3,xyz,rgb,0.1786,0.3786
+cookie,holes,3,xyz,fpfh,0.7857,0.9126
+cookie,holes,3,xyz,late,0.6429,0.8155
+cookie,holes,3,xyz,reliable_window,0.1429,0.3495
+cookie,holes,3,xyz,reliable_extent,0.1429,0.3495
+cookie,holes,3,xyz,healthy sensor,0.1786,0.3786
+cookie,holes,4,xyz,rgb,0.1786,0.3786
+cookie,holes,4,xyz,fpfh,0.8571,0.9126
+cookie,holes,4,xyz,late,0.5357,0.835
+cookie,holes,4,xyz,reliable_window,0.1429,0.3495
+cookie,holes,4,xyz,reliable_extent,0.1429,0.3495
+cookie,holes,4,xyz,healthy sensor,0.1786,0.3786
+cookie,holes,5,xyz,rgb,0.1786,0.3786
+cookie,holes,5,xyz,fpfh,0.8571,0.9223
+cookie,holes,5,xyz,late,0.7143,0.8641
+cookie,holes,5,xyz,reliable_window,0.1429,0.3495
+cookie,holes,5,xyz,reliable_extent,0.1429,0.3495
+cookie,holes,5,xyz,healthy sensor,0.1786,0.3786
+cookie,jpeg,1,rgb,rgb,1.0,1.0
+cookie,jpeg,1,rgb,fpfh,0.2857,0.7573
+cookie,jpeg,1,rgb,late,1.0,1.0
+cookie,jpeg,1,rgb,reliable_window,0.2857,0.7087
+cookie,jpeg,1,rgb,reliable_extent,0.2857,0.7087
+cookie,jpeg,1,rgb,healthy sensor,0.2857,0.7573
+cookie,jpeg,2,rgb,rgb,1.0,1.0
+cookie,jpeg,2,rgb,fpfh,0.2857,0.7573
+cookie,jpeg,2,rgb,late,1.0,1.0
+cookie,jpeg,2,rgb,reliable_window,0.2857,0.7087
+cookie,jpeg,2,rgb,reliable_extent,0.2857,0.7087
+cookie,jpeg,2,rgb,healthy sensor,0.2857,0.7573
+cookie,jpeg,3,rgb,rgb,1.0,1.0
+cookie,jpeg,3,rgb,fpfh,0.2857,0.7573
+cookie,jpeg,3,rgb,late,1.0,1.0
+cookie,jpeg,3,rgb,reliable_window,0.2857,0.7087
+cookie,jpeg,3,rgb,reliable_extent,0.2857,0.7087
+cookie,jpeg,3,rgb,healthy sensor,0.2857,0.7573
+cookie,jpeg,4,rgb,rgb,1.0,1.0
+cookie,jpeg,4,rgb,fpfh,0.2857,0.7573
+cookie,jpeg,4,rgb,late,1.0,1.0
+cookie,jpeg,4,rgb,reliable_window,0.2857,0.7087
+cookie,jpeg,4,rgb,reliable_extent,0.2857,0.7087
+cookie,jpeg,4,rgb,healthy sensor,0.2857,0.7573
+cookie,jpeg,5,rgb,rgb,1.0,1.0
+cookie,jpeg,5,rgb,fpfh,0.2857,0.7573
+cookie,jpeg,5,rgb,late,1.0,1.0
+cookie,jpeg,5,rgb,reliable_window,0.2857,0.7087
+cookie,jpeg,5,rgb,reliable_extent,0.2857,0.7087
+cookie,jpeg,5,rgb,healthy sensor,0.2857,0.7573
+cookie,misregister,1,xyz,rgb,0.1786,0.3786
+cookie,misregister,1,xyz,fpfh,0.2143,0.7573
+cookie,misregister,1,xyz,late,0.1786,0.7184
+cookie,misregister,1,xyz,reliable_window,0.1786,0.7184
+cookie,misregister,1,xyz,reliable_extent,0.1786,0.6796
+cookie,misregister,1,xyz,healthy sensor,0.1786,0.3786
+cookie,misregister,2,xyz,rgb,0.1786,0.3786
+cookie,misregister,2,xyz,fpfh,0.25,0.7282
+cookie,misregister,2,xyz,late,0.2143,0.7282
+cookie,misregister,2,xyz,reliable_window,0.2143,0.7282
+cookie,misregister,2,xyz,reliable_extent,0.2143,0.699
+cookie,misregister,2,xyz,healthy sensor,0.1786,0.3786
+cookie,misregister,3,xyz,rgb,0.1786,0.3786
+cookie,misregister,3,xyz,fpfh,0.1429,0.7864
+cookie,misregister,3,xyz,late,0.1071,0.7184
+cookie,misregister,3,xyz,reliable_window,0.1071,0.7184
+cookie,misregister,3,xyz,reliable_extent,0.1071,0.7184
+cookie,misregister,3,xyz,healthy sensor,0.1786,0.3786
+cookie,misregister,4,xyz,rgb,0.1786,0.3786
+cookie,misregister,4,xyz,fpfh,0.1786,0.7379
+cookie,misregister,4,xyz,late,0.25,0.7573
+cookie,misregister,4,xyz,reliable_window,0.25,0.7573
+cookie,misregister,4,xyz,reliable_extent,0.25,0.7087
+cookie,misregister,4,xyz,healthy sensor,0.1786,0.3786
+cookie,misregister,5,xyz,rgb,0.1786,0.3786
+cookie,misregister,5,xyz,fpfh,0.1786,0.7476
+cookie,misregister,5,xyz,late,0.1786,0.7379
+cookie,misregister,5,xyz,reliable_window,0.1786,0.7379
+cookie,misregister,5,xyz,reliable_extent,0.1786,0.699
+cookie,misregister,5,xyz,healthy sensor,0.1786,0.3786
+cookie,occlusion,1,rgb,rgb,1.0,1.0
+cookie,occlusion,1,rgb,fpfh,0.2857,0.7573
+cookie,occlusion,1,rgb,late,1.0,1.0
+cookie,occlusion,1,rgb,reliable_window,1.0,1.0
+cookie,occlusion,1,rgb,reliable_extent,0.2857,0.7087
+cookie,occlusion,1,rgb,healthy sensor,0.2857,0.7573
+cookie,occlusion,2,rgb,rgb,1.0,1.0
+cookie,occlusion,2,rgb,fpfh,0.2857,0.7573
+cookie,occlusion,2,rgb,late,1.0,1.0
+cookie,occlusion,2,rgb,reliable_window,1.0,1.0
+cookie,occlusion,2,rgb,reliable_extent,0.2857,0.7087
+cookie,occlusion,2,rgb,healthy sensor,0.2857,0.7573
+cookie,occlusion,3,rgb,rgb,1.0,1.0
+cookie,occlusion,3,rgb,fpfh,0.2857,0.7573
+cookie,occlusion,3,rgb,late,1.0,1.0
+cookie,occlusion,3,rgb,reliable_window,0.5357,0.835
+cookie,occlusion,3,rgb,reliable_extent,0.2857,0.7087
+cookie,occlusion,3,rgb,healthy sensor,0.2857,0.7573
+cookie,occlusion,4,rgb,rgb,1.0,1.0
+cookie,occlusion,4,rgb,fpfh,0.2857,0.7573
+cookie,occlusion,4,rgb,late,1.0,1.0
+cookie,occlusion,4,rgb,reliable_window,0.2857,0.7379
+cookie,occlusion,4,rgb,reliable_extent,0.2857,0.7087
+cookie,occlusion,4,rgb,healthy sensor,0.2857,0.7573
+cookie,occlusion,5,rgb,rgb,1.0,1.0
+cookie,occlusion,5,rgb,fpfh,0.2857,0.7573
+cookie,occlusion,5,rgb,late,1.0,1.0
+cookie,occlusion,5,rgb,reliable_window,0.2857,0.7087
+cookie,occlusion,5,rgb,reliable_extent,0.2857,0.7087
+cookie,occlusion,5,rgb,healthy sensor,0.2857,0.7573
+cookie,quantise,1,xyz,rgb,0.1786,0.3786
+cookie,quantise,1,xyz,fpfh,1.0,1.0
+cookie,quantise,1,xyz,late,0.8929,0.9903
+cookie,quantise,1,xyz,reliable_window,0.1429,0.3495
+cookie,quantise,1,xyz,reliable_extent,0.1429,0.3495
+cookie,quantise,1,xyz,healthy sensor,0.1786,0.3786
+cookie,quantise,2,xyz,rgb,0.1786,0.3786
+cookie,quantise,2,xyz,fpfh,1.0,1.0
+cookie,quantise,2,xyz,late,1.0,1.0
+cookie,quantise,2,xyz,reliable_window,0.1429,0.3495
+cookie,quantise,2,xyz,reliable_extent,0.1429,0.3495
+cookie,quantise,2,xyz,healthy sensor,0.1786,0.3786
+cookie,quantise,3,xyz,rgb,0.1786,0.3786
+cookie,quantise,3,xyz,fpfh,1.0,1.0
+cookie,quantise,3,xyz,late,1.0,1.0
+cookie,quantise,3,xyz,reliable_window,0.1429,0.3495
+cookie,quantise,3,xyz,reliable_extent,0.1429,0.3495
+cookie,quantise,3,xyz,healthy sensor,0.1786,0.3786
+cookie,quantise,4,xyz,rgb,0.1786,0.3786
+cookie,quantise,4,xyz,fpfh,1.0,1.0
+cookie,quantise,4,xyz,late,1.0,1.0
+cookie,quantise,4,xyz,reliable_window,0.1429,0.3495
+cookie,quantise,4,xyz,reliable_extent,0.1429,0.3495
+cookie,quantise,4,xyz,healthy sensor,0.1786,0.3786
+cookie,quantise,5,xyz,rgb,0.1786,0.3786
+cookie,quantise,5,xyz,fpfh,1.0,1.0
+cookie,quantise,5,xyz,late,1.0,1.0
+cookie,quantise,5,xyz,reliable_window,0.1429,0.3495
+cookie,quantise,5,xyz,reliable_extent,0.1429,0.3495
+cookie,quantise,5,xyz,healthy sensor,0.1786,0.3786
+cookie,rgb_missing,1,rgb,rgb,1.0,1.0
+cookie,rgb_missing,1,rgb,fpfh,0.2857,0.7573
+cookie,rgb_missing,1,rgb,late,1.0,1.0
+cookie,rgb_missing,1,rgb,reliable_window,0.2857,0.7087
+cookie,rgb_missing,1,rgb,reliable_extent,0.2857,0.7087
+cookie,rgb_missing,1,rgb,healthy sensor,0.2857,0.7573
+cookie,tilt,1,xyz,rgb,0.1786,0.3786
+cookie,tilt,1,xyz,fpfh,0.25,0.7573
+cookie,tilt,1,xyz,late,0.1429,0.7282
+cookie,tilt,1,xyz,reliable_window,0.1429,0.7282
+cookie,tilt,1,xyz,reliable_extent,0.2143,0.7087
+cookie,tilt,1,xyz,healthy sensor,0.1786,0.3786
+cookie,tilt,2,xyz,rgb,0.1786,0.3786
+cookie,tilt,2,xyz,fpfh,0.2857,0.7476
+cookie,tilt,2,xyz,late,0.1786,0.7282
+cookie,tilt,2,xyz,reliable_window,0.1786,0.7282
+cookie,tilt,2,xyz,reliable_extent,0.1429,0.6796
+cookie,tilt,2,xyz,healthy sensor,0.1786,0.3786
+cookie,tilt,3,xyz,rgb,0.1786,0.3786
+cookie,tilt,3,xyz,fpfh,0.1429,0.7573
+cookie,tilt,3,xyz,late,0.1071,0.7282
+cookie,tilt,3,xyz,reliable_window,0.1071,0.7282
+cookie,tilt,3,xyz,reliable_extent,0.1071,0.7184
+cookie,tilt,3,xyz,healthy sensor,0.1786,0.3786
+cookie,tilt,4,xyz,rgb,0.1786,0.3786
+cookie,tilt,4,xyz,fpfh,0.1786,0.7767
+cookie,tilt,4,xyz,late,0.1071,0.7476
+cookie,tilt,4,xyz,reliable_window,0.1071,0.7476
+cookie,tilt,4,xyz,reliable_extent,0.1429,0.699
+cookie,tilt,4,xyz,healthy sensor,0.1786,0.3786
+cookie,tilt,5,xyz,rgb,0.1786,0.3786
+cookie,tilt,5,xyz,fpfh,0.25,0.7961
+cookie,tilt,5,xyz,late,0.1786,0.7087
+cookie,tilt,5,xyz,reliable_window,0.1786,0.7087
+cookie,tilt,5,xyz,reliable_extent,0.1786,0.5922
+cookie,tilt,5,xyz,healthy sensor,0.1786,0.3786
+cookie,xyz_missing,1,xyz,rgb,0.1786,0.3786
+cookie,xyz_missing,1,xyz,fpfh,0.0,0.0
+cookie,xyz_missing,1,xyz,late,0.0,0.0
+cookie,xyz_missing,1,xyz,reliable_window,0.1429,0.3495
+cookie,xyz_missing,1,xyz,reliable_extent,0.1429,0.3495
+cookie,xyz_missing,1,xyz,healthy sensor,0.1786,0.3786
+dowel,brightness,1,rgb,rgb,1.0,1.0
+dowel,brightness,1,rgb,fpfh,0.0769,0.4808
+dowel,brightness,1,rgb,late,1.0,1.0
+dowel,brightness,1,rgb,reliable_window,0.0769,0.4712
+dowel,brightness,1,rgb,reliable_extent,0.0769,0.4712
+dowel,brightness,1,rgb,healthy sensor,0.0769,0.4808
+dowel,brightness,2,rgb,rgb,1.0,1.0
+dowel,brightness,2,rgb,fpfh,0.0769,0.4808
+dowel,brightness,2,rgb,late,1.0,1.0
+dowel,brightness,2,rgb,reliable_window,0.0769,0.4712
+dowel,brightness,2,rgb,reliable_extent,0.0769,0.4712
+dowel,brightness,2,rgb,healthy sensor,0.0769,0.4808
+dowel,brightness,3,rgb,rgb,1.0,1.0
+dowel,brightness,3,rgb,fpfh,0.0769,0.4808
+dowel,brightness,3,rgb,late,1.0,1.0
+dowel,brightness,3,rgb,reliable_window,0.0769,0.4712
+dowel,brightness,3,rgb,reliable_extent,0.0769,0.4712
+dowel,brightness,3,rgb,healthy sensor,0.0769,0.4808
+dowel,brightness,4,rgb,rgb,1.0,1.0
+dowel,brightness,4,rgb,fpfh,0.0769,0.4808
+dowel,brightness,4,rgb,late,1.0,1.0
+dowel,brightness,4,rgb,reliable_window,0.0769,0.4712
+dowel,brightness,4,rgb,reliable_extent,0.0769,0.4712
+dowel,brightness,4,rgb,healthy sensor,0.0769,0.4808
+dowel,brightness,5,rgb,rgb,1.0,1.0
+dowel,brightness,5,rgb,fpfh,0.0769,0.4808
+dowel,brightness,5,rgb,late,1.0,1.0
+dowel,brightness,5,rgb,reliable_window,0.0769,0.4712
+dowel,brightness,5,rgb,reliable_extent,0.0769,0.4712
+dowel,brightness,5,rgb,healthy sensor,0.0769,0.4808
+dowel,defocus_blur,1,rgb,rgb,1.0,1.0
+dowel,defocus_blur,1,rgb,fpfh,0.0769,0.4808
+dowel,defocus_blur,1,rgb,late,1.0,1.0
+dowel,defocus_blur,1,rgb,reliable_window,0.0769,0.4712
+dowel,defocus_blur,1,rgb,reliable_extent,0.0769,0.4712
+dowel,defocus_blur,1,rgb,healthy sensor,0.0769,0.4808
+dowel,defocus_blur,2,rgb,rgb,1.0,1.0
+dowel,defocus_blur,2,rgb,fpfh,0.0769,0.4808
+dowel,defocus_blur,2,rgb,late,1.0,1.0
+dowel,defocus_blur,2,rgb,reliable_window,0.0769,0.4712
+dowel,defocus_blur,2,rgb,reliable_extent,0.0769,0.4712
+dowel,defocus_blur,2,rgb,healthy sensor,0.0769,0.4808
+dowel,defocus_blur,3,rgb,rgb,1.0,1.0
+dowel,defocus_blur,3,rgb,fpfh,0.0769,0.4808
+dowel,defocus_blur,3,rgb,late,1.0,1.0
+dowel,defocus_blur,3,rgb,reliable_window,0.0769,0.4712
+dowel,defocus_blur,3,rgb,reliable_extent,0.0769,0.4712
+dowel,defocus_blur,3,rgb,healthy sensor,0.0769,0.4808
+dowel,defocus_blur,4,rgb,rgb,1.0,1.0
+dowel,defocus_blur,4,rgb,fpfh,0.0769,0.4808
+dowel,defocus_blur,4,rgb,late,1.0,1.0
+dowel,defocus_blur,4,rgb,reliable_window,0.0769,0.4712
+dowel,defocus_blur,4,rgb,reliable_extent,0.0769,0.4712
+dowel,defocus_blur,4,rgb,healthy sensor,0.0769,0.4808
+dowel,defocus_blur,5,rgb,rgb,1.0,1.0
+dowel,defocus_blur,5,rgb,fpfh,0.0769,0.4808
+dowel,defocus_blur,5,rgb,late,1.0,1.0
+dowel,defocus_blur,5,rgb,reliable_window,0.0769,0.4712
+dowel,defocus_blur,5,rgb,reliable_extent,0.0769,0.4712
+dowel,defocus_blur,5,rgb,healthy sensor,0.0769,0.4808
+dowel,depth_noise,1,xyz,rgb,0.0,0.9038
+dowel,depth_noise,1,xyz,fpfh,1.0,1.0
+dowel,depth_noise,1,xyz,late,1.0,1.0
+dowel,depth_noise,1,xyz,reliable_window,0.0,0.8654
+dowel,depth_noise,1,xyz,reliable_extent,0.1154,0.875
+dowel,depth_noise,1,xyz,healthy sensor,0.0,0.9038
+dowel,depth_noise,2,xyz,rgb,0.0,0.9038
+dowel,depth_noise,2,xyz,fpfh,1.0,1.0
+dowel,depth_noise,2,xyz,late,1.0,1.0
+dowel,depth_noise,2,xyz,reliable_window,0.0,0.8654
+dowel,depth_noise,2,xyz,reliable_extent,0.1154,0.875
+dowel,depth_noise,2,xyz,healthy sensor,0.0,0.9038
+dowel,depth_noise,3,xyz,rgb,0.0,0.9038
+dowel,depth_noise,3,xyz,fpfh,1.0,1.0
+dowel,depth_noise,3,xyz,late,0.9615,1.0
+dowel,depth_noise,3,xyz,reliable_window,0.0,0.8654
+dowel,depth_noise,3,xyz,reliable_extent,0.1154,0.875
+dowel,depth_noise,3,xyz,healthy sensor,0.0,0.9038
+dowel,depth_noise,4,xyz,rgb,0.0,0.9038
+dowel,depth_noise,4,xyz,fpfh,1.0,1.0
+dowel,depth_noise,4,xyz,late,1.0,1.0
+dowel,depth_noise,4,xyz,reliable_window,0.0,0.8654
+dowel,depth_noise,4,xyz,reliable_extent,0.1154,0.875
+dowel,depth_noise,4,xyz,healthy sensor,0.0,0.9038
+dowel,depth_noise,5,xyz,rgb,0.0,0.9038
+dowel,depth_noise,5,xyz,fpfh,1.0,1.0
+dowel,depth_noise,5,xyz,late,1.0,1.0
+dowel,depth_noise,5,xyz,reliable_window,0.0,0.8654
+dowel,depth_noise,5,xyz,reliable_extent,0.1154,0.875
+dowel,depth_noise,5,xyz,healthy sensor,0.0,0.9038
+dowel,gaussian_noise,1,rgb,rgb,1.0,1.0
+dowel,gaussian_noise,1,rgb,fpfh,0.0769,0.4808
+dowel,gaussian_noise,1,rgb,late,1.0,1.0
+dowel,gaussian_noise,1,rgb,reliable_window,0.0769,0.4712
+dowel,gaussian_noise,1,rgb,reliable_extent,0.0769,0.4712
+dowel,gaussian_noise,1,rgb,healthy sensor,0.0769,0.4808
+dowel,gaussian_noise,2,rgb,rgb,1.0,1.0
+dowel,gaussian_noise,2,rgb,fpfh,0.0769,0.4808
+dowel,gaussian_noise,2,rgb,late,1.0,1.0
+dowel,gaussian_noise,2,rgb,reliable_window,0.0769,0.4712
+dowel,gaussian_noise,2,rgb,reliable_extent,0.0769,0.4712
+dowel,gaussian_noise,2,rgb,healthy sensor,0.0769,0.4808
+dowel,gaussian_noise,3,rgb,rgb,1.0,1.0
+dowel,gaussian_noise,3,rgb,fpfh,0.0769,0.4808
+dowel,gaussian_noise,3,rgb,late,1.0,1.0
+dowel,gaussian_noise,3,rgb,reliable_window,0.0769,0.4712
+dowel,gaussian_noise,3,rgb,reliable_extent,0.0769,0.4712
+dowel,gaussian_noise,3,rgb,healthy sensor,0.0769,0.4808
+dowel,gaussian_noise,4,rgb,rgb,1.0,1.0
+dowel,gaussian_noise,4,rgb,fpfh,0.0769,0.4808
+dowel,gaussian_noise,4,rgb,late,1.0,1.0
+dowel,gaussian_noise,4,rgb,reliable_window,0.0769,0.4712
+dowel,gaussian_noise,4,rgb,reliable_extent,0.0769,0.4712
+dowel,gaussian_noise,4,rgb,healthy sensor,0.0769,0.4808
+dowel,gaussian_noise,5,rgb,rgb,1.0,1.0
+dowel,gaussian_noise,5,rgb,fpfh,0.0769,0.4808
+dowel,gaussian_noise,5,rgb,late,1.0,1.0
+dowel,gaussian_noise,5,rgb,reliable_window,0.0769,0.4712
+dowel,gaussian_noise,5,rgb,reliable_extent,0.0769,0.4712
+dowel,gaussian_noise,5,rgb,healthy sensor,0.0769,0.4808
+dowel,holes,1,xyz,rgb,0.0,0.9038
+dowel,holes,1,xyz,fpfh,0.3077,0.5769
+dowel,holes,1,xyz,late,0.1538,0.9135
+dowel,holes,1,xyz,reliable_window,0.1154,0.9135
+dowel,holes,1,xyz,reliable_extent,0.1923,0.7692
+dowel,holes,1,xyz,healthy sensor,0.0,0.9038
+dowel,holes,2,xyz,rgb,0.0,0.9038
+dowel,holes,2,xyz,fpfh,0.3846,0.625
+dowel,holes,2,xyz,late,0.1923,0.9327
+dowel,holes,2,xyz,reliable_window,0.0385,0.8846
+dowel,holes,2,xyz,reliable_extent,0.2308,0.7788
+dowel,holes,2,xyz,healthy sensor,0.0,0.9038
+dowel,holes,3,xyz,rgb,0.0,0.9038
+dowel,holes,3,xyz,fpfh,0.5,0.7981
+dowel,holes,3,xyz,late,0.3462,0.9519
+dowel,holes,3,xyz,reliable_window,0.0,0.8654
+dowel,holes,3,xyz,reliable_extent,0.0769,0.8846
+dowel,holes,3,xyz,healthy sensor,0.0,0.9038
+dowel,holes,4,xyz,rgb,0.0,0.9038
+dowel,holes,4,xyz,fpfh,0.7692,0.7692
+dowel,holes,4,xyz,late,0.4615,0.9519
+dowel,holes,4,xyz,reliable_window,0.0,0.8654
+dowel,holes,4,xyz,reliable_extent,0.0385,0.875
+dowel,holes,4,xyz,healthy sensor,0.0,0.9038
+dowel,holes,5,xyz,rgb,0.0,0.9038
+dowel,holes,5,xyz,fpfh,0.8846,0.8846
+dowel,holes,5,xyz,late,0.6154,0.9519
+dowel,holes,5,xyz,reliable_window,0.0,0.8654
+dowel,holes,5,xyz,reliable_extent,0.0,0.8846
+dowel,holes,5,xyz,healthy sensor,0.0,0.9038
+dowel,jpeg,1,rgb,rgb,1.0,1.0
+dowel,jpeg,1,rgb,fpfh,0.0769,0.4808
+dowel,jpeg,1,rgb,late,1.0,1.0
+dowel,jpeg,1,rgb,reliable_window,0.0769,0.4712
+dowel,jpeg,1,rgb,reliable_extent,0.0769,0.4712
+dowel,jpeg,1,rgb,healthy sensor,0.0769,0.4808
+dowel,jpeg,2,rgb,rgb,1.0,1.0
+dowel,jpeg,2,rgb,fpfh,0.0769,0.4808
+dowel,jpeg,2,rgb,late,1.0,1.0
+dowel,jpeg,2,rgb,reliable_window,0.0769,0.4712
+dowel,jpeg,2,rgb,reliable_extent,0.0769,0.4712
+dowel,jpeg,2,rgb,healthy sensor,0.0769,0.4808
+dowel,jpeg,3,rgb,rgb,1.0,1.0
+dowel,jpeg,3,rgb,fpfh,0.0769,0.4808
+dowel,jpeg,3,rgb,late,1.0,1.0
+dowel,jpeg,3,rgb,reliable_window,0.0769,0.4712
+dowel,jpeg,3,rgb,reliable_extent,0.0769,0.4712
+dowel,jpeg,3,rgb,healthy sensor,0.0769,0.4808
+dowel,jpeg,4,rgb,rgb,1.0,1.0
+dowel,jpeg,4,rgb,fpfh,0.0769,0.4808
+dowel,jpeg,4,rgb,late,1.0,1.0
+dowel,jpeg,4,rgb,reliable_window,0.0769,0.4712
+dowel,jpeg,4,rgb,reliable_extent,0.0769,0.4712
+dowel,jpeg,4,rgb,healthy sensor,0.0769,0.4808
+dowel,jpeg,5,rgb,rgb,1.0,1.0
+dowel,jpeg,5,rgb,fpfh,0.0769,0.4808
+dowel,jpeg,5,rgb,late,1.0,1.0
+dowel,jpeg,5,rgb,reliable_window,0.0769,0.4712
+dowel,jpeg,5,rgb,reliable_extent,0.0769,0.4712
+dowel,jpeg,5,rgb,healthy sensor,0.0769,0.4808
+dowel,misregister,1,xyz,rgb,0.0,0.9038
+dowel,misregister,1,xyz,fpfh,0.0385,0.5288
+dowel,misregister,1,xyz,late,0.0385,0.9038
+dowel,misregister,1,xyz,reliable_window,0.0385,0.9038
+dowel,misregister,1,xyz,reliable_extent,0.0385,0.75
+dowel,misregister,1,xyz,healthy sensor,0.0,0.9038
+dowel,misregister,2,xyz,rgb,0.0,0.9038
+dowel,misregister,2,xyz,fpfh,0.0385,0.5577
+dowel,misregister,2,xyz,late,0.0,0.9038
+dowel,misregister,2,xyz,reliable_window,0.0,0.9038
+dowel,misregister,2,xyz,reliable_extent,0.0,0.7596
+dowel,misregister,2,xyz,healthy sensor,0.0,0.9038
+dowel,misregister,3,xyz,rgb,0.0,0.9038
+dowel,misregister,3,xyz,fpfh,0.0385,0.5673
+dowel,misregister,3,xyz,late,0.0,0.9038
+dowel,misregister,3,xyz,reliable_window,0.0,0.9038
+dowel,misregister,3,xyz,reliable_extent,0.0,0.7788
+dowel,misregister,3,xyz,healthy sensor,0.0,0.9038
+dowel,misregister,4,xyz,rgb,0.0,0.9038
+dowel,misregister,4,xyz,fpfh,0.0385,0.5385
+dowel,misregister,4,xyz,late,0.0,0.9038
+dowel,misregister,4,xyz,reliable_window,0.0,0.9038
+dowel,misregister,4,xyz,reliable_extent,0.0,0.7788
+dowel,misregister,4,xyz,healthy sensor,0.0,0.9038
+dowel,misregister,5,xyz,rgb,0.0,0.9038
+dowel,misregister,5,xyz,fpfh,0.1154,0.5385
+dowel,misregister,5,xyz,late,0.0,0.9135
+dowel,misregister,5,xyz,reliable_window,0.0,0.9135
+dowel,misregister,5,xyz,reliable_extent,0.0385,0.7212
+dowel,misregister,5,xyz,healthy sensor,0.0,0.9038
+dowel,occlusion,1,rgb,rgb,1.0,1.0
+dowel,occlusion,1,rgb,fpfh,0.0769,0.4808
+dowel,occlusion,1,rgb,late,1.0,1.0
+dowel,occlusion,1,rgb,reliable_window,0.3077,0.5865
+dowel,occlusion,1,rgb,reliable_extent,0.0769,0.4712
+dowel,occlusion,1,rgb,healthy sensor,0.0769,0.4808
+dowel,occlusion,2,rgb,rgb,1.0,1.0
+dowel,occlusion,2,rgb,fpfh,0.0769,0.4808
+dowel,occlusion,2,rgb,late,1.0,1.0
+dowel,occlusion,2,rgb,reliable_window,0.0769,0.4712
+dowel,occlusion,2,rgb,reliable_extent,0.0769,0.4712
+dowel,occlusion,2,rgb,healthy sensor,0.0769,0.4808
+dowel,occlusion,3,rgb,rgb,1.0,1.0
+dowel,occlusion,3,rgb,fpfh,0.0769,0.4808
+dowel,occlusion,3,rgb,late,1.0,1.0
+dowel,occlusion,3,rgb,reliable_window,0.0769,0.4712
+dowel,occlusion,3,rgb,reliable_extent,0.0769,0.4712
+dowel,occlusion,3,rgb,healthy sensor,0.0769,0.4808
+dowel,occlusion,4,rgb,rgb,1.0,1.0
+dowel,occlusion,4,rgb,fpfh,0.0769,0.4808
+dowel,occlusion,4,rgb,late,1.0,1.0
+dowel,occlusion,4,rgb,reliable_window,0.0769,0.4712
+dowel,occlusion,4,rgb,reliable_extent,0.0769,0.4712
+dowel,occlusion,4,rgb,healthy sensor,0.0769,0.4808
+dowel,occlusion,5,rgb,rgb,1.0,1.0
+dowel,occlusion,5,rgb,fpfh,0.0769,0.4808
+dowel,occlusion,5,rgb,late,1.0,1.0
+dowel,occlusion,5,rgb,reliable_window,0.0769,0.4712
+dowel,occlusion,5,rgb,reliable_extent,0.0769,0.4712
+dowel,occlusion,5,rgb,healthy sensor,0.0769,0.4808
+dowel,quantise,1,xyz,rgb,0.0,0.9038
+dowel,quantise,1,xyz,fpfh,1.0,1.0
+dowel,quantise,1,xyz,late,1.0,1.0
+dowel,quantise,1,xyz,reliable_window,0.0,0.8654
+dowel,quantise,1,xyz,reliable_extent,0.1154,0.875
+dowel,quantise,1,xyz,healthy sensor,0.0,0.9038
+dowel,quantise,2,xyz,rgb,0.0,0.9038
+dowel,quantise,2,xyz,fpfh,1.0,1.0
+dowel,quantise,2,xyz,late,1.0,1.0
+dowel,quantise,2,xyz,reliable_window,0.0,0.8654
+dowel,quantise,2,xyz,reliable_extent,0.1154,0.875
+dowel,quantise,2,xyz,healthy sensor,0.0,0.9038
+dowel,quantise,3,xyz,rgb,0.0,0.9038
+dowel,quantise,3,xyz,fpfh,1.0,1.0
+dowel,quantise,3,xyz,late,1.0,1.0
+dowel,quantise,3,xyz,reliable_window,0.0,0.8654
+dowel,quantise,3,xyz,reliable_extent,0.1154,0.875
+dowel,quantise,3,xyz,healthy sensor,0.0,0.9038
+dowel,quantise,4,xyz,rgb,0.0,0.9038
+dowel,quantise,4,xyz,fpfh,1.0,1.0
+dowel,quantise,4,xyz,late,1.0,1.0
+dowel,quantise,4,xyz,reliable_window,0.0,0.8654
+dowel,quantise,4,xyz,reliable_extent,0.1154,0.875
+dowel,quantise,4,xyz,healthy sensor,0.0,0.9038
+dowel,quantise,5,xyz,rgb,0.0,0.9038
+dowel,quantise,5,xyz,fpfh,1.0,1.0
+dowel,quantise,5,xyz,late,1.0,1.0
+dowel,quantise,5,xyz,reliable_window,0.0,0.8654
+dowel,quantise,5,xyz,reliable_extent,0.1154,0.875
+dowel,quantise,5,xyz,healthy sensor,0.0,0.9038
+dowel,rgb_missing,1,rgb,rgb,1.0,1.0
+dowel,rgb_missing,1,rgb,fpfh,0.0769,0.4808
+dowel,rgb_missing,1,rgb,late,1.0,1.0
+dowel,rgb_missing,1,rgb,reliable_window,0.0769,0.4712
+dowel,rgb_missing,1,rgb,reliable_extent,0.0769,0.4712
+dowel,rgb_missing,1,rgb,healthy sensor,0.0769,0.4808
+dowel,tilt,1,xyz,rgb,0.0,0.9038
+dowel,tilt,1,xyz,fpfh,0.0769,0.5
+dowel,tilt,1,xyz,late,0.0,0.8942
+dowel,tilt,1,xyz,reliable_window,0.0,0.8942
+dowel,tilt,1,xyz,reliable_extent,0.0385,0.7308
+dowel,tilt,1,xyz,healthy sensor,0.0,0.9038
+dowel,tilt,2,xyz,rgb,0.0,0.9038
+dowel,tilt,2,xyz,fpfh,0.0385,0.5
+dowel,tilt,2,xyz,late,0.0,0.8942
+dowel,tilt,2,xyz,reliable_window,0.0,0.8942
+dowel,tilt,2,xyz,reliable_extent,0.0,0.7404
+dowel,tilt,2,xyz,healthy sensor,0.0,0.9038
+dowel,tilt,3,xyz,rgb,0.0,0.9038
+dowel,tilt,3,xyz,fpfh,0.0385,0.5192
+dowel,tilt,3,xyz,late,0.0,0.8942
+dowel,tilt,3,xyz,reliable_window,0.0,0.8942
+dowel,tilt,3,xyz,reliable_extent,0.0,0.75
+dowel,tilt,3,xyz,healthy sensor,0.0,0.9038
+dowel,tilt,4,xyz,rgb,0.0,0.9038
+dowel,tilt,4,xyz,fpfh,0.0769,0.5385
+dowel,tilt,4,xyz,late,0.0,0.9135
+dowel,tilt,4,xyz,reliable_window,0.0,0.9135
+dowel,tilt,4,xyz,reliable_extent,0.0,0.7981
+dowel,tilt,4,xyz,healthy sensor,0.0,0.9038
+dowel,tilt,5,xyz,rgb,0.0,0.9038
+dowel,tilt,5,xyz,fpfh,0.2308,0.6058
+dowel,tilt,5,xyz,late,0.0385,0.9135
+dowel,tilt,5,xyz,reliable_window,0.0385,0.9038
+dowel,tilt,5,xyz,reliable_extent,0.1154,0.8365
+dowel,tilt,5,xyz,healthy sensor,0.0,0.9038
+dowel,xyz_missing,1,xyz,rgb,0.0,0.9038
+dowel,xyz_missing,1,xyz,fpfh,0.0,0.0
+dowel,xyz_missing,1,xyz,late,0.0,0.5865
+dowel,xyz_missing,1,xyz,reliable_window,0.0,0.8654
+dowel,xyz_missing,1,xyz,reliable_extent,0.0,0.8654
+dowel,xyz_missing,1,xyz,healthy sensor,0.0,0.9038
+foam,brightness,1,rgb,rgb,0.15,0.65
+foam,brightness,1,rgb,fpfh,0.05,0.125
+foam,brightness,1,rgb,late,0.15,0.525
+foam,brightness,1,rgb,reliable_window,0.15,0.525
+foam,brightness,1,rgb,reliable_extent,0.15,0.5125
+foam,brightness,1,rgb,healthy sensor,0.05,0.125
+foam,brightness,2,rgb,rgb,1.0,1.0
+foam,brightness,2,rgb,fpfh,0.05,0.125
+foam,brightness,2,rgb,late,0.75,0.975
+foam,brightness,2,rgb,reliable_window,0.05,0.125
+foam,brightness,2,rgb,reliable_extent,0.05,0.125
+foam,brightness,2,rgb,healthy sensor,0.05,0.125
+foam,brightness,3,rgb,rgb,1.0,1.0
+foam,brightness,3,rgb,fpfh,0.05,0.125
+foam,brightness,3,rgb,late,1.0,1.0
+foam,brightness,3,rgb,reliable_window,0.05,0.125
+foam,brightness,3,rgb,reliable_extent,0.05,0.125
+foam,brightness,3,rgb,healthy sensor,0.05,0.125
+foam,brightness,4,rgb,rgb,1.0,1.0
+foam,brightness,4,rgb,fpfh,0.05,0.125
+foam,brightness,4,rgb,late,1.0,1.0
+foam,brightness,4,rgb,reliable_window,0.05,0.125
+foam,brightness,4,rgb,reliable_extent,0.05,0.125
+foam,brightness,4,rgb,healthy sensor,0.05,0.125
+foam,brightness,5,rgb,rgb,1.0,1.0
+foam,brightness,5,rgb,fpfh,0.05,0.125
+foam,brightness,5,rgb,late,1.0,1.0
+foam,brightness,5,rgb,reliable_window,0.05,0.125
+foam,brightness,5,rgb,reliable_extent,0.05,0.125
+foam,brightness,5,rgb,healthy sensor,0.05,0.125
+foam,defocus_blur,1,rgb,rgb,1.0,1.0
+foam,defocus_blur,1,rgb,fpfh,0.05,0.125
+foam,defocus_blur,1,rgb,late,1.0,1.0
+foam,defocus_blur,1,rgb,reliable_window,0.05,0.125
+foam,defocus_blur,1,rgb,reliable_extent,0.05,0.125
+foam,defocus_blur,1,rgb,healthy sensor,0.05,0.125
+foam,defocus_blur,2,rgb,rgb,1.0,1.0
+foam,defocus_blur,2,rgb,fpfh,0.05,0.125
+foam,defocus_blur,2,rgb,late,1.0,1.0
+foam,defocus_blur,2,rgb,reliable_window,0.05,0.125
+foam,defocus_blur,2,rgb,reliable_extent,0.05,0.125
+foam,defocus_blur,2,rgb,healthy sensor,0.05,0.125
+foam,defocus_blur,3,rgb,rgb,1.0,1.0
+foam,defocus_blur,3,rgb,fpfh,0.05,0.125
+foam,defocus_blur,3,rgb,late,1.0,1.0
+foam,defocus_blur,3,rgb,reliable_window,0.05,0.125
+foam,defocus_blur,3,rgb,reliable_extent,0.05,0.125
+foam,defocus_blur,3,rgb,healthy sensor,0.05,0.125
+foam,defocus_blur,4,rgb,rgb,1.0,1.0
+foam,defocus_blur,4,rgb,fpfh,0.05,0.125
+foam,defocus_blur,4,rgb,late,1.0,1.0
+foam,defocus_blur,4,rgb,reliable_window,0.05,0.125
+foam,defocus_blur,4,rgb,reliable_extent,0.05,0.125
+foam,defocus_blur,4,rgb,healthy sensor,0.05,0.125
+foam,defocus_blur,5,rgb,rgb,1.0,1.0
+foam,defocus_blur,5,rgb,fpfh,0.05,0.125
+foam,defocus_blur,5,rgb,late,1.0,1.0
+foam,defocus_blur,5,rgb,reliable_window,0.05,0.125
+foam,defocus_blur,5,rgb,reliable_extent,0.05,0.125
+foam,defocus_blur,5,rgb,healthy sensor,0.05,0.125
+foam,depth_noise,1,xyz,rgb,0.0,0.4875
+foam,depth_noise,1,xyz,fpfh,0.1,0.1375
+foam,depth_noise,1,xyz,late,0.0,0.525
+foam,depth_noise,1,xyz,reliable_window,0.0,0.475
+foam,depth_noise,1,xyz,reliable_extent,0.0,0.475
+foam,depth_noise,1,xyz,healthy sensor,0.0,0.4875
+foam,depth_noise,2,xyz,rgb,0.0,0.4875
+foam,depth_noise,2,xyz,fpfh,0.35,0.45
+foam,depth_noise,2,xyz,late,0.1,0.6375
+foam,depth_noise,2,xyz,reliable_window,0.0,0.475
+foam,depth_noise,2,xyz,reliable_extent,0.0,0.475
+foam,depth_noise,2,xyz,healthy sensor,0.0,0.4875
+foam,depth_noise,3,xyz,rgb,0.0,0.4875
+foam,depth_noise,3,xyz,fpfh,1.0,1.0
+foam,depth_noise,3,xyz,late,0.8,0.95
+foam,depth_noise,3,xyz,reliable_window,0.0,0.475
+foam,depth_noise,3,xyz,reliable_extent,0.0,0.475
+foam,depth_noise,3,xyz,healthy sensor,0.0,0.4875
+foam,depth_noise,4,xyz,rgb,0.0,0.4875
+foam,depth_noise,4,xyz,fpfh,1.0,1.0
+foam,depth_noise,4,xyz,late,0.85,0.975
+foam,depth_noise,4,xyz,reliable_window,0.0,0.475
+foam,depth_noise,4,xyz,reliable_extent,0.0,0.475
+foam,depth_noise,4,xyz,healthy sensor,0.0,0.4875
+foam,depth_noise,5,xyz,rgb,0.0,0.4875
+foam,depth_noise,5,xyz,fpfh,1.0,1.0
+foam,depth_noise,5,xyz,late,0.7,0.9
+foam,depth_noise,5,xyz,reliable_window,0.0,0.475
+foam,depth_noise,5,xyz,reliable_extent,0.0,0.475
+foam,depth_noise,5,xyz,healthy sensor,0.0,0.4875
+foam,gaussian_noise,1,rgb,rgb,1.0,1.0
+foam,gaussian_noise,1,rgb,fpfh,0.05,0.125
+foam,gaussian_noise,1,rgb,late,1.0,1.0
+foam,gaussian_noise,1,rgb,reliable_window,0.05,0.125
+foam,gaussian_noise,1,rgb,reliable_extent,0.05,0.125
+foam,gaussian_noise,1,rgb,healthy sensor,0.05,0.125
+foam,gaussian_noise,2,rgb,rgb,1.0,1.0
+foam,gaussian_noise,2,rgb,fpfh,0.05,0.125
+foam,gaussian_noise,2,rgb,late,1.0,1.0
+foam,gaussian_noise,2,rgb,reliable_window,0.05,0.125
+foam,gaussian_noise,2,rgb,reliable_extent,0.05,0.125
+foam,gaussian_noise,2,rgb,healthy sensor,0.05,0.125
+foam,gaussian_noise,3,rgb,rgb,1.0,1.0
+foam,gaussian_noise,3,rgb,fpfh,0.05,0.125
+foam,gaussian_noise,3,rgb,late,1.0,1.0
+foam,gaussian_noise,3,rgb,reliable_window,0.05,0.125
+foam,gaussian_noise,3,rgb,reliable_extent,0.05,0.125
+foam,gaussian_noise,3,rgb,healthy sensor,0.05,0.125
+foam,gaussian_noise,4,rgb,rgb,1.0,1.0
+foam,gaussian_noise,4,rgb,fpfh,0.05,0.125
+foam,gaussian_noise,4,rgb,late,1.0,1.0
+foam,gaussian_noise,4,rgb,reliable_window,0.05,0.125
+foam,gaussian_noise,4,rgb,reliable_extent,0.05,0.125
+foam,gaussian_noise,4,rgb,healthy sensor,0.05,0.125
+foam,gaussian_noise,5,rgb,rgb,1.0,1.0
+foam,gaussian_noise,5,rgb,fpfh,0.05,0.125
+foam,gaussian_noise,5,rgb,late,1.0,1.0
+foam,gaussian_noise,5,rgb,reliable_window,0.05,0.125
+foam,gaussian_noise,5,rgb,reliable_extent,0.05,0.125
+foam,gaussian_noise,5,rgb,healthy sensor,0.05,0.125
+foam,holes,1,xyz,rgb,0.0,0.4875
+foam,holes,1,xyz,fpfh,0.05,0.1375
+foam,holes,1,xyz,late,0.05,0.475
+foam,holes,1,xyz,reliable_window,0.0,0.475
+foam,holes,1,xyz,reliable_extent,0.0,0.475
+foam,holes,1,xyz,healthy sensor,0.0,0.4875
+foam,holes,2,xyz,rgb,0.0,0.4875
+foam,holes,2,xyz,fpfh,0.1,0.175
+foam,holes,2,xyz,late,0.0,0.525
+foam,holes,2,xyz,reliable_window,0.0,0.4875
+foam,holes,2,xyz,reliable_extent,0.0,0.4875
+foam,holes,2,xyz,healthy sensor,0.0,0.4875
+foam,holes,3,xyz,rgb,0.0,0.4875
+foam,holes,3,xyz,fpfh,0.2,0.1875
+foam,holes,3,xyz,late,0.1,0.5625
+foam,holes,3,xyz,reliable_window,0.0,0.475
+foam,holes,3,xyz,reliable_extent,0.0,0.475
+foam,holes,3,xyz,healthy sensor,0.0,0.4875
+foam,holes,4,xyz,rgb,0.0,0.4875
+foam,holes,4,xyz,fpfh,0.05,0.2625
+foam,holes,4,xyz,late,0.0,0.575
+foam,holes,4,xyz,reliable_window,0.0,0.475
+foam,holes,4,xyz,reliable_extent,0.0,0.475
+foam,holes,4,xyz,healthy sensor,0.0,0.4875
+foam,holes,5,xyz,rgb,0.0,0.4875
+foam,holes,5,xyz,fpfh,0.45,0.4
+foam,holes,5,xyz,late,0.2,0.6
+foam,holes,5,xyz,reliable_window,0.0,0.475
+foam,holes,5,xyz,reliable_extent,0.0,0.475
+foam,holes,5,xyz,healthy sensor,0.0,0.4875
+foam,jpeg,1,rgb,rgb,1.0,1.0
+foam,jpeg,1,rgb,fpfh,0.05,0.125
+foam,jpeg,1,rgb,late,1.0,1.0
+foam,jpeg,1,rgb,reliable_window,0.05,0.125
+foam,jpeg,1,rgb,reliable_extent,0.05,0.125
+foam,jpeg,1,rgb,healthy sensor,0.05,0.125
+foam,jpeg,2,rgb,rgb,1.0,1.0
+foam,jpeg,2,rgb,fpfh,0.05,0.125
+foam,jpeg,2,rgb,late,1.0,1.0
+foam,jpeg,2,rgb,reliable_window,0.05,0.125
+foam,jpeg,2,rgb,reliable_extent,0.05,0.125
+foam,jpeg,2,rgb,healthy sensor,0.05,0.125
+foam,jpeg,3,rgb,rgb,1.0,1.0
+foam,jpeg,3,rgb,fpfh,0.05,0.125
+foam,jpeg,3,rgb,late,1.0,1.0
+foam,jpeg,3,rgb,reliable_window,0.05,0.125
+foam,jpeg,3,rgb,reliable_extent,0.05,0.125
+foam,jpeg,3,rgb,healthy sensor,0.05,0.125
+foam,jpeg,4,rgb,rgb,1.0,1.0
+foam,jpeg,4,rgb,fpfh,0.05,0.125
+foam,jpeg,4,rgb,late,1.0,1.0
+foam,jpeg,4,rgb,reliable_window,0.05,0.125
+foam,jpeg,4,rgb,reliable_extent,0.05,0.125
+foam,jpeg,4,rgb,healthy sensor,0.05,0.125
+foam,jpeg,5,rgb,rgb,1.0,1.0
+foam,jpeg,5,rgb,fpfh,0.05,0.125
+foam,jpeg,5,rgb,late,1.0,1.0
+foam,jpeg,5,rgb,reliable_window,0.05,0.125
+foam,jpeg,5,rgb,reliable_extent,0.05,0.125
+foam,jpeg,5,rgb,healthy sensor,0.05,0.125
+foam,misregister,1,xyz,rgb,0.0,0.4875
+foam,misregister,1,xyz,fpfh,0.0,0.1125
+foam,misregister,1,xyz,late,0.0,0.45
+foam,misregister,1,xyz,reliable_window,0.0,0.45
+foam,misregister,1,xyz,reliable_extent,0.0,0.45
+foam,misregister,1,xyz,healthy sensor,0.0,0.4875
+foam,misregister,2,xyz,rgb,0.0,0.4875
+foam,misregister,2,xyz,fpfh,0.0,0.0875
+foam,misregister,2,xyz,late,0.0,0.425
+foam,misregister,2,xyz,reliable_window,0.0,0.425
+foam,misregister,2,xyz,reliable_extent,0.0,0.425
+foam,misregister,2,xyz,healthy sensor,0.0,0.4875
+foam,misregister,3,xyz,rgb,0.0,0.4875
+foam,misregister,3,xyz,fpfh,0.0,0.1125
+foam,misregister,3,xyz,late,0.0,0.5
+foam,misregister,3,xyz,reliable_window,0.0,0.5
+foam,misregister,3,xyz,reliable_extent,0.0,0.5
+foam,misregister,3,xyz,healthy sensor,0.0,0.4875
+foam,misregister,4,xyz,rgb,0.0,0.4875
+foam,misregister,4,xyz,fpfh,0.0,0.05
+foam,misregister,4,xyz,late,0.0,0.4375
+foam,misregister,4,xyz,reliable_window,0.0,0.4375
+foam,misregister,4,xyz,reliable_extent,0.0,0.4375
+foam,misregister,4,xyz,healthy sensor,0.0,0.4875
+foam,misregister,5,xyz,rgb,0.0,0.4875
+foam,misregister,5,xyz,fpfh,0.05,0.075
+foam,misregister,5,xyz,late,0.05,0.4625
+foam,misregister,5,xyz,reliable_window,0.0,0.4625
+foam,misregister,5,xyz,reliable_extent,0.0,0.4625
+foam,misregister,5,xyz,healthy sensor,0.0,0.4875
+foam,occlusion,1,rgb,rgb,1.0,1.0
+foam,occlusion,1,rgb,fpfh,0.05,0.125
+foam,occlusion,1,rgb,late,1.0,1.0
+foam,occlusion,1,rgb,reliable_window,1.0,1.0
+foam,occlusion,1,rgb,reliable_extent,0.05,0.125
+foam,occlusion,1,rgb,healthy sensor,0.05,0.125
+foam,occlusion,2,rgb,rgb,1.0,1.0
+foam,occlusion,2,rgb,fpfh,0.05,0.125
+foam,occlusion,2,rgb,late,1.0,1.0
+foam,occlusion,2,rgb,reliable_window,1.0,0.9875
+foam,occlusion,2,rgb,reliable_extent,0.05,0.125
+foam,occlusion,2,rgb,healthy sensor,0.05,0.125
+foam,occlusion,3,rgb,rgb,1.0,1.0
+foam,occlusion,3,rgb,fpfh,0.05,0.125
+foam,occlusion,3,rgb,late,1.0,1.0
+foam,occlusion,3,rgb,reliable_window,0.3,0.5125
+foam,occlusion,3,rgb,reliable_extent,0.05,0.125
+foam,occlusion,3,rgb,healthy sensor,0.05,0.125
+foam,occlusion,4,rgb,rgb,1.0,1.0
+foam,occlusion,4,rgb,fpfh,0.05,0.125
+foam,occlusion,4,rgb,late,1.0,1.0
+foam,occlusion,4,rgb,reliable_window,0.05,0.125
+foam,occlusion,4,rgb,reliable_extent,0.05,0.125
+foam,occlusion,4,rgb,healthy sensor,0.05,0.125
+foam,occlusion,5,rgb,rgb,1.0,1.0
+foam,occlusion,5,rgb,fpfh,0.05,0.125
+foam,occlusion,5,rgb,late,1.0,1.0
+foam,occlusion,5,rgb,reliable_window,0.05,0.125
+foam,occlusion,5,rgb,reliable_extent,0.05,0.125
+foam,occlusion,5,rgb,healthy sensor,0.05,0.125
+foam,quantise,1,xyz,rgb,0.0,0.4875
+foam,quantise,1,xyz,fpfh,0.05,0.1375
+foam,quantise,1,xyz,late,0.0,0.4875
+foam,quantise,1,xyz,reliable_window,0.0,0.4875
+foam,quantise,1,xyz,reliable_extent,0.0,0.4875
+foam,quantise,1,xyz,healthy sensor,0.0,0.4875
+foam,quantise,2,xyz,rgb,0.0,0.4875
+foam,quantise,2,xyz,fpfh,0.15,0.25
+foam,quantise,2,xyz,late,0.1,0.5125
+foam,quantise,2,xyz,reliable_window,0.0,0.475
+foam,quantise,2,xyz,reliable_extent,0.0,0.475
+foam,quantise,2,xyz,healthy sensor,0.0,0.4875
+foam,quantise,3,xyz,rgb,0.0,0.4875
+foam,quantise,3,xyz,fpfh,0.6,0.65
+foam,quantise,3,xyz,late,0.3,0.6625
+foam,quantise,3,xyz,reliable_window,0.0,0.475
+foam,quantise,3,xyz,reliable_extent,0.0,0.475
+foam,quantise,3,xyz,healthy sensor,0.0,0.4875
+foam,quantise,4,xyz,rgb,0.0,0.4875
+foam,quantise,4,xyz,fpfh,1.0,0.9875
+foam,quantise,4,xyz,late,0.65,0.8625
+foam,quantise,4,xyz,reliable_window,0.0,0.475
+foam,quantise,4,xyz,reliable_extent,0.0,0.475
+foam,quantise,4,xyz,healthy sensor,0.0,0.4875
+foam,quantise,5,xyz,rgb,0.0,0.4875
+foam,quantise,5,xyz,fpfh,1.0,1.0
+foam,quantise,5,xyz,late,1.0,1.0
+foam,quantise,5,xyz,reliable_window,0.0,0.475
+foam,quantise,5,xyz,reliable_extent,0.0,0.475
+foam,quantise,5,xyz,healthy sensor,0.0,0.4875
+foam,rgb_missing,1,rgb,rgb,1.0,1.0
+foam,rgb_missing,1,rgb,fpfh,0.05,0.125
+foam,rgb_missing,1,rgb,late,1.0,1.0
+foam,rgb_missing,1,rgb,reliable_window,0.05,0.125
+foam,rgb_missing,1,rgb,reliable_extent,0.05,0.125
+foam,rgb_missing,1,rgb,healthy sensor,0.05,0.125
+foam,tilt,1,xyz,rgb,0.0,0.4875
+foam,tilt,1,xyz,fpfh,0.05,0.125
+foam,tilt,1,xyz,late,0.05,0.475
+foam,tilt,1,xyz,reliable_window,0.0,0.475
+foam,tilt,1,xyz,reliable_extent,0.0,0.475
+foam,tilt,1,xyz,healthy sensor,0.0,0.4875
+foam,tilt,2,xyz,rgb,0.0,0.4875
+foam,tilt,2,xyz,fpfh,0.05,0.125
+foam,tilt,2,xyz,late,0.05,0.475
+foam,tilt,2,xyz,reliable_window,0.0,0.475
+foam,tilt,2,xyz,reliable_extent,0.0,0.475
+foam,tilt,2,xyz,healthy sensor,0.0,0.4875
+foam,tilt,3,xyz,rgb,0.0,0.4875
+foam,tilt,3,xyz,fpfh,0.05,0.125
+foam,tilt,3,xyz,late,0.1,0.475
+foam,tilt,3,xyz,reliable_window,0.1,0.475
+foam,tilt,3,xyz,reliable_extent,0.1,0.475
+foam,tilt,3,xyz,healthy sensor,0.0,0.4875
+foam,tilt,4,xyz,rgb,0.0,0.4875
+foam,tilt,4,xyz,fpfh,0.05,0.1375
+foam,tilt,4,xyz,late,0.05,0.475
+foam,tilt,4,xyz,reliable_window,0.0,0.475
+foam,tilt,4,xyz,reliable_extent,0.0,0.475
+foam,tilt,4,xyz,healthy sensor,0.0,0.4875
+foam,tilt,5,xyz,rgb,0.0,0.4875
+foam,tilt,5,xyz,fpfh,0.05,0.125
+foam,tilt,5,xyz,late,0.05,0.4625
+foam,tilt,5,xyz,reliable_window,0.0,0.4625
+foam,tilt,5,xyz,reliable_extent,0.0,0.4625
+foam,tilt,5,xyz,healthy sensor,0.0,0.4875
+foam,xyz_missing,1,xyz,rgb,0.0,0.4875
+foam,xyz_missing,1,xyz,fpfh,0.0,0.0
+foam,xyz_missing,1,xyz,late,0.0,0.1125
+foam,xyz_missing,1,xyz,reliable_window,0.0,0.475
+foam,xyz_missing,1,xyz,reliable_extent,0.0,0.475
+foam,xyz_missing,1,xyz,healthy sensor,0.0,0.4875
+peach,brightness,1,rgb,rgb,0.1923,0.3585
+peach,brightness,1,rgb,fpfh,0.2692,0.5472
+peach,brightness,1,rgb,late,0.2308,0.5377
+peach,brightness,1,rgb,reliable_window,0.2308,0.5377
+peach,brightness,1,rgb,reliable_extent,0.2308,0.5472
+peach,brightness,1,rgb,healthy sensor,0.2692,0.5472
+peach,brightness,2,rgb,rgb,0.2692,0.4811
+peach,brightness,2,rgb,fpfh,0.2692,0.5472
+peach,brightness,2,rgb,late,0.3077,0.6226
+peach,brightness,2,rgb,reliable_window,0.3462,0.566
+peach,brightness,2,rgb,reliable_extent,0.3462,0.566
+peach,brightness,2,rgb,healthy sensor,0.2692,0.5472
+peach,brightness,3,rgb,rgb,0.5,0.7547
+peach,brightness,3,rgb,fpfh,0.2692,0.5472
+peach,brightness,3,rgb,late,0.3846,0.7547
+peach,brightness,3,rgb,reliable_window,0.1923,0.5283
+peach,brightness,3,rgb,reliable_extent,0.1923,0.5283
+peach,brightness,3,rgb,healthy sensor,0.2692,0.5472
+peach,brightness,4,rgb,rgb,0.7308,0.8868
+peach,brightness,4,rgb,fpfh,0.2692,0.5472
+peach,brightness,4,rgb,late,0.4231,0.8302
+peach,brightness,4,rgb,reliable_window,0.1154,0.4717
+peach,brightness,4,rgb,reliable_extent,0.1154,0.4717
+peach,brightness,4,rgb,healthy sensor,0.2692,0.5472
+peach,brightness,5,rgb,rgb,0.8462,0.9623
+peach,brightness,5,rgb,fpfh,0.2692,0.5472
+peach,brightness,5,rgb,late,0.5,0.8868
+peach,brightness,5,rgb,reliable_window,0.1154,0.4717
+peach,brightness,5,rgb,reliable_extent,0.1154,0.4717
+peach,brightness,5,rgb,healthy sensor,0.2692,0.5472
+peach,defocus_blur,1,rgb,rgb,0.6923,0.8491
+peach,defocus_blur,1,rgb,fpfh,0.2692,0.5472
+peach,defocus_blur,1,rgb,late,0.5,0.8396
+peach,defocus_blur,1,rgb,reliable_window,0.1154,0.4717
+peach,defocus_blur,1,rgb,reliable_extent,0.1154,0.4717
+peach,defocus_blur,1,rgb,healthy sensor,0.2692,0.5472
+peach,defocus_blur,2,rgb,rgb,0.9615,0.9811
+peach,defocus_blur,2,rgb,fpfh,0.2692,0.5472
+peach,defocus_blur,2,rgb,late,0.5769,0.8962
+peach,defocus_blur,2,rgb,reliable_window,0.1154,0.4717
+peach,defocus_blur,2,rgb,reliable_extent,0.1154,0.4717
+peach,defocus_blur,2,rgb,healthy sensor,0.2692,0.5472
+peach,defocus_blur,3,rgb,rgb,1.0,1.0
+peach,defocus_blur,3,rgb,fpfh,0.2692,0.5472
+peach,defocus_blur,3,rgb,late,0.8846,0.9906
+peach,defocus_blur,3,rgb,reliable_window,0.1154,0.4717
+peach,defocus_blur,3,rgb,reliable_extent,0.1154,0.4717
+peach,defocus_blur,3,rgb,healthy sensor,0.2692,0.5472
+peach,defocus_blur,4,rgb,rgb,1.0,1.0
+peach,defocus_blur,4,rgb,fpfh,0.2692,0.5472
+peach,defocus_blur,4,rgb,late,1.0,1.0
+peach,defocus_blur,4,rgb,reliable_window,0.1154,0.4717
+peach,defocus_blur,4,rgb,reliable_extent,0.1154,0.4717
+peach,defocus_blur,4,rgb,healthy sensor,0.2692,0.5472
+peach,defocus_blur,5,rgb,rgb,1.0,1.0
+peach,defocus_blur,5,rgb,fpfh,0.2692,0.5472
+peach,defocus_blur,5,rgb,late,1.0,1.0
+peach,defocus_blur,5,rgb,reliable_window,0.1154,0.4717
+peach,defocus_blur,5,rgb,reliable_extent,0.1154,0.4717
+peach,defocus_blur,5,rgb,healthy sensor,0.2692,0.5472
+peach,depth_noise,1,xyz,rgb,0.1538,0.2925
+peach,depth_noise,1,xyz,fpfh,1.0,1.0
+peach,depth_noise,1,xyz,late,1.0,1.0
+peach,depth_noise,1,xyz,reliable_window,0.1154,0.2358
+peach,depth_noise,1,xyz,reliable_extent,0.1154,0.2358
+peach,depth_noise,1,xyz,healthy sensor,0.1538,0.2925
+peach,depth_noise,2,xyz,rgb,0.1538,0.2925
+peach,depth_noise,2,xyz,fpfh,1.0,1.0
+peach,depth_noise,2,xyz,late,1.0,1.0
+peach,depth_noise,2,xyz,reliable_window,0.1154,0.2358
+peach,depth_noise,2,xyz,reliable_extent,0.1154,0.2358
+peach,depth_noise,2,xyz,healthy sensor,0.1538,0.2925
+peach,depth_noise,3,xyz,rgb,0.1538,0.2925
+peach,depth_noise,3,xyz,fpfh,1.0,1.0
+peach,depth_noise,3,xyz,late,1.0,1.0
+peach,depth_noise,3,xyz,reliable_window,0.1154,0.2358
+peach,depth_noise,3,xyz,reliable_extent,0.1154,0.2358
+peach,depth_noise,3,xyz,healthy sensor,0.1538,0.2925
+peach,depth_noise,4,xyz,rgb,0.1538,0.2925
+peach,depth_noise,4,xyz,fpfh,1.0,1.0
+peach,depth_noise,4,xyz,late,1.0,0.9906
+peach,depth_noise,4,xyz,reliable_window,0.1154,0.2358
+peach,depth_noise,4,xyz,reliable_extent,0.1154,0.2358
+peach,depth_noise,4,xyz,healthy sensor,0.1538,0.2925
+peach,depth_noise,5,xyz,rgb,0.1538,0.2925
+peach,depth_noise,5,xyz,fpfh,1.0,1.0
+peach,depth_noise,5,xyz,late,1.0,1.0
+peach,depth_noise,5,xyz,reliable_window,0.1154,0.2358
+peach,depth_noise,5,xyz,reliable_extent,0.1154,0.2358
+peach,depth_noise,5,xyz,healthy sensor,0.1538,0.2925
+peach,gaussian_noise,1,rgb,rgb,1.0,1.0
+peach,gaussian_noise,1,rgb,fpfh,0.2692,0.5472
+peach,gaussian_noise,1,rgb,late,0.9615,1.0
+peach,gaussian_noise,1,rgb,reliable_window,0.1154,0.4717
+peach,gaussian_noise,1,rgb,reliable_extent,0.1154,0.4717
+peach,gaussian_noise,1,rgb,healthy sensor,0.2692,0.5472
+peach,gaussian_noise,2,rgb,rgb,1.0,1.0
+peach,gaussian_noise,2,rgb,fpfh,0.2692,0.5472
+peach,gaussian_noise,2,rgb,late,1.0,1.0
+peach,gaussian_noise,2,rgb,reliable_window,0.1154,0.4717
+peach,gaussian_noise,2,rgb,reliable_extent,0.1154,0.4717
+peach,gaussian_noise,2,rgb,healthy sensor,0.2692,0.5472
+peach,gaussian_noise,3,rgb,rgb,1.0,1.0
+peach,gaussian_noise,3,rgb,fpfh,0.2692,0.5472
+peach,gaussian_noise,3,rgb,late,1.0,1.0
+peach,gaussian_noise,3,rgb,reliable_window,0.1154,0.4717
+peach,gaussian_noise,3,rgb,reliable_extent,0.1154,0.4717
+peach,gaussian_noise,3,rgb,healthy sensor,0.2692,0.5472
+peach,gaussian_noise,4,rgb,rgb,1.0,1.0
+peach,gaussian_noise,4,rgb,fpfh,0.2692,0.5472
+peach,gaussian_noise,4,rgb,late,1.0,1.0
+peach,gaussian_noise,4,rgb,reliable_window,0.1154,0.4717
+peach,gaussian_noise,4,rgb,reliable_extent,0.1154,0.4717
+peach,gaussian_noise,4,rgb,healthy sensor,0.2692,0.5472
+peach,gaussian_noise,5,rgb,rgb,1.0,1.0
+peach,gaussian_noise,5,rgb,fpfh,0.2692,0.5472
+peach,gaussian_noise,5,rgb,late,1.0,1.0
+peach,gaussian_noise,5,rgb,reliable_window,0.1154,0.4717
+peach,gaussian_noise,5,rgb,reliable_extent,0.1154,0.4717
+peach,gaussian_noise,5,rgb,healthy sensor,0.2692,0.5472
+peach,holes,1,xyz,rgb,0.1538,0.2925
+peach,holes,1,xyz,fpfh,0.3846,0.6038
+peach,holes,1,xyz,late,0.2308,0.5377
+peach,holes,1,xyz,reliable_window,0.2308,0.5377
+peach,holes,1,xyz,reliable_extent,0.2308,0.5283
+peach,holes,1,xyz,healthy sensor,0.1538,0.2925
+peach,holes,2,xyz,rgb,0.1538,0.2925
+peach,holes,2,xyz,fpfh,0.3462,0.5849
+peach,holes,2,xyz,late,0.2308,0.566
+peach,holes,2,xyz,reliable_window,0.2308,0.566
+peach,holes,2,xyz,reliable_extent,0.1923,0.5566
+peach,holes,2,xyz,healthy sensor,0.1538,0.2925
+peach,holes,3,xyz,rgb,0.1538,0.2925
+peach,holes,3,xyz,fpfh,0.3077,0.6132
+peach,holes,3,xyz,late,0.2308,0.566
+peach,holes,3,xyz,reliable_window,0.2308,0.5283
+peach,holes,3,xyz,reliable_extent,0.2692,0.5
+peach,holes,3,xyz,healthy sensor,0.1538,0.2925
+peach,holes,4,xyz,rgb,0.1538,0.2925
+peach,holes,4,xyz,fpfh,0.4231,0.6698
+peach,holes,4,xyz,late,0.4231,0.5755
+peach,holes,4,xyz,reliable_window,0.3462,0.5189
+peach,holes,4,xyz,reliable_extent,0.3077,0.4906
+peach,holes,4,xyz,healthy sensor,0.1538,0.2925
+peach,holes,5,xyz,rgb,0.1538,0.2925
+peach,holes,5,xyz,fpfh,0.5,0.7736
+peach,holes,5,xyz,late,0.4615,0.6509
+peach,holes,5,xyz,reliable_window,0.1923,0.2453
+peach,holes,5,xyz,reliable_extent,0.1538,0.2453
+peach,holes,5,xyz,healthy sensor,0.1538,0.2925
+peach,jpeg,1,rgb,rgb,1.0,1.0
+peach,jpeg,1,rgb,fpfh,0.2692,0.5472
+peach,jpeg,1,rgb,late,0.9615,0.9717
+peach,jpeg,1,rgb,reliable_window,0.1154,0.4717
+peach,jpeg,1,rgb,reliable_extent,0.1154,0.4717
+peach,jpeg,1,rgb,healthy sensor,0.2692,0.5472
+peach,jpeg,2,rgb,rgb,1.0,1.0
+peach,jpeg,2,rgb,fpfh,0.2692,0.5472
+peach,jpeg,2,rgb,late,1.0,1.0
+peach,jpeg,2,rgb,reliable_window,0.1154,0.4717
+peach,jpeg,2,rgb,reliable_extent,0.1154,0.4717
+peach,jpeg,2,rgb,healthy sensor,0.2692,0.5472
+peach,jpeg,3,rgb,rgb,1.0,1.0
+peach,jpeg,3,rgb,fpfh,0.2692,0.5472
+peach,jpeg,3,rgb,late,0.9231,1.0
+peach,jpeg,3,rgb,reliable_window,0.1154,0.4717
+peach,jpeg,3,rgb,reliable_extent,0.1154,0.4717
+peach,jpeg,3,rgb,healthy sensor,0.2692,0.5472
+peach,jpeg,4,rgb,rgb,1.0,1.0
+peach,jpeg,4,rgb,fpfh,0.2692,0.5472
+peach,jpeg,4,rgb,late,1.0,1.0
+peach,jpeg,4,rgb,reliable_window,0.1154,0.4717
+peach,jpeg,4,rgb,reliable_extent,0.1154,0.4717
+peach,jpeg,4,rgb,healthy sensor,0.2692,0.5472
+peach,jpeg,5,rgb,rgb,1.0,1.0
+peach,jpeg,5,rgb,fpfh,0.2692,0.5472
+peach,jpeg,5,rgb,late,1.0,1.0
+peach,jpeg,5,rgb,reliable_window,0.1154,0.4717
+peach,jpeg,5,rgb,reliable_extent,0.1154,0.4717
+peach,jpeg,5,rgb,healthy sensor,0.2692,0.5472
+peach,misregister,1,xyz,rgb,0.1538,0.2925
+peach,misregister,1,xyz,fpfh,0.1538,0.5943
+peach,misregister,1,xyz,late,0.1538,0.5943
+peach,misregister,1,xyz,reliable_window,0.1538,0.5943
+peach,misregister,1,xyz,reliable_extent,0.1538,0.5943
+peach,misregister,1,xyz,healthy sensor,0.1538,0.2925
+peach,misregister,2,xyz,rgb,0.1538,0.2925
+peach,misregister,2,xyz,fpfh,0.1538,0.566
+peach,misregister,2,xyz,late,0.1538,0.566
+peach,misregister,2,xyz,reliable_window,0.1538,0.566
+peach,misregister,2,xyz,reliable_extent,0.1538,0.566
+peach,misregister,2,xyz,healthy sensor,0.1538,0.2925
+peach,misregister,3,xyz,rgb,0.1538,0.2925
+peach,misregister,3,xyz,fpfh,0.1154,0.5472
+peach,misregister,3,xyz,late,0.1538,0.5283
+peach,misregister,3,xyz,reliable_window,0.1538,0.5283
+peach,misregister,3,xyz,reliable_extent,0.1538,0.5283
+peach,misregister,3,xyz,healthy sensor,0.1538,0.2925
+peach,misregister,4,xyz,rgb,0.1538,0.2925
+peach,misregister,4,xyz,fpfh,0.1154,0.6038
+peach,misregister,4,xyz,late,0.1923,0.5377
+peach,misregister,4,xyz,reliable_window,0.1923,0.5377
+peach,misregister,4,xyz,reliable_extent,0.1923,0.5377
+peach,misregister,4,xyz,healthy sensor,0.1538,0.2925
+peach,misregister,5,xyz,rgb,0.1538,0.2925
+peach,misregister,5,xyz,fpfh,0.1154,0.5755
+peach,misregister,5,xyz,late,0.0769,0.566
+peach,misregister,5,xyz,reliable_window,0.0769,0.566
+peach,misregister,5,xyz,reliable_extent,0.0769,0.566
+peach,misregister,5,xyz,healthy sensor,0.1538,0.2925
+peach,occlusion,1,rgb,rgb,1.0,1.0
+peach,occlusion,1,rgb,fpfh,0.2692,0.5472
+peach,occlusion,1,rgb,late,1.0,1.0
+peach,occlusion,1,rgb,reliable_window,1.0,1.0
+peach,occlusion,1,rgb,reliable_extent,0.1154,0.4717
+peach,occlusion,1,rgb,healthy sensor,0.2692,0.5472
+peach,occlusion,2,rgb,rgb,1.0,1.0
+peach,occlusion,2,rgb,fpfh,0.2692,0.5472
+peach,occlusion,2,rgb,late,1.0,1.0
+peach,occlusion,2,rgb,reliable_window,0.9615,0.9717
+peach,occlusion,2,rgb,reliable_extent,0.1154,0.4717
+peach,occlusion,2,rgb,healthy sensor,0.2692,0.5472
+peach,occlusion,3,rgb,rgb,1.0,1.0
+peach,occlusion,3,rgb,fpfh,0.2692,0.5472
+peach,occlusion,3,rgb,late,1.0,1.0
+peach,occlusion,3,rgb,reliable_window,0.1154,0.5
+peach,occlusion,3,rgb,reliable_extent,0.1154,0.4717
+peach,occlusion,3,rgb,healthy sensor,0.2692,0.5472
+peach,occlusion,4,rgb,rgb,1.0,1.0
+peach,occlusion,4,rgb,fpfh,0.2692,0.5472
+peach,occlusion,4,rgb,late,1.0,1.0
+peach,occlusion,4,rgb,reliable_window,0.1154,0.4717
+peach,occlusion,4,rgb,reliable_extent,0.1154,0.4717
+peach,occlusion,4,rgb,healthy sensor,0.2692,0.5472
+peach,occlusion,5,rgb,rgb,1.0,1.0
+peach,occlusion,5,rgb,fpfh,0.2692,0.5472
+peach,occlusion,5,rgb,late,1.0,1.0
+peach,occlusion,5,rgb,reliable_window,0.1154,0.4717
+peach,occlusion,5,rgb,reliable_extent,0.1154,0.4717
+peach,occlusion,5,rgb,healthy sensor,0.2692,0.5472
+peach,quantise,1,xyz,rgb,0.1538,0.2925
+peach,quantise,1,xyz,fpfh,0.5385,0.8208
+peach,quantise,1,xyz,late,0.3462,0.7264
+peach,quantise,1,xyz,reliable_window,0.1154,0.2358
+peach,quantise,1,xyz,reliable_extent,0.1154,0.2358
+peach,quantise,1,xyz,healthy sensor,0.1538,0.2925
+peach,quantise,2,xyz,rgb,0.1538,0.2925
+peach,quantise,2,xyz,fpfh,1.0,1.0
+peach,quantise,2,xyz,late,1.0,1.0
+peach,quantise,2,xyz,reliable_window,0.1154,0.2358
+peach,quantise,2,xyz,reliable_extent,0.1154,0.2358
+peach,quantise,2,xyz,healthy sensor,0.1538,0.2925
+peach,quantise,3,xyz,rgb,0.1538,0.2925
+peach,quantise,3,xyz,fpfh,1.0,1.0
+peach,quantise,3,xyz,late,1.0,1.0
+peach,quantise,3,xyz,reliable_window,0.1154,0.2358
+peach,quantise,3,xyz,reliable_extent,0.1154,0.2358
+peach,quantise,3,xyz,healthy sensor,0.1538,0.2925
+peach,quantise,4,xyz,rgb,0.1538,0.2925
+peach,quantise,4,xyz,fpfh,1.0,1.0
+peach,quantise,4,xyz,late,1.0,1.0
+peach,quantise,4,xyz,reliable_window,0.1154,0.2358
+peach,quantise,4,xyz,reliable_extent,0.1154,0.2358
+peach,quantise,4,xyz,healthy sensor,0.1538,0.2925
+peach,quantise,5,xyz,rgb,0.1538,0.2925
+peach,quantise,5,xyz,fpfh,1.0,1.0
+peach,quantise,5,xyz,late,1.0,1.0
+peach,quantise,5,xyz,reliable_window,0.1154,0.2358
+peach,quantise,5,xyz,reliable_extent,0.1154,0.2358
+peach,quantise,5,xyz,healthy sensor,0.1538,0.2925
+peach,rgb_missing,1,rgb,rgb,1.0,1.0
+peach,rgb_missing,1,rgb,fpfh,0.2692,0.5472
+peach,rgb_missing,1,rgb,late,1.0,1.0
+peach,rgb_missing,1,rgb,reliable_window,0.1154,0.4717
+peach,rgb_missing,1,rgb,reliable_extent,0.1154,0.4717
+peach,rgb_missing,1,rgb,healthy sensor,0.2692,0.5472
+peach,tilt,1,xyz,rgb,0.1538,0.2925
+peach,tilt,1,xyz,fpfh,0.2692,0.5472
+peach,tilt,1,xyz,late,0.2308,0.5377
+peach,tilt,1,xyz,reliable_window,0.2308,0.5377
+peach,tilt,1,xyz,reliable_extent,0.2308,0.5472
+peach,tilt,1,xyz,healthy sensor,0.1538,0.2925
+peach,tilt,2,xyz,rgb,0.1538,0.2925
+peach,tilt,2,xyz,fpfh,0.2308,0.566
+peach,tilt,2,xyz,late,0.1923,0.5094
+peach,tilt,2,xyz,reliable_window,0.1923,0.5094
+peach,tilt,2,xyz,reliable_extent,0.1923,0.5189
+peach,tilt,2,xyz,healthy sensor,0.1538,0.2925
+peach,tilt,3,xyz,rgb,0.1538,0.2925
+peach,tilt,3,xyz,fpfh,0.1923,0.5566
+peach,tilt,3,xyz,late,0.1923,0.5
+peach,tilt,3,xyz,reliable_window,0.1923,0.5
+peach,tilt,3,xyz,reliable_extent,0.1923,0.5
+peach,tilt,3,xyz,healthy sensor,0.1538,0.2925
+peach,tilt,4,xyz,rgb,0.1538,0.2925
+peach,tilt,4,xyz,fpfh,0.2308,0.5943
+peach,tilt,4,xyz,late,0.1923,0.5283
+peach,tilt,4,xyz,reliable_window,0.1923,0.5283
+peach,tilt,4,xyz,reliable_extent,0.1923,0.5283
+peach,tilt,4,xyz,healthy sensor,0.1538,0.2925
+peach,tilt,5,xyz,rgb,0.1538,0.2925
+peach,tilt,5,xyz,fpfh,0.2692,0.6887
+peach,tilt,5,xyz,late,0.2692,0.5943
+peach,tilt,5,xyz,reliable_window,0.2692,0.5943
+peach,tilt,5,xyz,reliable_extent,0.2692,0.5849
+peach,tilt,5,xyz,healthy sensor,0.1538,0.2925
+peach,xyz_missing,1,xyz,rgb,0.1538,0.2925
+peach,xyz_missing,1,xyz,fpfh,0.0,0.0
+peach,xyz_missing,1,xyz,late,0.0,0.0
+peach,xyz_missing,1,xyz,reliable_window,0.1154,0.2358
+peach,xyz_missing,1,xyz,reliable_extent,0.1154,0.2358
+peach,xyz_missing,1,xyz,healthy sensor,0.1538,0.2925
+potato,brightness,1,rgb,rgb,0.2273,0.25
+potato,brightness,1,rgb,fpfh,0.0455,0.7826
+potato,brightness,1,rgb,late,0.0909,0.837
+potato,brightness,1,rgb,reliable_window,0.0455,0.8261
+potato,brightness,1,rgb,reliable_extent,0.0455,0.8261
+potato,brightness,1,rgb,healthy sensor,0.0455,0.7826
+potato,brightness,2,rgb,rgb,0.4091,0.5978
+potato,brightness,2,rgb,fpfh,0.0455,0.7826
+potato,brightness,2,rgb,late,0.2727,0.9239
+potato,brightness,2,rgb,reliable_window,0.0455,0.8043
+potato,brightness,2,rgb,reliable_extent,0.0455,0.8043
+potato,brightness,2,rgb,healthy sensor,0.0455,0.7826
+potato,brightness,3,rgb,rgb,0.6364,0.8587
+potato,brightness,3,rgb,fpfh,0.0455,0.7826
+potato,brightness,3,rgb,late,0.5909,0.9783
+potato,brightness,3,rgb,reliable_window,0.0455,0.7826
+potato,brightness,3,rgb,reliable_extent,0.0455,0.7826
+potato,brightness,3,rgb,healthy sensor,0.0455,0.7826
+potato,brightness,4,rgb,rgb,0.9091,0.9891
+potato,brightness,4,rgb,fpfh,0.0455,0.7826
+potato,brightness,4,rgb,late,0.6818,0.9891
+potato,brightness,4,rgb,reliable_window,0.0455,0.7826
+potato,brightness,4,rgb,reliable_extent,0.0455,0.7826
+potato,brightness,4,rgb,healthy sensor,0.0455,0.7826
+potato,brightness,5,rgb,rgb,0.9545,1.0
+potato,brightness,5,rgb,fpfh,0.0455,0.7826
+potato,brightness,5,rgb,late,0.8182,1.0
+potato,brightness,5,rgb,reliable_window,0.0455,0.7826
+potato,brightness,5,rgb,reliable_extent,0.0455,0.7826
+potato,brightness,5,rgb,healthy sensor,0.0455,0.7826
+potato,defocus_blur,1,rgb,rgb,1.0,1.0
+potato,defocus_blur,1,rgb,fpfh,0.0455,0.7826
+potato,defocus_blur,1,rgb,late,0.9545,1.0
+potato,defocus_blur,1,rgb,reliable_window,0.0455,0.7826
+potato,defocus_blur,1,rgb,reliable_extent,0.0455,0.7826
+potato,defocus_blur,1,rgb,healthy sensor,0.0455,0.7826
+potato,defocus_blur,2,rgb,rgb,1.0,1.0
+potato,defocus_blur,2,rgb,fpfh,0.0455,0.7826
+potato,defocus_blur,2,rgb,late,1.0,1.0
+potato,defocus_blur,2,rgb,reliable_window,0.0455,0.7826
+potato,defocus_blur,2,rgb,reliable_extent,0.0455,0.7826
+potato,defocus_blur,2,rgb,healthy sensor,0.0455,0.7826
+potato,defocus_blur,3,rgb,rgb,1.0,1.0
+potato,defocus_blur,3,rgb,fpfh,0.0455,0.7826
+potato,defocus_blur,3,rgb,late,1.0,1.0
+potato,defocus_blur,3,rgb,reliable_window,0.0455,0.7826
+potato,defocus_blur,3,rgb,reliable_extent,0.0455,0.7826
+potato,defocus_blur,3,rgb,healthy sensor,0.0455,0.7826
+potato,defocus_blur,4,rgb,rgb,1.0,1.0
+potato,defocus_blur,4,rgb,fpfh,0.0455,0.7826
+potato,defocus_blur,4,rgb,late,1.0,1.0
+potato,defocus_blur,4,rgb,reliable_window,0.0455,0.7826
+potato,defocus_blur,4,rgb,reliable_extent,0.0455,0.7826
+potato,defocus_blur,4,rgb,healthy sensor,0.0455,0.7826
+potato,defocus_blur,5,rgb,rgb,1.0,1.0
+potato,defocus_blur,5,rgb,fpfh,0.0455,0.7826
+potato,defocus_blur,5,rgb,late,1.0,1.0
+potato,defocus_blur,5,rgb,reliable_window,0.0455,0.7826
+potato,defocus_blur,5,rgb,reliable_extent,0.0455,0.7826
+potato,defocus_blur,5,rgb,healthy sensor,0.0455,0.7826
+potato,depth_noise,1,xyz,rgb,0.1364,0.1087
+potato,depth_noise,1,xyz,fpfh,0.5909,0.9239
+potato,depth_noise,1,xyz,late,0.4091,0.9239
+potato,depth_noise,1,xyz,reliable_window,0.1818,0.1304
+potato,depth_noise,1,xyz,reliable_extent,0.1818,0.1304
+potato,depth_noise,1,xyz,healthy sensor,0.1364,0.1087
+potato,depth_noise,2,xyz,rgb,0.1364,0.1087
+potato,depth_noise,2,xyz,fpfh,1.0,1.0
+potato,depth_noise,2,xyz,late,1.0,1.0
+potato,depth_noise,2,xyz,reliable_window,0.1818,0.1304
+potato,depth_noise,2,xyz,reliable_extent,0.1818,0.1304
+potato,depth_noise,2,xyz,healthy sensor,0.1364,0.1087
+potato,depth_noise,3,xyz,rgb,0.1364,0.1087
+potato,depth_noise,3,xyz,fpfh,1.0,1.0
+potato,depth_noise,3,xyz,late,1.0,1.0
+potato,depth_noise,3,xyz,reliable_window,0.1818,0.1304
+potato,depth_noise,3,xyz,reliable_extent,0.1818,0.1304
+potato,depth_noise,3,xyz,healthy sensor,0.1364,0.1087
+potato,depth_noise,4,xyz,rgb,0.1364,0.1087
+potato,depth_noise,4,xyz,fpfh,1.0,1.0
+potato,depth_noise,4,xyz,late,1.0,1.0
+potato,depth_noise,4,xyz,reliable_window,0.1818,0.1304
+potato,depth_noise,4,xyz,reliable_extent,0.1818,0.1304
+potato,depth_noise,4,xyz,healthy sensor,0.1364,0.1087
+potato,depth_noise,5,xyz,rgb,0.1364,0.1087
+potato,depth_noise,5,xyz,fpfh,1.0,1.0
+potato,depth_noise,5,xyz,late,1.0,1.0
+potato,depth_noise,5,xyz,reliable_window,0.1818,0.1304
+potato,depth_noise,5,xyz,reliable_extent,0.1818,0.1304
+potato,depth_noise,5,xyz,healthy sensor,0.1364,0.1087
+potato,gaussian_noise,1,rgb,rgb,1.0,1.0
+potato,gaussian_noise,1,rgb,fpfh,0.0455,0.7826
+potato,gaussian_noise,1,rgb,late,1.0,1.0
+potato,gaussian_noise,1,rgb,reliable_window,0.0455,0.7826
+potato,gaussian_noise,1,rgb,reliable_extent,0.0455,0.7826
+potato,gaussian_noise,1,rgb,healthy sensor,0.0455,0.7826
+potato,gaussian_noise,2,rgb,rgb,1.0,1.0
+potato,gaussian_noise,2,rgb,fpfh,0.0455,0.7826
+potato,gaussian_noise,2,rgb,late,1.0,1.0
+potato,gaussian_noise,2,rgb,reliable_window,0.0455,0.7826
+potato,gaussian_noise,2,rgb,reliable_extent,0.0455,0.7826
+potato,gaussian_noise,2,rgb,healthy sensor,0.0455,0.7826
+potato,gaussian_noise,3,rgb,rgb,1.0,1.0
+potato,gaussian_noise,3,rgb,fpfh,0.0455,0.7826
+potato,gaussian_noise,3,rgb,late,1.0,1.0
+potato,gaussian_noise,3,rgb,reliable_window,0.0455,0.7826
+potato,gaussian_noise,3,rgb,reliable_extent,0.0455,0.7826
+potato,gaussian_noise,3,rgb,healthy sensor,0.0455,0.7826
+potato,gaussian_noise,4,rgb,rgb,1.0,1.0
+potato,gaussian_noise,4,rgb,fpfh,0.0455,0.7826
+potato,gaussian_noise,4,rgb,late,1.0,1.0
+potato,gaussian_noise,4,rgb,reliable_window,0.0455,0.7826
+potato,gaussian_noise,4,rgb,reliable_extent,0.0455,0.7826
+potato,gaussian_noise,4,rgb,healthy sensor,0.0455,0.7826
+potato,gaussian_noise,5,rgb,rgb,1.0,1.0
+potato,gaussian_noise,5,rgb,fpfh,0.0455,0.7826
+potato,gaussian_noise,5,rgb,late,1.0,1.0
+potato,gaussian_noise,5,rgb,reliable_window,0.0455,0.7826
+potato,gaussian_noise,5,rgb,reliable_extent,0.0455,0.7826
+potato,gaussian_noise,5,rgb,healthy sensor,0.0455,0.7826
+potato,holes,1,xyz,rgb,0.1364,0.1087
+potato,holes,1,xyz,fpfh,0.0455,0.75
+potato,holes,1,xyz,late,0.0909,0.7391
+potato,holes,1,xyz,reliable_window,0.0909,0.7391
+potato,holes,1,xyz,reliable_extent,0.0909,0.7391
+potato,holes,1,xyz,healthy sensor,0.1364,0.1087
+potato,holes,2,xyz,rgb,0.1364,0.1087
+potato,holes,2,xyz,fpfh,0.1364,0.75
+potato,holes,2,xyz,late,0.1364,0.6957
+potato,holes,2,xyz,reliable_window,0.1364,0.6848
+potato,holes,2,xyz,reliable_extent,0.1364,0.663
+potato,holes,2,xyz,healthy sensor,0.1364,0.1087
+potato,holes,3,xyz,rgb,0.1364,0.1087
+potato,holes,3,xyz,fpfh,0.0455,0.7283
+potato,holes,3,xyz,late,0.1818,0.7391
+potato,holes,3,xyz,reliable_window,0.2273,0.6413
+potato,holes,3,xyz,reliable_extent,0.2273,0.6087
+potato,holes,3,xyz,healthy sensor,0.1364,0.1087
+potato,holes,4,xyz,rgb,0.1364,0.1087
+potato,holes,4,xyz,fpfh,0.1818,0.7391
+potato,holes,4,xyz,late,0.1818,0.7609
+potato,holes,4,xyz,reliable_window,0.2273,0.5435
+potato,holes,4,xyz,reliable_extent,0.2273,0.5217
+potato,holes,4,xyz,healthy sensor,0.1364,0.1087
+potato,holes,5,xyz,rgb,0.1364,0.1087
+potato,holes,5,xyz,fpfh,0.2727,0.6413
+potato,holes,5,xyz,late,0.2727,0.6739
+potato,holes,5,xyz,reliable_window,0.1818,0.2174
+potato,holes,5,xyz,reliable_extent,0.1818,0.2174
+potato,holes,5,xyz,healthy sensor,0.1364,0.1087
+potato,jpeg,1,rgb,rgb,1.0,1.0
+potato,jpeg,1,rgb,fpfh,0.0455,0.7826
+potato,jpeg,1,rgb,late,1.0,1.0
+potato,jpeg,1,rgb,reliable_window,0.0455,0.7826
+potato,jpeg,1,rgb,reliable_extent,0.0455,0.7826
+potato,jpeg,1,rgb,healthy sensor,0.0455,0.7826
+potato,jpeg,2,rgb,rgb,1.0,1.0
+potato,jpeg,2,rgb,fpfh,0.0455,0.7826
+potato,jpeg,2,rgb,late,1.0,1.0
+potato,jpeg,2,rgb,reliable_window,0.0455,0.7826
+potato,jpeg,2,rgb,reliable_extent,0.0455,0.7826
+potato,jpeg,2,rgb,healthy sensor,0.0455,0.7826
+potato,jpeg,3,rgb,rgb,1.0,1.0
+potato,jpeg,3,rgb,fpfh,0.0455,0.7826
+potato,jpeg,3,rgb,late,1.0,1.0
+potato,jpeg,3,rgb,reliable_window,0.0455,0.7826
+potato,jpeg,3,rgb,reliable_extent,0.0455,0.7826
+potato,jpeg,3,rgb,healthy sensor,0.0455,0.7826
+potato,jpeg,4,rgb,rgb,1.0,1.0
+potato,jpeg,4,rgb,fpfh,0.0455,0.7826
+potato,jpeg,4,rgb,late,1.0,1.0
+potato,jpeg,4,rgb,reliable_window,0.0455,0.7826
+potato,jpeg,4,rgb,reliable_extent,0.0455,0.7826
+potato,jpeg,4,rgb,healthy sensor,0.0455,0.7826
+potato,jpeg,5,rgb,rgb,1.0,1.0
+potato,jpeg,5,rgb,fpfh,0.0455,0.7826
+potato,jpeg,5,rgb,late,1.0,1.0
+potato,jpeg,5,rgb,reliable_window,0.0455,0.7826
+potato,jpeg,5,rgb,reliable_extent,0.0455,0.7826
+potato,jpeg,5,rgb,healthy sensor,0.0455,0.7826
+potato,misregister,1,xyz,rgb,0.1364,0.1087
+potato,misregister,1,xyz,fpfh,0.0909,0.7935
+potato,misregister,1,xyz,late,0.0455,0.7935
+potato,misregister,1,xyz,reliable_window,0.0455,0.7935
+potato,misregister,1,xyz,reliable_extent,0.0455,0.7935
+potato,misregister,1,xyz,healthy sensor,0.1364,0.1087
+potato,misregister,2,xyz,rgb,0.1364,0.1087
+potato,misregister,2,xyz,fpfh,0.0455,0.8043
+potato,misregister,2,xyz,late,0.0909,0.7283
+potato,misregister,2,xyz,reliable_window,0.0909,0.7283
+potato,misregister,2,xyz,reliable_extent,0.0909,0.7283
+potato,misregister,2,xyz,healthy sensor,0.1364,0.1087
+potato,misregister,3,xyz,rgb,0.1364,0.1087
+potato,misregister,3,xyz,fpfh,0.0455,0.7717
+potato,misregister,3,xyz,late,0.1818,0.7283
+potato,misregister,3,xyz,reliable_window,0.1818,0.7283
+potato,misregister,3,xyz,reliable_extent,0.1818,0.7283
+potato,misregister,3,xyz,healthy sensor,0.1364,0.1087
+potato,misregister,4,xyz,rgb,0.1364,0.1087
+potato,misregister,4,xyz,fpfh,0.0909,0.7935
+potato,misregister,4,xyz,late,0.0909,0.7717
+potato,misregister,4,xyz,reliable_window,0.0909,0.7717
+potato,misregister,4,xyz,reliable_extent,0.0909,0.7717
+potato,misregister,4,xyz,healthy sensor,0.1364,0.1087
+potato,misregister,5,xyz,rgb,0.1364,0.1087
+potato,misregister,5,xyz,fpfh,0.0909,0.7935
+potato,misregister,5,xyz,late,0.1818,0.7717
+potato,misregister,5,xyz,reliable_window,0.1818,0.7717
+potato,misregister,5,xyz,reliable_extent,0.1818,0.7717
+potato,misregister,5,xyz,healthy sensor,0.1364,0.1087
+potato,occlusion,1,rgb,rgb,1.0,1.0
+potato,occlusion,1,rgb,fpfh,0.0455,0.7826
+potato,occlusion,1,rgb,late,1.0,1.0
+potato,occlusion,1,rgb,reliable_window,0.0909,0.7935
+potato,occlusion,1,rgb,reliable_extent,0.0455,0.7826
+potato,occlusion,1,rgb,healthy sensor,0.0455,0.7826
+potato,occlusion,2,rgb,rgb,1.0,1.0
+potato,occlusion,2,rgb,fpfh,0.0455,0.7826
+potato,occlusion,2,rgb,late,1.0,1.0
+potato,occlusion,2,rgb,reliable_window,0.0455,0.7826
+potato,occlusion,2,rgb,reliable_extent,0.0455,0.7826
+potato,occlusion,2,rgb,healthy sensor,0.0455,0.7826
+potato,occlusion,3,rgb,rgb,1.0,1.0
+potato,occlusion,3,rgb,fpfh,0.0455,0.7826
+potato,occlusion,3,rgb,late,1.0,1.0
+potato,occlusion,3,rgb,reliable_window,0.0455,0.7826
+potato,occlusion,3,rgb,reliable_extent,0.0455,0.7826
+potato,occlusion,3,rgb,healthy sensor,0.0455,0.7826
+potato,occlusion,4,rgb,rgb,1.0,1.0
+potato,occlusion,4,rgb,fpfh,0.0455,0.7826
+potato,occlusion,4,rgb,late,1.0,1.0
+potato,occlusion,4,rgb,reliable_window,0.0455,0.7826
+potato,occlusion,4,rgb,reliable_extent,0.0455,0.7826
+potato,occlusion,4,rgb,healthy sensor,0.0455,0.7826
+potato,occlusion,5,rgb,rgb,1.0,1.0
+potato,occlusion,5,rgb,fpfh,0.0455,0.7826
+potato,occlusion,5,rgb,late,1.0,1.0
+potato,occlusion,5,rgb,reliable_window,0.0455,0.7826
+potato,occlusion,5,rgb,reliable_extent,0.0455,0.7826
+potato,occlusion,5,rgb,healthy sensor,0.0455,0.7826
+potato,quantise,1,xyz,rgb,0.1364,0.1087
+potato,quantise,1,xyz,fpfh,0.1364,0.8261
+potato,quantise,1,xyz,late,0.1364,0.8043
+potato,quantise,1,xyz,reliable_window,0.1818,0.413
+potato,quantise,1,xyz,reliable_extent,0.1818,0.3804
+potato,quantise,1,xyz,healthy sensor,0.1364,0.1087
+potato,quantise,2,xyz,rgb,0.1364,0.1087
+potato,quantise,2,xyz,fpfh,0.9545,1.0
+potato,quantise,2,xyz,late,0.6818,0.9565
+potato,quantise,2,xyz,reliable_window,0.1818,0.1304
+potato,quantise,2,xyz,reliable_extent,0.1818,0.1304
+potato,quantise,2,xyz,healthy sensor,0.1364,0.1087
+potato,quantise,3,xyz,rgb,0.1364,0.1087
+potato,quantise,3,xyz,fpfh,1.0,1.0
+potato,quantise,3,xyz,late,1.0,1.0
+potato,quantise,3,xyz,reliable_window,0.1818,0.1304
+potato,quantise,3,xyz,reliable_extent,0.1818,0.1304
+potato,quantise,3,xyz,healthy sensor,0.1364,0.1087
+potato,quantise,4,xyz,rgb,0.1364,0.1087
+potato,quantise,4,xyz,fpfh,1.0,1.0
+potato,quantise,4,xyz,late,1.0,1.0
+potato,quantise,4,xyz,reliable_window,0.1818,0.1304
+potato,quantise,4,xyz,reliable_extent,0.1818,0.1304
+potato,quantise,4,xyz,healthy sensor,0.1364,0.1087
+potato,quantise,5,xyz,rgb,0.1364,0.1087
+potato,quantise,5,xyz,fpfh,1.0,1.0
+potato,quantise,5,xyz,late,1.0,1.0
+potato,quantise,5,xyz,reliable_window,0.1818,0.1304
+potato,quantise,5,xyz,reliable_extent,0.1818,0.1304
+potato,quantise,5,xyz,healthy sensor,0.1364,0.1087
+potato,rgb_missing,1,rgb,rgb,1.0,1.0
+potato,rgb_missing,1,rgb,fpfh,0.0455,0.7826
+potato,rgb_missing,1,rgb,late,1.0,1.0
+potato,rgb_missing,1,rgb,reliable_window,0.0455,0.7826
+potato,rgb_missing,1,rgb,reliable_extent,0.0455,0.7826
+potato,rgb_missing,1,rgb,healthy sensor,0.0455,0.7826
+potato,tilt,1,xyz,rgb,0.1364,0.1087
+potato,tilt,1,xyz,fpfh,0.0455,0.7826
+potato,tilt,1,xyz,late,0.0,0.75
+potato,tilt,1,xyz,reliable_window,0.0,0.75
+potato,tilt,1,xyz,reliable_extent,0.0,0.75
+potato,tilt,1,xyz,healthy sensor,0.1364,0.1087
+potato,tilt,2,xyz,rgb,0.1364,0.1087
+potato,tilt,2,xyz,fpfh,0.0455,0.7935
+potato,tilt,2,xyz,late,0.0455,0.7609
+potato,tilt,2,xyz,reliable_window,0.0455,0.7609
+potato,tilt,2,xyz,reliable_extent,0.0455,0.7609
+potato,tilt,2,xyz,healthy sensor,0.1364,0.1087
+potato,tilt,3,xyz,rgb,0.1364,0.1087
+potato,tilt,3,xyz,fpfh,0.0909,0.7935
+potato,tilt,3,xyz,late,0.1364,0.7609
+potato,tilt,3,xyz,reliable_window,0.1364,0.7609
+potato,tilt,3,xyz,reliable_extent,0.1364,0.7609
+potato,tilt,3,xyz,healthy sensor,0.1364,0.1087
+potato,tilt,4,xyz,rgb,0.1364,0.1087
+potato,tilt,4,xyz,fpfh,0.0909,0.7935
+potato,tilt,4,xyz,late,0.1364,0.75
+potato,tilt,4,xyz,reliable_window,0.1364,0.75
+potato,tilt,4,xyz,reliable_extent,0.1364,0.75
+potato,tilt,4,xyz,healthy sensor,0.1364,0.1087
+potato,tilt,5,xyz,rgb,0.1364,0.1087
+potato,tilt,5,xyz,fpfh,0.0909,0.7717
+potato,tilt,5,xyz,late,0.0909,0.75
+potato,tilt,5,xyz,reliable_window,0.0909,0.75
+potato,tilt,5,xyz,reliable_extent,0.0909,0.75
+potato,tilt,5,xyz,healthy sensor,0.1364,0.1087
+potato,xyz_missing,1,xyz,rgb,0.1364,0.1087
+potato,xyz_missing,1,xyz,fpfh,0.0,0.0
+potato,xyz_missing,1,xyz,late,0.0,0.0
+potato,xyz_missing,1,xyz,reliable_window,0.0,0.0109
+potato,xyz_missing,1,xyz,reliable_extent,0.0,0.0109
+potato,xyz_missing,1,xyz,healthy sensor,0.1364,0.1087
+rope,brightness,1,rgb,rgb,0.6875,0.971
+rope,brightness,1,rgb,fpfh,0.0625,0.913
+rope,brightness,1,rgb,late,0.5938,1.0
+rope,brightness,1,rgb,reliable_window,0.375,0.9855
+rope,brightness,1,rgb,reliable_extent,0.2188,0.971
+rope,brightness,1,rgb,healthy sensor,0.0625,0.913
+rope,brightness,2,rgb,rgb,1.0,1.0
+rope,brightness,2,rgb,fpfh,0.0625,0.913
+rope,brightness,2,rgb,late,0.9688,1.0
+rope,brightness,2,rgb,reliable_window,0.1562,0.942
+rope,brightness,2,rgb,reliable_extent,0.1562,0.942
+rope,brightness,2,rgb,healthy sensor,0.0625,0.913
+rope,brightness,3,rgb,rgb,1.0,1.0
+rope,brightness,3,rgb,fpfh,0.0625,0.913
+rope,brightness,3,rgb,late,1.0,1.0
+rope,brightness,3,rgb,reliable_window,0.1562,0.942
+rope,brightness,3,rgb,reliable_extent,0.1562,0.942
+rope,brightness,3,rgb,healthy sensor,0.0625,0.913
+rope,brightness,4,rgb,rgb,1.0,1.0
+rope,brightness,4,rgb,fpfh,0.0625,0.913
+rope,brightness,4,rgb,late,1.0,1.0
+rope,brightness,4,rgb,reliable_window,0.1562,0.942
+rope,brightness,4,rgb,reliable_extent,0.1562,0.942
+rope,brightness,4,rgb,healthy sensor,0.0625,0.913
+rope,brightness,5,rgb,rgb,1.0,1.0
+rope,brightness,5,rgb,fpfh,0.0625,0.913
+rope,brightness,5,rgb,late,1.0,1.0
+rope,brightness,5,rgb,reliable_window,0.1562,0.942
+rope,brightness,5,rgb,reliable_extent,0.1562,0.942
+rope,brightness,5,rgb,healthy sensor,0.0625,0.913
+rope,defocus_blur,1,rgb,rgb,1.0,1.0
+rope,defocus_blur,1,rgb,fpfh,0.0625,0.913
+rope,defocus_blur,1,rgb,late,1.0,1.0
+rope,defocus_blur,1,rgb,reliable_window,0.1562,0.942
+rope,defocus_blur,1,rgb,reliable_extent,0.1562,0.942
+rope,defocus_blur,1,rgb,healthy sensor,0.0625,0.913
+rope,defocus_blur,2,rgb,rgb,1.0,1.0
+rope,defocus_blur,2,rgb,fpfh,0.0625,0.913
+rope,defocus_blur,2,rgb,late,1.0,1.0
+rope,defocus_blur,2,rgb,reliable_window,0.1562,0.942
+rope,defocus_blur,2,rgb,reliable_extent,0.1562,0.942
+rope,defocus_blur,2,rgb,healthy sensor,0.0625,0.913
+rope,defocus_blur,3,rgb,rgb,1.0,1.0
+rope,defocus_blur,3,rgb,fpfh,0.0625,0.913
+rope,defocus_blur,3,rgb,late,1.0,1.0
+rope,defocus_blur,3,rgb,reliable_window,0.1562,0.942
+rope,defocus_blur,3,rgb,reliable_extent,0.1562,0.942
+rope,defocus_blur,3,rgb,healthy sensor,0.0625,0.913
+rope,defocus_blur,4,rgb,rgb,1.0,1.0
+rope,defocus_blur,4,rgb,fpfh,0.0625,0.913
+rope,defocus_blur,4,rgb,late,1.0,1.0
+rope,defocus_blur,4,rgb,reliable_window,0.1562,0.942
+rope,defocus_blur,4,rgb,reliable_extent,0.1562,0.942
+rope,defocus_blur,4,rgb,healthy sensor,0.0625,0.913
+rope,defocus_blur,5,rgb,rgb,1.0,1.0
+rope,defocus_blur,5,rgb,fpfh,0.0625,0.913
+rope,defocus_blur,5,rgb,late,1.0,1.0
+rope,defocus_blur,5,rgb,reliable_window,0.1562,0.942
+rope,defocus_blur,5,rgb,reliable_extent,0.1562,0.942
+rope,defocus_blur,5,rgb,healthy sensor,0.0625,0.913
+rope,depth_noise,1,xyz,rgb,0.125,0.8986
+rope,depth_noise,1,xyz,fpfh,0.3125,0.971
+rope,depth_noise,1,xyz,late,0.4062,1.0
+rope,depth_noise,1,xyz,reliable_window,0.2188,0.8986
+rope,depth_noise,1,xyz,reliable_extent,0.2188,0.942
+rope,depth_noise,1,xyz,healthy sensor,0.125,0.8986
+rope,depth_noise,2,xyz,rgb,0.125,0.8986
+rope,depth_noise,2,xyz,fpfh,1.0,1.0
+rope,depth_noise,2,xyz,late,1.0,1.0
+rope,depth_noise,2,xyz,reliable_window,0.2188,0.8986
+rope,depth_noise,2,xyz,reliable_extent,0.5312,0.942
+rope,depth_noise,2,xyz,healthy sensor,0.125,0.8986
+rope,depth_noise,3,xyz,rgb,0.125,0.8986
+rope,depth_noise,3,xyz,fpfh,1.0,1.0
+rope,depth_noise,3,xyz,late,1.0,1.0
+rope,depth_noise,3,xyz,reliable_window,0.2188,0.8986
+rope,depth_noise,3,xyz,reliable_extent,0.5312,0.942
+rope,depth_noise,3,xyz,healthy sensor,0.125,0.8986
+rope,depth_noise,4,xyz,rgb,0.125,0.8986
+rope,depth_noise,4,xyz,fpfh,1.0,1.0
+rope,depth_noise,4,xyz,late,1.0,1.0
+rope,depth_noise,4,xyz,reliable_window,0.2188,0.8986
+rope,depth_noise,4,xyz,reliable_extent,0.5312,0.942
+rope,depth_noise,4,xyz,healthy sensor,0.125,0.8986
+rope,depth_noise,5,xyz,rgb,0.125,0.8986
+rope,depth_noise,5,xyz,fpfh,1.0,1.0
+rope,depth_noise,5,xyz,late,1.0,1.0
+rope,depth_noise,5,xyz,reliable_window,0.2188,0.8986
+rope,depth_noise,5,xyz,reliable_extent,0.5312,0.942
+rope,depth_noise,5,xyz,healthy sensor,0.125,0.8986
+rope,gaussian_noise,1,rgb,rgb,1.0,1.0
+rope,gaussian_noise,1,rgb,fpfh,0.0625,0.913
+rope,gaussian_noise,1,rgb,late,1.0,1.0
+rope,gaussian_noise,1,rgb,reliable_window,0.1562,0.942
+rope,gaussian_noise,1,rgb,reliable_extent,0.1562,0.942
+rope,gaussian_noise,1,rgb,healthy sensor,0.0625,0.913
+rope,gaussian_noise,2,rgb,rgb,1.0,1.0
+rope,gaussian_noise,2,rgb,fpfh,0.0625,0.913
+rope,gaussian_noise,2,rgb,late,1.0,1.0
+rope,gaussian_noise,2,rgb,reliable_window,0.1562,0.942
+rope,gaussian_noise,2,rgb,reliable_extent,0.1562,0.942
+rope,gaussian_noise,2,rgb,healthy sensor,0.0625,0.913
+rope,gaussian_noise,3,rgb,rgb,1.0,1.0
+rope,gaussian_noise,3,rgb,fpfh,0.0625,0.913
+rope,gaussian_noise,3,rgb,late,1.0,1.0
+rope,gaussian_noise,3,rgb,reliable_window,0.1562,0.942
+rope,gaussian_noise,3,rgb,reliable_extent,0.1562,0.942
+rope,gaussian_noise,3,rgb,healthy sensor,0.0625,0.913
+rope,gaussian_noise,4,rgb,rgb,1.0,1.0
+rope,gaussian_noise,4,rgb,fpfh,0.0625,0.913
+rope,gaussian_noise,4,rgb,late,1.0,1.0
+rope,gaussian_noise,4,rgb,reliable_window,0.1562,0.942
+rope,gaussian_noise,4,rgb,reliable_extent,0.1562,0.942
+rope,gaussian_noise,4,rgb,healthy sensor,0.0625,0.913
+rope,gaussian_noise,5,rgb,rgb,1.0,1.0
+rope,gaussian_noise,5,rgb,fpfh,0.0625,0.913
+rope,gaussian_noise,5,rgb,late,1.0,1.0
+rope,gaussian_noise,5,rgb,reliable_window,0.1562,0.942
+rope,gaussian_noise,5,rgb,reliable_extent,0.1562,0.942
+rope,gaussian_noise,5,rgb,healthy sensor,0.0625,0.913
+rope,holes,1,xyz,rgb,0.125,0.8986
+rope,holes,1,xyz,fpfh,0.875,0.9275
+rope,holes,1,xyz,late,0.8125,0.971
+rope,holes,1,xyz,reliable_window,0.2188,0.8986
+rope,holes,1,xyz,reliable_extent,0.4375,0.942
+rope,holes,1,xyz,healthy sensor,0.125,0.8986
+rope,holes,2,xyz,rgb,0.125,0.8986
+rope,holes,2,xyz,fpfh,1.0,1.0
+rope,holes,2,xyz,late,1.0,1.0
+rope,holes,2,xyz,reliable_window,0.2188,0.8986
+rope,holes,2,xyz,reliable_extent,0.4375,0.942
+rope,holes,2,xyz,healthy sensor,0.125,0.8986
+rope,holes,3,xyz,rgb,0.125,0.8986
+rope,holes,3,xyz,fpfh,1.0,1.0
+rope,holes,3,xyz,late,0.9688,1.0
+rope,holes,3,xyz,reliable_window,0.2188,0.8986
+rope,holes,3,xyz,reliable_extent,0.5,0.9275
+rope,holes,3,xyz,healthy sensor,0.125,0.8986
+rope,holes,4,xyz,rgb,0.125,0.8986
+rope,holes,4,xyz,fpfh,1.0,1.0
+rope,holes,4,xyz,late,1.0,1.0
+rope,holes,4,xyz,reliable_window,0.2188,0.8986
+rope,holes,4,xyz,reliable_extent,0.5,0.942
+rope,holes,4,xyz,healthy sensor,0.125,0.8986
+rope,holes,5,xyz,rgb,0.125,0.8986
+rope,holes,5,xyz,fpfh,1.0,1.0
+rope,holes,5,xyz,late,1.0,1.0
+rope,holes,5,xyz,reliable_window,0.2188,0.8986
+rope,holes,5,xyz,reliable_extent,0.4375,0.9275
+rope,holes,5,xyz,healthy sensor,0.125,0.8986
+rope,jpeg,1,rgb,rgb,1.0,1.0
+rope,jpeg,1,rgb,fpfh,0.0625,0.913
+rope,jpeg,1,rgb,late,1.0,1.0
+rope,jpeg,1,rgb,reliable_window,0.1562,0.942
+rope,jpeg,1,rgb,reliable_extent,0.1562,0.942
+rope,jpeg,1,rgb,healthy sensor,0.0625,0.913
+rope,jpeg,2,rgb,rgb,1.0,1.0
+rope,jpeg,2,rgb,fpfh,0.0625,0.913
+rope,jpeg,2,rgb,late,1.0,1.0
+rope,jpeg,2,rgb,reliable_window,0.1562,0.942
+rope,jpeg,2,rgb,reliable_extent,0.1562,0.942
+rope,jpeg,2,rgb,healthy sensor,0.0625,0.913
+rope,jpeg,3,rgb,rgb,1.0,1.0
+rope,jpeg,3,rgb,fpfh,0.0625,0.913
+rope,jpeg,3,rgb,late,1.0,1.0
+rope,jpeg,3,rgb,reliable_window,0.1562,0.942
+rope,jpeg,3,rgb,reliable_extent,0.1562,0.942
+rope,jpeg,3,rgb,healthy sensor,0.0625,0.913
+rope,jpeg,4,rgb,rgb,1.0,1.0
+rope,jpeg,4,rgb,fpfh,0.0625,0.913
+rope,jpeg,4,rgb,late,1.0,1.0
+rope,jpeg,4,rgb,reliable_window,0.1562,0.942
+rope,jpeg,4,rgb,reliable_extent,0.1562,0.942
+rope,jpeg,4,rgb,healthy sensor,0.0625,0.913
+rope,jpeg,5,rgb,rgb,1.0,1.0
+rope,jpeg,5,rgb,fpfh,0.0625,0.913
+rope,jpeg,5,rgb,late,1.0,1.0
+rope,jpeg,5,rgb,reliable_window,0.1562,0.942
+rope,jpeg,5,rgb,reliable_extent,0.1562,0.942
+rope,jpeg,5,rgb,healthy sensor,0.0625,0.913
+rope,misregister,1,xyz,rgb,0.125,0.8986
+rope,misregister,1,xyz,fpfh,0.25,0.8986
+rope,misregister,1,xyz,late,0.2812,0.9565
+rope,misregister,1,xyz,reliable_window,0.2812,0.9565
+rope,misregister,1,xyz,reliable_extent,0.3438,0.9565
+rope,misregister,1,xyz,healthy sensor,0.125,0.8986
+rope,misregister,2,xyz,rgb,0.125,0.8986
+rope,misregister,2,xyz,fpfh,0.25,0.913
+rope,misregister,2,xyz,late,0.2812,0.971
+rope,misregister,2,xyz,reliable_window,0.2812,0.971
+rope,misregister,2,xyz,reliable_extent,0.3438,0.971
+rope,misregister,2,xyz,healthy sensor,0.125,0.8986
+rope,misregister,3,xyz,rgb,0.125,0.8986
+rope,misregister,3,xyz,fpfh,0.25,0.9275
+rope,misregister,3,xyz,late,0.3438,0.9855
+rope,misregister,3,xyz,reliable_window,0.3438,0.971
+rope,misregister,3,xyz,reliable_extent,0.3125,0.9565
+rope,misregister,3,xyz,healthy sensor,0.125,0.8986
+rope,misregister,4,xyz,rgb,0.125,0.8986
+rope,misregister,4,xyz,fpfh,0.1875,0.913
+rope,misregister,4,xyz,late,0.3125,1.0
+rope,misregister,4,xyz,reliable_window,0.3125,0.9855
+rope,misregister,4,xyz,reliable_extent,0.3125,0.9565
+rope,misregister,4,xyz,healthy sensor,0.125,0.8986
+rope,misregister,5,xyz,rgb,0.125,0.8986
+rope,misregister,5,xyz,fpfh,0.0938,0.8986
+rope,misregister,5,xyz,late,0.125,0.971
+rope,misregister,5,xyz,reliable_window,0.1562,0.971
+rope,misregister,5,xyz,reliable_extent,0.125,0.942
+rope,misregister,5,xyz,healthy sensor,0.125,0.8986
+rope,occlusion,1,rgb,rgb,1.0,1.0
+rope,occlusion,1,rgb,fpfh,0.0625,0.913
+rope,occlusion,1,rgb,late,1.0,1.0
+rope,occlusion,1,rgb,reliable_window,0.9688,1.0
+rope,occlusion,1,rgb,reliable_extent,0.1562,0.942
+rope,occlusion,1,rgb,healthy sensor,0.0625,0.913
+rope,occlusion,2,rgb,rgb,1.0,1.0
+rope,occlusion,2,rgb,fpfh,0.0625,0.913
+rope,occlusion,2,rgb,late,1.0,1.0
+rope,occlusion,2,rgb,reliable_window,0.8125,0.9855
+rope,occlusion,2,rgb,reliable_extent,0.1562,0.942
+rope,occlusion,2,rgb,healthy sensor,0.0625,0.913
+rope,occlusion,3,rgb,rgb,1.0,1.0
+rope,occlusion,3,rgb,fpfh,0.0625,0.913
+rope,occlusion,3,rgb,late,1.0,1.0
+rope,occlusion,3,rgb,reliable_window,0.3125,0.942
+rope,occlusion,3,rgb,reliable_extent,0.1562,0.942
+rope,occlusion,3,rgb,healthy sensor,0.0625,0.913
+rope,occlusion,4,rgb,rgb,1.0,1.0
+rope,occlusion,4,rgb,fpfh,0.0625,0.913
+rope,occlusion,4,rgb,late,1.0,1.0
+rope,occlusion,4,rgb,reliable_window,0.1562,0.942
+rope,occlusion,4,rgb,reliable_extent,0.1562,0.942
+rope,occlusion,4,rgb,healthy sensor,0.0625,0.913
+rope,occlusion,5,rgb,rgb,1.0,1.0
+rope,occlusion,5,rgb,fpfh,0.0625,0.913
+rope,occlusion,5,rgb,late,1.0,1.0
+rope,occlusion,5,rgb,reliable_window,0.1562,0.942
+rope,occlusion,5,rgb,reliable_extent,0.1562,0.942
+rope,occlusion,5,rgb,healthy sensor,0.0625,0.913
+rope,quantise,1,xyz,rgb,0.125,0.8986
+rope,quantise,1,xyz,fpfh,0.0938,0.913
+rope,quantise,1,xyz,late,0.2812,0.971
+rope,quantise,1,xyz,reliable_window,0.25,0.971
+rope,quantise,1,xyz,reliable_extent,0.1875,0.9565
+rope,quantise,1,xyz,healthy sensor,0.125,0.8986
+rope,quantise,2,xyz,rgb,0.125,0.8986
+rope,quantise,2,xyz,fpfh,1.0,1.0
+rope,quantise,2,xyz,late,0.9688,1.0
+rope,quantise,2,xyz,reliable_window,0.2188,0.8986
+rope,quantise,2,xyz,reliable_extent,0.5,0.942
+rope,quantise,2,xyz,healthy sensor,0.125,0.8986
+rope,quantise,3,xyz,rgb,0.125,0.8986
+rope,quantise,3,xyz,fpfh,1.0,1.0
+rope,quantise,3,xyz,late,1.0,1.0
+rope,quantise,3,xyz,reliable_window,0.2188,0.8986
+rope,quantise,3,xyz,reliable_extent,0.5312,0.942
+rope,quantise,3,xyz,healthy sensor,0.125,0.8986
+rope,quantise,4,xyz,rgb,0.125,0.8986
+rope,quantise,4,xyz,fpfh,1.0,1.0
+rope,quantise,4,xyz,late,1.0,1.0
+rope,quantise,4,xyz,reliable_window,0.2188,0.8986
+rope,quantise,4,xyz,reliable_extent,0.5312,0.942
+rope,quantise,4,xyz,healthy sensor,0.125,0.8986
+rope,quantise,5,xyz,rgb,0.125,0.8986
+rope,quantise,5,xyz,fpfh,1.0,1.0
+rope,quantise,5,xyz,late,1.0,1.0
+rope,quantise,5,xyz,reliable_window,0.2188,0.8986
+rope,quantise,5,xyz,reliable_extent,0.5312,0.942
+rope,quantise,5,xyz,healthy sensor,0.125,0.8986
+rope,rgb_missing,1,rgb,rgb,1.0,1.0
+rope,rgb_missing,1,rgb,fpfh,0.0625,0.913
+rope,rgb_missing,1,rgb,late,1.0,1.0
+rope,rgb_missing,1,rgb,reliable_window,0.1562,0.942
+rope,rgb_missing,1,rgb,reliable_extent,0.1562,0.942
+rope,rgb_missing,1,rgb,healthy sensor,0.0625,0.913
+rope,tilt,1,xyz,rgb,0.125,0.8986
+rope,tilt,1,xyz,fpfh,0.0625,0.8986
+rope,tilt,1,xyz,late,0.1875,0.9565
+rope,tilt,1,xyz,reliable_window,0.2188,0.9565
+rope,tilt,1,xyz,reliable_extent,0.1562,0.942
+rope,tilt,1,xyz,healthy sensor,0.125,0.8986
+rope,tilt,2,xyz,rgb,0.125,0.8986
+rope,tilt,2,xyz,fpfh,0.0625,0.913
+rope,tilt,2,xyz,late,0.1875,0.942
+rope,tilt,2,xyz,reliable_window,0.2188,0.942
+rope,tilt,2,xyz,reliable_extent,0.1562,0.942
+rope,tilt,2,xyz,healthy sensor,0.125,0.8986
+rope,tilt,3,xyz,rgb,0.125,0.8986
+rope,tilt,3,xyz,fpfh,0.0625,0.8986
+rope,tilt,3,xyz,late,0.1875,0.9565
+rope,tilt,3,xyz,reliable_window,0.1875,0.9565
+rope,tilt,3,xyz,reliable_extent,0.1562,0.9565
+rope,tilt,3,xyz,healthy sensor,0.125,0.8986
+rope,tilt,4,xyz,rgb,0.125,0.8986
+rope,tilt,4,xyz,fpfh,0.0938,0.913
+rope,tilt,4,xyz,late,0.25,0.9565
+rope,tilt,4,xyz,reliable_window,0.25,0.9565
+rope,tilt,4,xyz,reliable_extent,0.2188,0.942
+rope,tilt,4,xyz,healthy sensor,0.125,0.8986
+rope,tilt,5,xyz,rgb,0.125,0.8986
+rope,tilt,5,xyz,fpfh,0.1562,0.8986
+rope,tilt,5,xyz,late,0.25,0.9565
+rope,tilt,5,xyz,reliable_window,0.2188,0.9565
+rope,tilt,5,xyz,reliable_extent,0.2188,0.9275
+rope,tilt,5,xyz,healthy sensor,0.125,0.8986
+rope,xyz_missing,1,xyz,rgb,0.125,0.8986
+rope,xyz_missing,1,xyz,fpfh,0.0,0.0
+rope,xyz_missing,1,xyz,late,0.0,0.7391
+rope,xyz_missing,1,xyz,reliable_window,0.2188,0.8986
+rope,xyz_missing,1,xyz,reliable_extent,0.2188,0.8986
+rope,xyz_missing,1,xyz,healthy sensor,0.125,0.8986
+tire,brightness,1,rgb,rgb,0.44,0.7471
+tire,brightness,1,rgb,fpfh,0.44,0.4943
+tire,brightness,1,rgb,late,0.32,0.5747
+tire,brightness,1,rgb,reliable_window,0.24,0.3793
+tire,brightness,1,rgb,reliable_extent,0.24,0.3793
+tire,brightness,1,rgb,healthy sensor,0.44,0.4943
+tire,brightness,2,rgb,rgb,1.0,1.0
+tire,brightness,2,rgb,fpfh,0.44,0.4943
+tire,brightness,2,rgb,late,0.88,0.954
+tire,brightness,2,rgb,reliable_window,0.16,0.1609
+tire,brightness,2,rgb,reliable_extent,0.16,0.1609
+tire,brightness,2,rgb,healthy sensor,0.44,0.4943
+tire,brightness,3,rgb,rgb,1.0,1.0
+tire,brightness,3,rgb,fpfh,0.44,0.4943
+tire,brightness,3,rgb,late,1.0,1.0
+tire,brightness,3,rgb,reliable_window,0.16,0.1609
+tire,brightness,3,rgb,reliable_extent,0.16,0.1609
+tire,brightness,3,rgb,healthy sensor,0.44,0.4943
+tire,brightness,4,rgb,rgb,1.0,1.0
+tire,brightness,4,rgb,fpfh,0.44,0.4943
+tire,brightness,4,rgb,late,1.0,1.0
+tire,brightness,4,rgb,reliable_window,0.16,0.1609
+tire,brightness,4,rgb,reliable_extent,0.16,0.1609
+tire,brightness,4,rgb,healthy sensor,0.44,0.4943
+tire,brightness,5,rgb,rgb,1.0,1.0
+tire,brightness,5,rgb,fpfh,0.44,0.4943
+tire,brightness,5,rgb,late,1.0,1.0
+tire,brightness,5,rgb,reliable_window,0.16,0.1609
+tire,brightness,5,rgb,reliable_extent,0.16,0.1609
+tire,brightness,5,rgb,healthy sensor,0.44,0.4943
+tire,defocus_blur,1,rgb,rgb,1.0,1.0
+tire,defocus_blur,1,rgb,fpfh,0.44,0.4943
+tire,defocus_blur,1,rgb,late,1.0,1.0
+tire,defocus_blur,1,rgb,reliable_window,0.16,0.1609
+tire,defocus_blur,1,rgb,reliable_extent,0.16,0.1609
+tire,defocus_blur,1,rgb,healthy sensor,0.44,0.4943
+tire,defocus_blur,2,rgb,rgb,1.0,1.0
+tire,defocus_blur,2,rgb,fpfh,0.44,0.4943
+tire,defocus_blur,2,rgb,late,1.0,1.0
+tire,defocus_blur,2,rgb,reliable_window,0.16,0.1609
+tire,defocus_blur,2,rgb,reliable_extent,0.16,0.1609
+tire,defocus_blur,2,rgb,healthy sensor,0.44,0.4943
+tire,defocus_blur,3,rgb,rgb,1.0,1.0
+tire,defocus_blur,3,rgb,fpfh,0.44,0.4943
+tire,defocus_blur,3,rgb,late,1.0,1.0
+tire,defocus_blur,3,rgb,reliable_window,0.16,0.1609
+tire,defocus_blur,3,rgb,reliable_extent,0.16,0.1609
+tire,defocus_blur,3,rgb,healthy sensor,0.44,0.4943
+tire,defocus_blur,4,rgb,rgb,1.0,1.0
+tire,defocus_blur,4,rgb,fpfh,0.44,0.4943
+tire,defocus_blur,4,rgb,late,1.0,1.0
+tire,defocus_blur,4,rgb,reliable_window,0.16,0.1609
+tire,defocus_blur,4,rgb,reliable_extent,0.16,0.1609
+tire,defocus_blur,4,rgb,healthy sensor,0.44,0.4943
+tire,defocus_blur,5,rgb,rgb,1.0,1.0
+tire,defocus_blur,5,rgb,fpfh,0.44,0.4943
+tire,defocus_blur,5,rgb,late,1.0,1.0
+tire,defocus_blur,5,rgb,reliable_window,0.16,0.1609
+tire,defocus_blur,5,rgb,reliable_extent,0.16,0.1609
+tire,defocus_blur,5,rgb,healthy sensor,0.44,0.4943
+tire,depth_noise,1,xyz,rgb,0.04,0.4828
+tire,depth_noise,1,xyz,fpfh,0.96,1.0
+tire,depth_noise,1,xyz,late,0.52,0.7931
+tire,depth_noise,1,xyz,reliable_window,0.56,0.7701
+tire,depth_noise,1,xyz,reliable_extent,0.04,0.2759
+tire,depth_noise,1,xyz,healthy sensor,0.04,0.4828
+tire,depth_noise,2,xyz,rgb,0.04,0.4828
+tire,depth_noise,2,xyz,fpfh,1.0,1.0
+tire,depth_noise,2,xyz,late,0.72,0.9195
+tire,depth_noise,2,xyz,reliable_window,0.28,0.5862
+tire,depth_noise,2,xyz,reliable_extent,0.04,0.2759
+tire,depth_noise,2,xyz,healthy sensor,0.04,0.4828
+tire,depth_noise,3,xyz,rgb,0.04,0.4828
+tire,depth_noise,3,xyz,fpfh,1.0,1.0
+tire,depth_noise,3,xyz,late,0.24,0.5172
+tire,depth_noise,3,xyz,reliable_window,0.04,0.2759
+tire,depth_noise,3,xyz,reliable_extent,0.04,0.2759
+tire,depth_noise,3,xyz,healthy sensor,0.04,0.4828
+tire,depth_noise,4,xyz,rgb,0.04,0.4828
+tire,depth_noise,4,xyz,fpfh,1.0,1.0
+tire,depth_noise,4,xyz,late,0.72,0.8736
+tire,depth_noise,4,xyz,reliable_window,0.04,0.2759
+tire,depth_noise,4,xyz,reliable_extent,0.04,0.2759
+tire,depth_noise,4,xyz,healthy sensor,0.04,0.4828
+tire,depth_noise,5,xyz,rgb,0.04,0.4828
+tire,depth_noise,5,xyz,fpfh,1.0,1.0
+tire,depth_noise,5,xyz,late,0.92,1.0
+tire,depth_noise,5,xyz,reliable_window,0.04,0.2759
+tire,depth_noise,5,xyz,reliable_extent,0.04,0.2759
+tire,depth_noise,5,xyz,healthy sensor,0.04,0.4828
+tire,gaussian_noise,1,rgb,rgb,1.0,1.0
+tire,gaussian_noise,1,rgb,fpfh,0.44,0.4943
+tire,gaussian_noise,1,rgb,late,1.0,1.0
+tire,gaussian_noise,1,rgb,reliable_window,0.16,0.1609
+tire,gaussian_noise,1,rgb,reliable_extent,0.16,0.1609
+tire,gaussian_noise,1,rgb,healthy sensor,0.44,0.4943
+tire,gaussian_noise,2,rgb,rgb,1.0,1.0
+tire,gaussian_noise,2,rgb,fpfh,0.44,0.4943
+tire,gaussian_noise,2,rgb,late,1.0,1.0
+tire,gaussian_noise,2,rgb,reliable_window,0.16,0.1609
+tire,gaussian_noise,2,rgb,reliable_extent,0.16,0.1609
+tire,gaussian_noise,2,rgb,healthy sensor,0.44,0.4943
+tire,gaussian_noise,3,rgb,rgb,1.0,1.0
+tire,gaussian_noise,3,rgb,fpfh,0.44,0.4943
+tire,gaussian_noise,3,rgb,late,1.0,1.0
+tire,gaussian_noise,3,rgb,reliable_window,0.16,0.1609
+tire,gaussian_noise,3,rgb,reliable_extent,0.16,0.1609
+tire,gaussian_noise,3,rgb,healthy sensor,0.44,0.4943
+tire,gaussian_noise,4,rgb,rgb,1.0,1.0
+tire,gaussian_noise,4,rgb,fpfh,0.44,0.4943
+tire,gaussian_noise,4,rgb,late,1.0,1.0
+tire,gaussian_noise,4,rgb,reliable_window,0.16,0.1609
+tire,gaussian_noise,4,rgb,reliable_extent,0.16,0.1609
+tire,gaussian_noise,4,rgb,healthy sensor,0.44,0.4943
+tire,gaussian_noise,5,rgb,rgb,1.0,1.0
+tire,gaussian_noise,5,rgb,fpfh,0.44,0.4943
+tire,gaussian_noise,5,rgb,late,1.0,1.0
+tire,gaussian_noise,5,rgb,reliable_window,0.16,0.1609
+tire,gaussian_noise,5,rgb,reliable_extent,0.16,0.1609
+tire,gaussian_noise,5,rgb,healthy sensor,0.44,0.4943
+tire,holes,1,xyz,rgb,0.04,0.4828
+tire,holes,1,xyz,fpfh,0.6,0.5747
+tire,holes,1,xyz,late,0.12,0.3563
+tire,holes,1,xyz,reliable_window,0.04,0.2759
+tire,holes,1,xyz,reliable_extent,0.04,0.2759
+tire,holes,1,xyz,healthy sensor,0.04,0.4828
+tire,holes,2,xyz,rgb,0.04,0.4828
+tire,holes,2,xyz,fpfh,0.52,0.6207
+tire,holes,2,xyz,late,0.12,0.3908
+tire,holes,2,xyz,reliable_window,0.04,0.2759
+tire,holes,2,xyz,reliable_extent,0.04,0.2759
+tire,holes,2,xyz,healthy sensor,0.04,0.4828
+tire,holes,3,xyz,rgb,0.04,0.4828
+tire,holes,3,xyz,fpfh,0.8,0.7816
+tire,holes,3,xyz,late,0.16,0.4253
+tire,holes,3,xyz,reliable_window,0.04,0.2759
+tire,holes,3,xyz,reliable_extent,0.04,0.2759
+tire,holes,3,xyz,healthy sensor,0.04,0.4828
+tire,holes,4,xyz,rgb,0.04,0.4828
+tire,holes,4,xyz,fpfh,0.76,0.7931
+tire,holes,4,xyz,late,0.08,0.4253
+tire,holes,4,xyz,reliable_window,0.04,0.2759
+tire,holes,4,xyz,reliable_extent,0.04,0.2759
+tire,holes,4,xyz,healthy sensor,0.04,0.4828
+tire,holes,5,xyz,rgb,0.04,0.4828
+tire,holes,5,xyz,fpfh,0.8,0.8506
+tire,holes,5,xyz,late,0.16,0.4253
+tire,holes,5,xyz,reliable_window,0.04,0.2759
+tire,holes,5,xyz,reliable_extent,0.04,0.2759
+tire,holes,5,xyz,healthy sensor,0.04,0.4828
+tire,jpeg,1,rgb,rgb,1.0,1.0
+tire,jpeg,1,rgb,fpfh,0.44,0.4943
+tire,jpeg,1,rgb,late,1.0,1.0
+tire,jpeg,1,rgb,reliable_window,0.16,0.1609
+tire,jpeg,1,rgb,reliable_extent,0.16,0.1609
+tire,jpeg,1,rgb,healthy sensor,0.44,0.4943
+tire,jpeg,2,rgb,rgb,1.0,1.0
+tire,jpeg,2,rgb,fpfh,0.44,0.4943
+tire,jpeg,2,rgb,late,1.0,1.0
+tire,jpeg,2,rgb,reliable_window,0.16,0.1609
+tire,jpeg,2,rgb,reliable_extent,0.16,0.1609
+tire,jpeg,2,rgb,healthy sensor,0.44,0.4943
+tire,jpeg,3,rgb,rgb,1.0,1.0
+tire,jpeg,3,rgb,fpfh,0.44,0.4943
+tire,jpeg,3,rgb,late,1.0,1.0
+tire,jpeg,3,rgb,reliable_window,0.16,0.1609
+tire,jpeg,3,rgb,reliable_extent,0.16,0.1609
+tire,jpeg,3,rgb,healthy sensor,0.44,0.4943
+tire,jpeg,4,rgb,rgb,1.0,1.0
+tire,jpeg,4,rgb,fpfh,0.44,0.4943
+tire,jpeg,4,rgb,late,1.0,1.0
+tire,jpeg,4,rgb,reliable_window,0.16,0.1609
+tire,jpeg,4,rgb,reliable_extent,0.16,0.1609
+tire,jpeg,4,rgb,healthy sensor,0.44,0.4943
+tire,jpeg,5,rgb,rgb,1.0,1.0
+tire,jpeg,5,rgb,fpfh,0.44,0.4943
+tire,jpeg,5,rgb,late,1.0,1.0
+tire,jpeg,5,rgb,reliable_window,0.16,0.1609
+tire,jpeg,5,rgb,reliable_extent,0.16,0.1609
+tire,jpeg,5,rgb,healthy sensor,0.44,0.4943
+tire,misregister,1,xyz,rgb,0.04,0.4828
+tire,misregister,1,xyz,fpfh,0.52,0.5402
+tire,misregister,1,xyz,late,0.04,0.3563
+tire,misregister,1,xyz,reliable_window,0.04,0.3563
+tire,misregister,1,xyz,reliable_extent,0.04,0.3563
+tire,misregister,1,xyz,healthy sensor,0.04,0.4828
+tire,misregister,2,xyz,rgb,0.04,0.4828
+tire,misregister,2,xyz,fpfh,0.52,0.4943
+tire,misregister,2,xyz,late,0.12,0.3333
+tire,misregister,2,xyz,reliable_window,0.12,0.3333
+tire,misregister,2,xyz,reliable_extent,0.12,0.3333
+tire,misregister,2,xyz,healthy sensor,0.04,0.4828
+tire,misregister,3,xyz,rgb,0.04,0.4828
+tire,misregister,3,xyz,fpfh,0.4,0.5057
+tire,misregister,3,xyz,late,0.08,0.3678
+tire,misregister,3,xyz,reliable_window,0.08,0.3678
+tire,misregister,3,xyz,reliable_extent,0.08,0.3678
+tire,misregister,3,xyz,healthy sensor,0.04,0.4828
+tire,misregister,4,xyz,rgb,0.04,0.4828
+tire,misregister,4,xyz,fpfh,0.52,0.4943
+tire,misregister,4,xyz,late,0.08,0.3908
+tire,misregister,4,xyz,reliable_window,0.08,0.3908
+tire,misregister,4,xyz,reliable_extent,0.08,0.4023
+tire,misregister,4,xyz,healthy sensor,0.04,0.4828
+tire,misregister,5,xyz,rgb,0.04,0.4828
+tire,misregister,5,xyz,fpfh,0.4,0.4828
+tire,misregister,5,xyz,late,0.08,0.3218
+tire,misregister,5,xyz,reliable_window,0.08,0.3218
+tire,misregister,5,xyz,reliable_extent,0.08,0.3218
+tire,misregister,5,xyz,healthy sensor,0.04,0.4828
+tire,occlusion,1,rgb,rgb,1.0,1.0
+tire,occlusion,1,rgb,fpfh,0.44,0.4943
+tire,occlusion,1,rgb,late,1.0,1.0
+tire,occlusion,1,rgb,reliable_window,1.0,1.0
+tire,occlusion,1,rgb,reliable_extent,0.16,0.1609
+tire,occlusion,1,rgb,healthy sensor,0.44,0.4943
+tire,occlusion,2,rgb,rgb,1.0,1.0
+tire,occlusion,2,rgb,fpfh,0.44,0.4943
+tire,occlusion,2,rgb,late,1.0,1.0
+tire,occlusion,2,rgb,reliable_window,1.0,1.0
+tire,occlusion,2,rgb,reliable_extent,0.16,0.1609
+tire,occlusion,2,rgb,healthy sensor,0.44,0.4943
+tire,occlusion,3,rgb,rgb,1.0,1.0
+tire,occlusion,3,rgb,fpfh,0.44,0.4943
+tire,occlusion,3,rgb,late,1.0,1.0
+tire,occlusion,3,rgb,reliable_window,0.72,0.7471
+tire,occlusion,3,rgb,reliable_extent,0.16,0.1609
+tire,occlusion,3,rgb,healthy sensor,0.44,0.4943
+tire,occlusion,4,rgb,rgb,1.0,1.0
+tire,occlusion,4,rgb,fpfh,0.44,0.4943
+tire,occlusion,4,rgb,late,1.0,1.0
+tire,occlusion,4,rgb,reliable_window,0.28,0.1609
+tire,occlusion,4,rgb,reliable_extent,0.16,0.1609
+tire,occlusion,4,rgb,healthy sensor,0.44,0.4943
+tire,occlusion,5,rgb,rgb,1.0,1.0
+tire,occlusion,5,rgb,fpfh,0.44,0.4943
+tire,occlusion,5,rgb,late,1.0,1.0
+tire,occlusion,5,rgb,reliable_window,0.16,0.1609
+tire,occlusion,5,rgb,reliable_extent,0.16,0.1609
+tire,occlusion,5,rgb,healthy sensor,0.44,0.4943
+tire,quantise,1,xyz,rgb,0.04,0.4828
+tire,quantise,1,xyz,fpfh,0.84,0.8966
+tire,quantise,1,xyz,late,0.52,0.6552
+tire,quantise,1,xyz,reliable_window,0.52,0.6552
+tire,quantise,1,xyz,reliable_extent,0.04,0.2759
+tire,quantise,1,xyz,healthy sensor,0.04,0.4828
+tire,quantise,2,xyz,rgb,0.04,0.4828
+tire,quantise,2,xyz,fpfh,1.0,1.0
+tire,quantise,2,xyz,late,0.76,0.9195
+tire,quantise,2,xyz,reliable_window,0.52,0.8161
+tire,quantise,2,xyz,reliable_extent,0.04,0.2759
+tire,quantise,2,xyz,healthy sensor,0.04,0.4828
+tire,quantise,3,xyz,rgb,0.04,0.4828
+tire,quantise,3,xyz,fpfh,1.0,1.0
+tire,quantise,3,xyz,late,0.72,0.8506
+tire,quantise,3,xyz,reliable_window,0.04,0.2759
+tire,quantise,3,xyz,reliable_extent,0.04,0.2759
+tire,quantise,3,xyz,healthy sensor,0.04,0.4828
+tire,quantise,4,xyz,rgb,0.04,0.4828
+tire,quantise,4,xyz,fpfh,1.0,1.0
+tire,quantise,4,xyz,late,1.0,1.0
+tire,quantise,4,xyz,reliable_window,0.04,0.2759
+tire,quantise,4,xyz,reliable_extent,0.04,0.2759
+tire,quantise,4,xyz,healthy sensor,0.04,0.4828
+tire,quantise,5,xyz,rgb,0.04,0.4828
+tire,quantise,5,xyz,fpfh,1.0,1.0
+tire,quantise,5,xyz,late,1.0,1.0
+tire,quantise,5,xyz,reliable_window,0.04,0.2759
+tire,quantise,5,xyz,reliable_extent,0.04,0.2759
+tire,quantise,5,xyz,healthy sensor,0.04,0.4828
+tire,rgb_missing,1,rgb,rgb,1.0,1.0
+tire,rgb_missing,1,rgb,fpfh,0.44,0.4943
+tire,rgb_missing,1,rgb,late,1.0,1.0
+tire,rgb_missing,1,rgb,reliable_window,0.16,0.1609
+tire,rgb_missing,1,rgb,reliable_extent,0.16,0.1609
+tire,rgb_missing,1,rgb,healthy sensor,0.44,0.4943
+tire,tilt,1,xyz,rgb,0.04,0.4828
+tire,tilt,1,xyz,fpfh,0.48,0.4828
+tire,tilt,1,xyz,late,0.08,0.3448
+tire,tilt,1,xyz,reliable_window,0.08,0.3448
+tire,tilt,1,xyz,reliable_extent,0.08,0.3448
+tire,tilt,1,xyz,healthy sensor,0.04,0.4828
+tire,tilt,2,xyz,rgb,0.04,0.4828
+tire,tilt,2,xyz,fpfh,0.44,0.4828
+tire,tilt,2,xyz,late,0.08,0.3448
+tire,tilt,2,xyz,reliable_window,0.08,0.3448
+tire,tilt,2,xyz,reliable_extent,0.08,0.3448
+tire,tilt,2,xyz,healthy sensor,0.04,0.4828
+tire,tilt,3,xyz,rgb,0.04,0.4828
+tire,tilt,3,xyz,fpfh,0.44,0.4943
+tire,tilt,3,xyz,late,0.08,0.3448
+tire,tilt,3,xyz,reliable_window,0.08,0.3448
+tire,tilt,3,xyz,reliable_extent,0.08,0.3448
+tire,tilt,3,xyz,healthy sensor,0.04,0.4828
+tire,tilt,4,xyz,rgb,0.04,0.4828
+tire,tilt,4,xyz,fpfh,0.4,0.4943
+tire,tilt,4,xyz,late,0.08,0.3333
+tire,tilt,4,xyz,reliable_window,0.08,0.3333
+tire,tilt,4,xyz,reliable_extent,0.08,0.3333
+tire,tilt,4,xyz,healthy sensor,0.04,0.4828
+tire,tilt,5,xyz,rgb,0.04,0.4828
+tire,tilt,5,xyz,fpfh,0.4,0.4713
+tire,tilt,5,xyz,late,0.08,0.3333
+tire,tilt,5,xyz,reliable_window,0.08,0.3333
+tire,tilt,5,xyz,reliable_extent,0.08,0.3333
+tire,tilt,5,xyz,healthy sensor,0.04,0.4828
+tire,xyz_missing,1,xyz,rgb,0.04,0.4828
+tire,xyz_missing,1,xyz,fpfh,0.0,0.0
+tire,xyz_missing,1,xyz,late,0.0,0.0115
+tire,xyz_missing,1,xyz,reliable_window,0.04,0.2759
+tire,xyz_missing,1,xyz,reliable_extent,0.04,0.2759
+tire,xyz_missing,1,xyz,healthy sensor,0.04,0.4828

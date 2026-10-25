@@ -953,6 +953,8 @@ def conformal_section() -> list[str]:
         },
         index=[names[m] for m in ("late", "reliable_window", "reliable_extent", "healthy sensor")],
     )
+    checks_path = Path("results/analysis/conformal_checks.csv")
+    checks = pd.read_csv(checks_path) if checks_path.exists() else None
     n_val = int(clean["n"].median())
     lo, hi = conformal.false_alarm_quantiles(n_val, 0.1, [0.05, 0.95])
     q = sizes.groupby("n")["false_alarm"].quantile([0.05, 0.95]).unstack()
@@ -999,6 +1001,49 @@ def conformal_section() -> list[str]:
         f"stays at {b.loc[('xyz', 'reliable_window'), 'false_alarm']:.0%} and catches more "
         f"than RGB alone ({b.loc[('xyz', 'reliable_window'), 'detection']:.3f} vs "
         f"{b.loc[('xyz', 'healthy sensor'), 'detection']:.3f}).",
+        "",
+        *conformal_checks(checks),
+    ]
+
+
+def conformal_checks(checks: pd.DataFrame | None) -> list[str]:
+    if checks is None:
+        return []
+    ex = checks[checks["check"] == "exchangeability"]
+    fp = ex[ex["sensor"] == "fpfh"]
+    shifted = fp[fp["shift_p"] < 0.05]["category"].tolist()
+    survives = ex[ex["shift_p_holm"] < 0.05]
+    tire = fp.set_index("category").loc["tire"]
+    split = checks[checks["check"] == "strict split"]
+    wm = (
+        checks[checks["check"] == "weight-matched"]
+        .groupby("sensor")[["false_alarm", "false_alarm_matched"]]
+        .mean()
+    )
+    return [
+        "Where the rate goes wrong, and what fixes it (`scripts/conformal_checks.py`):",
+        "",
+        f"- FPFH's excess on clean data is a real shift. Its normal test parts score higher "
+        f"than the validation parts in {len(shifted)} categories ({', '.join(shifted)}, "
+        "one-sided Mann-Whitney p < 0.05). After Holm's correction over the 20 tests, "
+        f"{len(survives)} remains ({', '.join(survives['category'] + ' ' + survives['sensor'])}), "
+        f"where FPFH alarms on {tire['false_alarm']:.0%} of good parts.",
+        "- Five confirmed-good parts from the current run fix most of it. Added to the "
+        "calibration set, they bring FPFH's mean false alarm rate from "
+        f"{fp['false_alarm'].mean():.3f} to {fp['false_alarm_plus5'].mean():.3f}, and "
+        f"tire's from {tire['false_alarm']:.2f} to {tire['false_alarm_plus5']:.2f}, measured "
+        "on the remaining normal parts. On a line that means asking an operator to confirm "
+        "a handful of good parts when a run starts.",
+        "- The fused scores take their z-score statistics from the same validation parts "
+        "they are calibrated on. Splitting the validation parts in two, one half for each "
+        f"job, gives {split['false_alarm_split'].mean():.3f} instead of "
+        f"{split['false_alarm'].mean():.3f}: the strict version stays under the target too, "
+        "at the price of a smaller calibration set.",
+        "- One idea that did not work: calibrating each part against validation parts fused "
+        "with that part's own sensor weights. With the RGB image corrupted, the false alarm "
+        f"rate went from {wm.loc['rgb', 'false_alarm']:.3f} to "
+        f"{wm.loc['rgb', 'false_alarm_matched']:.3f}. The excess there comes from occlusion "
+        "and from FPFH's own shift, not from the weights.",
         "",
     ]
 

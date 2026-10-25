@@ -302,6 +302,13 @@ Thresholds from the clean validation parts, test parts corrupted, alpha = 0.1, a
 
 - This is where the difference between the fusions shows in a way AUROC does not. With the RGB image corrupted, late fusion raises an alarm on 94% of normal parts: the line stops. Reliability fusion keeps it at 19% (13% with extent) and catches about as many defects as the healthy sensor. With the point cloud corrupted it stays at 10% and catches more than RGB alone (0.582 vs 0.510).
 
+Where the rate goes wrong, and what fixes it (`scripts/conformal_checks.py`):
+
+- FPFH's excess on clean data is a real shift. Its normal test parts score higher than the validation parts in 3 categories (bagel, cookie, tire, one-sided Mann-Whitney p < 0.05). After Holm's correction over the 20 tests, 1 remains (tire fpfh), where FPFH alarms on 44% of good parts.
+- Five confirmed-good parts from the current run fix most of it. Added to the calibration set, they bring FPFH's mean false alarm rate from 0.147 to 0.093, and tire's from 0.44 to 0.16, measured on the remaining normal parts. On a line that means asking an operator to confirm a handful of good parts when a run starts.
+- The fused scores take their z-score statistics from the same validation parts they are calibrated on. Splitting the validation parts in two, one half for each job, gives 0.074 instead of 0.094: the strict version stays under the target too, at the price of a smaller calibration set.
+- One idea that did not work: calibrating each part against validation parts fused with that part's own sensor weights. With the RGB image corrupted, the false alarm rate went from 0.185 to 0.206. The excess there comes from occlusion and from FPFH's own shift, not from the weights.
+
 ## Which backbone layers (RGB)
 
 Same detector, every layer combination on the same 28x28 patch grid (`scripts/run_layer_ablation.py`), full training set.

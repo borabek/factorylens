@@ -62,6 +62,16 @@ uv run factorylens ff blocks                            # FF label blocks and da
 uv run factorylens rgb run --category bagel             # PatchCore on one category
 uv run factorylens results table results/rgb            # mean metrics over result files
 uv run python scripts/make_results_tables.py            # regenerate docs/results.md
+uv run factorylens sweep                                # 4 detectors x k-shot x seeds
+uv run factorylens robustness                           # every model on FactoryLens-C
+```
+
+To use a fitted model on new parts, see [docs/inference.md](docs/inference.md):
+
+```bash
+uv run factorylens fit --category bagel                 # -> models/bagel.pt (with alarm threshold)
+uv run factorylens inspect models/bagel.pt part.png part.tiff
+uv run factorylens serve models/bagel.pt                # HTTP API, needs: uv sync --extra serve
 ```
 
 ## Setup

@@ -25,6 +25,11 @@ factorylens = "factorylens.cli:main"
 3d = [
     "open3d>=0.20.0",
 ]
+serve = [
+    "fastapi>=0.162.0",
+    "python-multipart>=0.0.32",
+    "uvicorn>=0.54.0",
+]
 
 [dependency-groups]
 analysis = [
@@ -39,6 +44,9 @@ dev = [
     "pandas-stubs>=3.0.5.260914",
     "matplotlib>=3.11.2",
     "scipy-stubs>=1.17.1.5",
+    "fastapi>=0.162.0",
+    "httpx>=0.28.1",
+    "python-multipart>=0.0.32",
 ]
 
 [build-system]

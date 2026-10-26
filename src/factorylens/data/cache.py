@@ -73,24 +73,36 @@ BTF_SETTINGS = Settings(
 )
 
 
+def prepare_sample(
+    rgb: np.ndarray, xyz: np.ndarray, settings: Settings
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """One full-resolution scan -> resized RGB, background-free xyz and object mask."""
+    xyz, fg, _ = preprocess.remove_background(
+        xyz, threshold=settings.threshold, min_component=settings.min_component
+    )
+    if settings.keep_largest:
+        fg = preprocess.keep_largest_component(fg)
+        xyz = np.where(fg[..., None], xyz, 0).astype(np.float32)
+    if settings.zero_background_rgb:
+        rgb = np.where(fg[..., None], rgb, 0).astype(np.uint8)
+    size = settings.size
+    return (
+        preprocess.resize_rgb(rgb, size),
+        preprocess.resize_xyz(xyz, size),
+        preprocess.resize_mask(fg, size),
+    )
+
+
 def prepare(root: str | Path, category: str, split: str, settings: Settings) -> Prepared:
     rgbs, xyzs, fgs, masks, defects, stems = [], [], [], [], [], []
     size = settings.size
     for s in mvtec3d.list_samples(root, category, split):
-        xyz, fg, _ = preprocess.remove_background(
-            mvtec3d.load_xyz(s.xyz_path),
-            threshold=settings.threshold,
-            min_component=settings.min_component,
+        rgb, xyz, fg = prepare_sample(
+            mvtec3d.load_rgb(s.rgb_path), mvtec3d.load_xyz(s.xyz_path), settings
         )
-        if settings.keep_largest:
-            fg = preprocess.keep_largest_component(fg)
-            xyz = np.where(fg[..., None], xyz, 0).astype(np.float32)
-        rgb = mvtec3d.load_rgb(s.rgb_path)
-        if settings.zero_background_rgb:
-            rgb = np.where(fg[..., None], rgb, 0).astype(np.uint8)
-        rgbs.append(preprocess.resize_rgb(rgb, size))
-        xyzs.append(preprocess.resize_xyz(xyz, size))
-        fgs.append(preprocess.resize_mask(fg, size))
+        rgbs.append(rgb)
+        xyzs.append(xyz)
+        fgs.append(fg)
         if s.gt_path is not None:
             masks.append(preprocess.resize_mask(mvtec3d.load_mask(s.gt_path), size))
         else:

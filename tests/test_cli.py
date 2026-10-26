@@ -128,3 +128,31 @@ def test_robustness_command(root, monkeypatch):
     ((a, kw),) = calls
     assert a[2] == "bagel" and kw["seed"] == 2
     assert kw["conditions"] == [("rgb_missing", 1), *[("holes", s) for s in range(1, 6)]]
+
+
+def test_fit_and_inspect_commands(root, tmp_path, monkeypatch, capsys):
+    from test_fpfh import fake_fpfh_map
+    from test_inspector import CONFIG
+
+    from factorylens import inspector as insp
+    from factorylens.models import fpfh
+
+    class Tiny(insp.Inspector):
+        """The real thing with a small, randomly initialised backbone."""
+
+        def __init__(self, config=None, device=None, pretrained=True):
+            super().__init__(CONFIG, device="cpu", pretrained=False)
+
+    monkeypatch.setattr(fpfh, "fpfh_map", fake_fpfh_map)
+    monkeypatch.setattr(insp, "InspectorConfig", lambda **kw: CONFIG)
+    monkeypatch.setattr(insp, "Inspector", Tiny)
+    out = tmp_path / "bagel.pt"
+    args = ["fit", str(root), "--category", "bagel", "--cache", str(tmp_path / "cache")]
+    assert cli.main([*args, "--out", str(out)]) == 0
+    assert out.exists() and "alarm threshold" in capsys.readouterr().out
+
+    s = mvtec3d.list_samples(root, "bagel", "test")[0]
+    assert cli.main(["inspect", str(out), str(s.rgb_path), str(s.xyz_path)]) == 0
+    line = capsys.readouterr().out.strip()
+    assert '"alarm"' in line and str(s.rgb_path) in line
+    assert cli.main(["inspect", str(out), str(s.rgb_path)]) == 2

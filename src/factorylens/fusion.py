@@ -35,7 +35,8 @@ unless a sensor looks off. If both sensors look off, both keep weight 1.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+from typing import Any
 
 import numpy as np
 
@@ -88,10 +89,23 @@ class Reference:
         return np.asarray((values - self.mean) / self.std)
 
 
-def _standardise(scored: Scored, val: Scored) -> Scored:
-    s, m = scored
-    vs, vm = val
-    return (s - vs.mean()) / (vs.std() + 1e-12), (m - vm.mean()) / (vm.std() + 1e-12)
+@dataclass
+class Scale:
+    """Mean and spread of one sensor's image scores and map values on the validation normals."""
+
+    score_mean: float
+    score_std: float
+    map_mean: float
+    map_std: float
+
+    @classmethod
+    def fit(cls, val: Scored) -> Scale:
+        s, m = val
+        return cls(float(s.mean()), float(s.std()) + 1e-12, float(m.mean()), float(m.std()) + 1e-12)
+
+    def __call__(self, scored: Scored) -> Scored:
+        s, m = scored
+        return (s - self.score_mean) / self.score_std, (m - self.map_mean) / self.map_std
 
 
 @dataclass
@@ -111,54 +125,88 @@ class ReliabilityFusion:
     ) -> ReliabilityFusion:
         """Validation-normal scores of both sensors, their object masks and point counts."""
         q = self.config.quantile
-        self.rgb_val, self.geo_val = rgb_val, geo_val
-        self.ref_rgb = Reference.fit(background_level(rgb_val[1], foreground, q))
-        self.ref_geo = Reference.fit(background_level(geo_val[1], foreground, q))
-        self.ref_points = Reference.fit(-points.astype(float))  # fewer points = higher
+        self.scale_rgb, self.scale_geo = Scale.fit(rgb_val), Scale.fit(geo_val)
+        self.refs = {
+            "rgb": Reference.fit(background_level(rgb_val[1], foreground, q)),
+            "geo": Reference.fit(background_level(geo_val[1], foreground, q)),
+            "points": Reference.fit(-points.astype(float)),  # fewer points = higher
+        }
         if self.config.extent is not None:
             e = self.config.extent
-            self.ext_rgb = Reference.fit(background_level(rgb_val[1], foreground, e))
-            self.ext_geo = Reference.fit(background_level(geo_val[1], foreground, e))
+            self.refs["rgb_extent"] = Reference.fit(background_level(rgb_val[1], foreground, e))
+            self.refs["geo_extent"] = Reference.fit(background_level(geo_val[1], foreground, e))
         return self
+
+    def state(self) -> dict[str, Any]:
+        """Everything a fitted fusion needs, as plain numbers (for saving a model)."""
+        return {
+            "config": asdict(self.config),
+            "scale_rgb": asdict(self.scale_rgb),
+            "scale_geo": asdict(self.scale_geo),
+            "refs": {k: asdict(v) for k, v in self.refs.items()},
+        }
+
+    @classmethod
+    def from_state(cls, state: dict[str, Any]) -> ReliabilityFusion:
+        f = cls(ReliabilityConfig(**state["config"]))
+        f.scale_rgb, f.scale_geo = Scale(**state["scale_rgb"]), Scale(**state["scale_geo"])
+        f.refs = {k: Reference(**v) for k, v in state["refs"].items()}
+        return f
 
     def _weight(self, u: np.ndarray) -> np.ndarray:
         """1 up to the worst validation image (u = 0), 0 at `ramp` SDs beyond it."""
         return np.clip(1 - u / self.config.ramp, 0.0, 1.0)
 
-    def weights(
+    def _beyond(self, name: str, values: np.ndarray) -> np.ndarray:
+        ref = self.refs[name]
+        return ref.z(values) - ref.worst
+
+    def signals(
         self, rgb: Scored, geo: Scored, foreground: np.ndarray, points: np.ndarray
-    ) -> Weights:
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Per image, how far each sensor is beyond anything seen on the validation normals."""
         q = self.config.quantile
-        # how far each image is beyond anything seen on the validation normals
-        u_rgb = self.ref_rgb.z(background_level(rgb[1], foreground, q)) - self.ref_rgb.worst
+        u_rgb = self._beyond("rgb", background_level(rgb[1], foreground, q))
         u_geo = np.maximum(
-            self.ref_geo.z(background_level(geo[1], foreground, q)) - self.ref_geo.worst,
-            self.ref_points.z(-points.astype(float)) - self.ref_points.worst,
+            self._beyond("geo", background_level(geo[1], foreground, q)),
+            self._beyond("points", -points.astype(float)),
         )
         if self.config.extent is not None:
             e = self.config.extent
             u_rgb = np.maximum(
-                u_rgb, self.ext_rgb.z(background_level(rgb[1], foreground, e)) - self.ext_rgb.worst
+                u_rgb, self._beyond("rgb_extent", background_level(rgb[1], foreground, e))
             )
             u_geo = np.maximum(
-                u_geo, self.ext_geo.z(background_level(geo[1], foreground, e)) - self.ext_geo.worst
+                u_geo, self._beyond("geo_extent", background_level(geo[1], foreground, e))
             )
+        return u_rgb, u_geo
+
+    def weights_from(self, u_rgb: np.ndarray, u_geo: np.ndarray) -> Weights:
+        w_rgb, w_geo = self._weight(u_rgb), self._weight(u_geo)
+        both_off = (w_rgb == 0) & (w_geo == 0)
+        w_rgb[both_off], w_geo[both_off] = 1.0, 1.0
+        return Weights(w_rgb, w_geo, u_rgb, u_geo)
+
+    def weights(
+        self, rgb: Scored, geo: Scored, foreground: np.ndarray, points: np.ndarray
+    ) -> Weights:
+        u_rgb, u_geo = self.signals(rgb, geo, foreground, points)
         if self.config.window:
             order = np.random.default_rng(self.config.order_seed).permutation(len(u_rgb))
             u_rgb = running_median(u_rgb, self.config.window, order)
             u_geo = running_median(u_geo, self.config.window, order)
-        w_rgb = self._weight(u_rgb)
-        w_geo = self._weight(u_geo)
-        both_off = (w_rgb == 0) & (w_geo == 0)
-        w_rgb[both_off], w_geo[both_off] = 1.0, 1.0
-        return Weights(w_rgb, w_geo, u_rgb, u_geo)
+        return self.weights_from(u_rgb, u_geo)
+
+    def combine(self, rgb: Scored, geo: Scored, w: Weights) -> Scored:
+        """Weighted Stouffer of the two standardised scores and maps."""
+        zr, zg = self.scale_rgb(rgb), self.scale_geo(geo)
+        norm = np.sqrt(w.rgb**2 + w.geo**2)
+        scores = (w.rgb * zr[0] + w.geo * zg[0]) / norm
+        maps = (w.rgb[:, None, None] * zr[1] + w.geo[:, None, None] * zg[1]) / norm[:, None, None]
+        return scores, maps
 
     def fuse(
         self, rgb: Scored, geo: Scored, foreground: np.ndarray, points: np.ndarray
     ) -> tuple[Scored, Weights]:
         w = self.weights(rgb, geo, foreground, points)
-        zr, zg = _standardise(rgb, self.rgb_val), _standardise(geo, self.geo_val)
-        norm = np.sqrt(w.rgb**2 + w.geo**2)
-        scores = (w.rgb * zr[0] + w.geo * zg[0]) / norm
-        maps = (w.rgb[:, None, None] * zr[1] + w.geo[:, None, None] * zg[1]) / norm[:, None, None]
-        return (scores, maps), w
+        return self.combine(rgb, geo, w), w

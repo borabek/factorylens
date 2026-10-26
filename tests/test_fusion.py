@@ -57,8 +57,8 @@ def test_clean_inputs_rank_exactly_like_plain_late_fusion():
     rgb, geo = with_defects(VAL_RGB, range(10)), with_defects(VAL_GEO, range(5, 15))
     (fused, _), w = f.fuse(scored(rgb), scored(geo), fg(30), POINTS)
     assert (w.rgb == 1).all() and (w.geo == 1).all()
-    zr = (rgb.max(axis=(1, 2)) - f.rgb_val[0].mean()) / f.rgb_val[0].std()
-    zg = (geo.max(axis=(1, 2)) - f.geo_val[0].mean()) / f.geo_val[0].std()
+    zr = (rgb.max(axis=(1, 2)) - f.scale_rgb.score_mean) / f.scale_rgb.score_std
+    zg = (geo.max(axis=(1, 2)) - f.scale_geo.score_mean) / f.scale_geo.score_std
     np.testing.assert_array_equal(rankdata(fused), rankdata(zr + zg))
 
 
@@ -129,3 +129,13 @@ def test_extent_catches_a_large_local_corruption():
     assert (plain.rgb > 0.9).all()  # the background level barely moves
     assert (extent.rgb == 0).all()
     assert (extent.geo == 1).all()
+
+
+def test_state_round_trip_gives_the_same_fusion():
+    f = fitted(ReliabilityConfig(window=5, extent=0.9))
+    g = ReliabilityFusion.from_state(f.state())
+    rgb, geo = scored(maps(10, level=1.5)), scored(VAL_GEO[:10])
+    (a, am), wa = f.fuse(rgb, geo, fg(10), POINTS[:10])
+    (b, bm), wb = g.fuse(rgb, geo, fg(10), POINTS[:10])
+    np.testing.assert_array_equal(a, b)
+    np.testing.assert_array_equal(wa.rgb, wb.rgb)

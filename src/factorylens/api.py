@@ -83,6 +83,6 @@ def create_app(inspector: Inspector) -> FastAPI:
 
 
 def serve(model: str | Path, host: str = "127.0.0.1", port: int = 8000) -> None:
-    import uvicorn
+    import uvicorn  # type: ignore[import-not-found, unused-ignore]  # only in the serve extra
 
     uvicorn.run(create_app(Inspector.load(model)), host=host, port=port)

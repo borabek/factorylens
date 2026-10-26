@@ -66,7 +66,7 @@ uv run factorylens sweep                                # 4 detectors x k-shot x
 uv run factorylens robustness                           # every model on FactoryLens-C
 ```
 
-To use a fitted model on new parts, see [docs/inference.md](docs/inference.md):
+To use a fitted model on new parts, see [docs/inference.md](docs/inference.md) and the [model card](docs/model_card.md):
 
 ```bash
 uv run factorylens fit --category bagel                 # -> models/bagel.pt (with alarm threshold)

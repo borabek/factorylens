@@ -54,9 +54,16 @@ class Inspection:
     score_3d: float
     anomaly_map: np.ndarray = field(repr=False)  # (S, S) fused, in validation SDs
 
+    @property
+    def sensor_alert(self) -> str | None:
+        """Which sensor needs looking at: counted at less than half weight for this part."""
+        off = [name for name, w in (("rgb", self.weight_rgb), ("3d", self.weight_3d)) if w < 0.5]
+        return "+".join(off) if off else None
+
     def as_dict(self, with_map: bool = False) -> dict[str, Any]:
         d = {k: v for k, v in asdict(self).items() if k != "anomaly_map"}
         d = {k: (bool(v) if isinstance(v, (bool, np.bool_)) else float(v)) for k, v in d.items()}
+        d["sensor_alert"] = self.sensor_alert
         if with_map:
             d["anomaly_map"] = np.round(self.anomaly_map, 3).tolist()
         return d
@@ -130,6 +137,20 @@ class Inspector:
             "geo": deque(maxlen=window),
         }
 
+    def status(self) -> dict[str, Any]:
+        """Sensor health over the current window, for a line monitor."""
+        out: dict[str, Any] = {"parts_in_window": len(self.history["rgb"])}
+        if out["parts_in_window"]:
+            u_rgb, u_geo = np.median(self.history["rgb"]), np.median(self.history["geo"])
+            w = self.fusion.weights_from(np.array([u_rgb]), np.array([u_geo]))
+            out |= {
+                "health_rgb": float(u_rgb),
+                "health_3d": float(u_geo),
+                "weight_rgb": float(w.rgb[0]),
+                "weight_3d": float(w.geo[0]),
+            }
+        return out
+
     def inspect(self, rgb: np.ndarray, xyz: np.ndarray, foreground: np.ndarray) -> Inspection:
         """One preprocessed part: (S, S, 3) uint8 image, (S, S, 3) xyz, (S, S) object mask."""
         part = Prepared(
@@ -172,8 +193,10 @@ class Inspector:
 
     # -- saving ------------------------------------------------------------------
 
-    def save(self, path: str | Path) -> None:
+    def save(self, path: str | Path, half: bool = False) -> None:
+        """half: store the banks as float16, about half the file, scores change by ~1e-3."""
         assert self.rgb_bank.bank is not None and self.geo_bank.bank is not None
+        dtype = torch.float16 if half else torch.float32
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         torch.save(
@@ -191,8 +214,8 @@ class Inspector:
                 # ImageNet weights come from torchvision; anything else has to travel with the file
                 "backbone": None if self.pretrained else self.rgb_model.backbone.state_dict(),
                 "size": list(self.size),
-                "rgb_bank": self.rgb_bank.bank.cpu(),
-                "geo_bank": self.geo_bank.bank.cpu(),
+                "rgb_bank": self.rgb_bank.bank.cpu().to(dtype),
+                "geo_bank": self.geo_bank.bank.cpu().to(dtype),
                 "fusion": self.fusion.state(),
                 "calibration": self.calibration.tolist(),
                 "meta": self.meta,
@@ -202,7 +225,8 @@ class Inspector:
 
     @classmethod
     def load(cls, path: str | Path, device: str | None = None) -> Inspector:
-        state = torch.load(path, weights_only=False)
+        # tensors and plain values only, so a model file cannot run code when loaded
+        state = torch.load(path, weights_only=True)
         if state["format"] != FORMAT:
             raise ValueError(f"model file format {state['format']}, this version reads {FORMAT}")
         fusion = ReliabilityFusion.from_state(state["fusion"])
@@ -215,8 +239,8 @@ class Inspector:
         if state["backbone"] is not None:
             inspector.rgb_model.backbone.load_state_dict(state["backbone"])
         device_ = inspector.rgb_model.device
-        inspector.rgb_bank.bank = state["rgb_bank"].to(device_)
-        inspector.geo_bank.bank = state["geo_bank"].to(device_)
+        inspector.rgb_bank.bank = state["rgb_bank"].float().to(device_)
+        inspector.geo_bank.bank = state["geo_bank"].float().to(device_)
         inspector.size = tuple(state["size"])
         inspector.fusion = fusion
         inspector.calibration = np.asarray(state["calibration"])

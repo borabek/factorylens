@@ -39,7 +39,7 @@ def test_inspect_returns_a_decision(client, root):
     r = client.post("/inspect", files=files(root))
     assert r.status_code == 200, r.text
     body = r.json()
-    assert {"score", "p_value", "alarm", "weight_rgb", "weight_3d"} <= set(body)
+    assert {"score", "p_value", "alarm", "weight_rgb", "weight_3d", "sensor_alert"} <= set(body)
     assert "anomaly_map" not in body
     with_map = client.post("/inspect?with_map=true", files=files(root)).json()
     assert np.array(with_map["anomaly_map"]).shape == (32, 32)
@@ -65,5 +65,9 @@ def test_bad_uploads_are_rejected(client, root):
     )
 
 
-def test_reset(client):
+def test_status_and_reset(client, root):
+    assert client.get("/status").json() == {"parts_in_window": 0}
+    client.post("/inspect", files=files(root))
+    assert client.get("/status").json()["parts_in_window"] == 1
     assert client.post("/reset").json() == {"status": "reset"}
+    assert client.get("/status").json() == {"parts_in_window": 0}

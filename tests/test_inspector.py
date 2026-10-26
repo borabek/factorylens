@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+import torch
 from test_fpfh import fake_fpfh_map
 from test_sweep import TINY
 
@@ -58,10 +59,15 @@ def test_saving_and_loading_gives_the_same_answers(inspector, splits, tmp_path):
 
 def test_a_dead_camera_is_switched_off_after_the_window_fills(inspector, splits):
     dead = corruptions.corrupt(splits["test"], "rgb_missing", 1)
-    weights = [inspector.inspect(*part).weight_rgb for part in parts(dead)]
-    assert weights[-1] == 0
+    results = [inspector.inspect(*part) for part in parts(dead)]
+    assert results[-1].weight_rgb == 0
+    assert results[-1].sensor_alert == "rgb" and results[-1].as_dict()["sensor_alert"] == "rgb"
+    status = inspector.status()
+    assert status["weight_rgb"] == 0 and status["parts_in_window"] == 3
     inspector.reset()
-    assert inspector.inspect(*parts(splits["validation"])[0]).weight_rgb == 1
+    assert inspector.status() == {"parts_in_window": 0}
+    clean = inspector.inspect(*parts(splits["validation"])[0])
+    assert clean.weight_rgb == 1 and clean.sensor_alert is None
 
 
 def test_raw_scans_are_preprocessed_first(inspector, root):
@@ -73,11 +79,20 @@ def test_raw_scans_are_preprocessed_first(inspector, root):
 
 
 def test_old_model_files_are_refused(inspector, tmp_path):
-    import torch
-
     inspector.save(tmp_path / "model.pt")
     state = torch.load(tmp_path / "model.pt", weights_only=False)
     state["format"] = 99
     torch.save(state, tmp_path / "old.pt")
     with pytest.raises(ValueError, match="format"):
         Inspector.load(tmp_path / "old.pt")
+
+
+def test_half_precision_banks_are_smaller_and_still_load(inspector, splits, tmp_path):
+    # how close the scores stay is measured on real data (docs/inference.md); the fake
+    # images here are nearly identical, so their distances sit at float16's resolution
+    inspector.save(tmp_path / "full.pt")
+    inspector.save(tmp_path / "half.pt", half=True)
+    assert (tmp_path / "half.pt").stat().st_size < (tmp_path / "full.pt").stat().st_size
+    half = Inspector.load(tmp_path / "half.pt", device="cpu")
+    assert half.rgb_bank.bank.dtype == torch.float32
+    assert np.isfinite(half.inspect(*parts(splits["test"])[0]).score_rgb)

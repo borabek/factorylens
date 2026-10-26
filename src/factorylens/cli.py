@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import time
 from collections.abc import Sequence
@@ -212,6 +213,46 @@ def run_sweep(args: argparse.Namespace) -> int:
     return 0
 
 
+def fit_model(args: argparse.Namespace) -> int:
+    from factorylens.inspector import Inspector, InspectorConfig
+
+    config = InspectorConfig(alpha=args.alpha)
+    splits = {
+        s: cache.get(args.root, args.cache, args.category, s, config.sweep.settings)
+        for s in ("train", "validation")
+    }
+    inspector = Inspector(config, device=args.device).fit(splits["train"], splits["validation"])
+    out = Path(args.out or f"models/{args.category}.pt")
+    inspector.save(out)
+    print(
+        f"{args.category}: {len(splits['train'])} training and {len(splits['validation'])} "
+        f"validation parts, alarm threshold {inspector.threshold:.3f} for alpha {args.alpha}"
+    )
+    print(f"wrote {out}")
+    return 0
+
+
+def inspect_parts(args: argparse.Namespace) -> int:
+    from factorylens.data import mvtec3d
+    from factorylens.inspector import Inspector
+
+    inspector = Inspector.load(args.model, device=args.device)
+    if len(args.files) % 2:
+        print("give the files in pairs: RGB image, then xyz TIFF", file=sys.stderr)
+        return 2
+    for rgb_path, xyz_path in zip(args.files[::2], args.files[1::2], strict=True):
+        result = inspector.inspect_raw(mvtec3d.load_rgb(rgb_path), mvtec3d.load_xyz(xyz_path))
+        print(json.dumps({"rgb": rgb_path, **result.as_dict()}))
+    return 0
+
+
+def serve_model(args: argparse.Namespace) -> int:
+    from factorylens import api
+
+    api.serve(args.model, host=args.host, port=args.port)
+    return 0
+
+
 def run_robustness(args: argparse.Namespace) -> int:
     conditions = robustness.all_conditions()
     if args.corruption:
@@ -342,6 +383,27 @@ def build_parser() -> argparse.ArgumentParser:
     sw.add_argument("--results", default="results/sweep")
     sw.add_argument("--device")
     sw.set_defaults(func=run_sweep)
+
+    fit = groups.add_parser("fit", help="fit an inspector for one product and save it")
+    fit.add_argument("root", nargs="?", default=DEFAULT_ROOT)
+    fit.add_argument("--category", required=True, choices=mvtec3d.CATEGORIES)
+    fit.add_argument("--cache", default=DEFAULT_CACHE)
+    fit.add_argument("--alpha", type=float, default=0.1, help="target false alarm rate")
+    fit.add_argument("--out", help="default: models/<category>.pt")
+    fit.add_argument("--device")
+    fit.set_defaults(func=fit_model)
+
+    ins = groups.add_parser("inspect", help="inspect parts with a saved inspector, in order")
+    ins.add_argument("model")
+    ins.add_argument("files", nargs="+", help="pairs of RGB image and xyz TIFF")
+    ins.add_argument("--device")
+    ins.set_defaults(func=inspect_parts)
+
+    srv = groups.add_parser("serve", help="HTTP API around a saved inspector (needs --extra serve)")
+    srv.add_argument("model")
+    srv.add_argument("--host", default="127.0.0.1")
+    srv.add_argument("--port", type=int, default=8000)
+    srv.set_defaults(func=serve_model)
 
     rb = groups.add_parser("robustness", help="the sweep detectors on FactoryLens-C")
     rb.add_argument("root", nargs="?", default=DEFAULT_ROOT)

@@ -40,7 +40,9 @@ def test_a_clean_part_gets_full_weights_and_a_valid_p_value(inspector, splits):
     out = inspector.inspect(*parts(splits["validation"])[0])
     assert out.weight_rgb == 1 and out.weight_3d == 1
     assert 0 < out.p_value <= 1
-    assert out.anomaly_map.shape == (32, 32)
+    assert out.anomaly_map.shape == out.map_rgb.shape == out.map_3d.shape == (32, 32)
+    # with both weights at 1 the fused map is the two sensor maps added, Stouffer-scaled
+    np.testing.assert_allclose(out.anomaly_map, (out.map_rgb + out.map_3d) / np.sqrt(2), rtol=1e-5)
     assert out.alarm == (out.score > inspector.threshold)
     d = out.as_dict()
     assert "anomaly_map" not in d and isinstance(d["alarm"], bool)

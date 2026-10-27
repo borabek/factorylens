@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FactoryLens demo</title>
+<style>
+  :root {
+    --bg: #fcfcfb; --panel: #ffffff; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --line: #e1e0d9; --accent: #2a78d6; --alarm: #c7254e; --ok: #1a7f55;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #141413; --panel: #1d1d1b; --ink: #f3f2ee; --ink-2: #c3c2b7; --muted: #8f8e87;
+            --line: #33332f; --accent: #6aa9ef; --alarm: #ff6b8b; --ok: #4cc38a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  h2 { font-size: 18px; margin: 32px 0 8px; }
+  p.lead { color: var(--ink-2); margin: 0 0 20px; max-width: 760px; }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+  .tabs button { background: none; border: 0; padding: 8px 12px; font: inherit; color: var(--ink-2);
+                 cursor: pointer; border-bottom: 2px solid transparent; }
+  .tabs button[aria-selected="true"] { color: var(--ink); border-color: var(--accent); }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+  label { display: flex; flex-direction: column; font-size: 13px; color: var(--ink-2); gap: 4px; }
+  select { font: inherit; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line);
+           background: var(--panel); color: var(--ink); min-width: 180px; }
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px; }
+  figure img { width: 100%; display: block; border-radius: 4px; }
+  figcaption { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin-top: 12px; }
+  .verdict { font-weight: 600; font-size: 17px; }
+  .verdict.alarm { color: var(--alarm); }
+  .verdict.ok { color: var(--ok); }
+  table { border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+  th, td { text-align: left; padding: 4px 12px 4px 0; border-bottom: 1px solid var(--line); }
+  th { color: var(--ink-2); font-weight: 500; }
+  .bar { display: inline-block; height: 8px; background: var(--accent); border-radius: 4px; vertical-align: middle; }
+  .stream img { width: 100%; background: #fcfcfb; border-radius: 6px; }
+  .note { color: var(--muted); font-size: 13px; }
+  footer { margin-top: 40px; color: var(--ink-2); font-size: 13px; border-top: 1px solid var(--line); padding-top: 12px; }
+  a { color: var(--accent); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>FactoryLens</h1>
+  <p class="lead">Anomaly detection with an RGB camera and a 3D sensor together, and a fusion that
+    notices, without labels, when one sensor starts failing and stops trusting it. Everything below
+    was computed in advance with the project's own code; nothing runs in your browser except this page.</p>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="one">One part</button>
+    <button role="tab" aria-selected="false" data-tab="stream">A sensor fails</button>
+  </div>
+
+  <section id="one">
+    <div class="controls">
+      <label>product <select id="product"></select></label>
+      <label>test part <select id="part"></select></label>
+      <label>break a sensor <select id="condition"></select></label>
+    </div>
+    <div class="grid" id="images"></div>
+    <div class="card" id="result"></div>
+    <p class="note">Before each part, the reliability window holds 15 normal parts in the same sensor
+      state, as on a line that has been running. Corruptions are applied at severity 3 of 5.
+      Anomaly maps are in standard deviations of the validation parts; colour starts above 0.</p>
+  </section>
+
+  <section id="stream" hidden>
+    <div class="controls">
+      <label>product <select id="s-product"></select></label>
+      <label>what breaks <select id="s-corruption"></select></label>
+    </div>
+    <div class="stream"><img id="s-figure" alt="sensor weights and fused scores part by part"></div>
+    <div class="card" id="s-result"></div>
+    <p class="note">The product's test parts in random order; one sensor is corrupted (severity 3)
+      from the middle of the run on. Both fusions use the same alarm threshold, set on normal
+      validation parts for a 10% false alarm rate.</p>
+  </section>
+
+  <footer>
+    Code, method and results: <a href="https://github.com/borabek/factorylens">github.com/borabek/factorylens</a>
+    (commit <span id="commit"></span>).<br>
+    Data: MVTec 3D-AD (Bergmann, Jin, Sattlegger, Steger, VISAPP 2022), licensed
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. The images here
+    are downscaled derivatives, and the anomaly maps come from models fitted on its normal parts.
+    This page and its images are shared under the same licence, for non-commercial use only.
+  </footer>
+</main>
+<script>
+const NAMES = { none: "none (clean)", gaussian_noise: "camera noise", defocus_blur: "camera out of focus",
+  jpeg: "JPEG compression", occlusion: "something in front of the camera", rgb_missing: "camera dead",
+  depth_noise: "3D noise", holes: "3D holes", quantise: "coarse 3D depth", xyz_missing: "3D sensor dead" };
+const IMAGES = [["rgb", "RGB as the camera saw it"], ["depth", "3D (shaded depth)"],
+  ["rgb_map", "RGB anomaly map"], ["map_3d", "3D anomaly map"], ["fused", "fused anomaly map"]];
+const $ = (id) => document.getElementById(id);
+const pct = (x) => Number.isNaN(x) || x === null ? "–" : Math.round(100 * x) + "%";
+
+function fill(select, values, label = (v) => v) {
+  select.innerHTML = values.map((v) => `<option value="${v}">${label(v)}</option>`).join("");
+}
+
+function bar(w) {
+  return `<span class="bar" style="width:${Math.round(60 * w)}px"></span> ${w.toFixed(2)}`;
+}
+
+fetch("data.json").then((r) => r.json()).then((data) => {
+  $("commit").textContent = data.commit;
+  const products = Object.keys(data.products);
+  const nice = (p) => p.replace("_", " ");
+  fill($("product"), products, nice);
+  fill($("s-product"), products, nice);
+  fill($("condition"), data.conditions, (c) => NAMES[c] || c);
+  fill($("s-corruption"), data.streams, (c) => NAMES[c] || c);
+
+  function parts() {
+    const p = data.products[$("product").value];
+    fill($("part"), p.parts.map((_, i) => i), (i) => `${p.parts[i].truth} (#${p.parts[i].index})`);
+  }
+
+  function showOne() {
+    const p = data.products[$("product").value];
+    const part = p.parts[Number($("part").value)];
+    const c = part.conditions[$("condition").value];
+    $("images").innerHTML = IMAGES.map(([k, cap]) =>
+      `<figure><img src="${c.images[k]}" alt="${cap}" loading="lazy"><figcaption>${cap}</figcaption></figure>`).join("");
+    const alert = [c.weight_rgb < 0.5 ? "RGB" : null, c.weight_3d < 0.5 ? "3D" : null].filter(Boolean);
+    $("result").innerHTML = `
+      <div class="verdict ${c.alarm ? "alarm" : "ok"}">${c.alarm ? "Alarm" : "No alarm"}</div>
+      <div>fused score ${c.score.toFixed(2)} (alarm above ${p.threshold.toFixed(2)}), p-value ${c.p_value.toFixed(3)}.
+        Ground truth: <strong>${part.truth}</strong>.</div>
+      <table><tr><th>sensor</th><th>weight</th><th>health (SDs beyond normal)</th></tr>
+        <tr><td>RGB</td><td>${bar(c.weight_rgb)}</td><td>${c.health_rgb.toFixed(1)}</td></tr>
+        <tr><td>3D</td><td>${bar(c.weight_3d)}</td><td>${c.health_3d.toFixed(1)}</td></tr></table>
+      ${alert.length ? `<p>Sensor alert: <strong>${alert.join(" + ")}</strong> counted for less than half.</p>` : ""}`;
+  }
+
+  function showStream() {
+    const s = data.products[$("s-product").value].streams[$("s-corruption").value];
+    $("s-figure").src = s.figure;
+    $("s-result").innerHTML = `After the fault, with the same threshold:
+      <table><tr><th></th><th>false alarms on good parts</th><th>defective parts caught</th></tr>
+        <tr><td>plain late fusion</td><td>${pct(s.late_false_alarm)}</td><td>${pct(s.late_caught)}</td></tr>
+        <tr><td>reliability fusion</td><td>${pct(s.reliable_false_alarm)}</td><td>${pct(s.reliable_caught)}</td></tr></table>`;
+  }
+
+  $("product").addEventListener("change", () => { parts(); showOne(); });
+  $("part").addEventListener("change", showOne);
+  $("condition").addEventListener("change", showOne);
+  $("s-product").addEventListener("change", showStream);
+  $("s-corruption").addEventListener("change", showStream);
+  document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll(".tabs button").forEach((x) => x.setAttribute("aria-selected", x === b));
+    $("one").hidden = b.dataset.tab !== "one";
+    $("stream").hidden = b.dataset.tab !== "stream";
+  }));
+  parts(); showOne(); showStream();
+});
+</script>
+</body>
+</html>

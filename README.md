@@ -72,7 +72,10 @@ To use a fitted model on new parts, see [docs/inference.md](docs/inference.md) a
 uv run factorylens fit --category bagel                 # -> models/bagel.pt (with alarm threshold)
 uv run factorylens inspect models/bagel.pt part.png part.tiff
 uv run factorylens serve models/bagel.pt                # HTTP API, needs: uv sync --extra serve
+uv run factorylens demo                                 # Gradio demo, needs: uv sync --extra demo
 ```
+
+The demo ([docs/demo.md](docs/demo.md)) breaks a sensor halfway through a simulated run and shows the weights and alarms part by part.
 
 ## Setup
 

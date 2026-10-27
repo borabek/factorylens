@@ -198,6 +198,8 @@ def run_stream(
                 "late_alarm": bool(late > inspector.threshold),
                 "weight_rgb": r.weight_rgb,
                 "weight_3d": r.weight_3d,
+                "health_rgb": r.health_rgb,
+                "health_3d": r.health_3d,
             }
         )
     return Stream(

@@ -53,6 +53,9 @@ class Inspection:
     score_rgb: float
     score_3d: float
     anomaly_map: np.ndarray = field(repr=False)  # (S, S) fused, in validation SDs
+    # each sensor's own map, on the same scale, before weighting
+    map_rgb: np.ndarray | None = field(default=None, repr=False)
+    map_3d: np.ndarray | None = field(default=None, repr=False)
 
     @property
     def sensor_alert(self) -> str | None:
@@ -61,7 +64,8 @@ class Inspection:
         return "+".join(off) if off else None
 
     def as_dict(self, with_map: bool = False) -> dict[str, Any]:
-        d = {k: v for k, v in asdict(self).items() if k != "anomaly_map"}
+        maps = {"anomaly_map", "map_rgb", "map_3d"}
+        d = {k: v for k, v in asdict(self).items() if k not in maps}
         d = {k: (bool(v) if isinstance(v, (bool, np.bool_)) else float(v)) for k, v in d.items()}
         d["sensor_alert"] = self.sensor_alert
         if with_map:
@@ -184,6 +188,8 @@ class Inspector:
             score_rgb=float(r[0][0]),
             score_3d=float(g[0][0]),
             anomaly_map=maps[0].astype(np.float32),
+            map_rgb=self.fusion.scale_rgb(r)[1][0].astype(np.float32),
+            map_3d=self.fusion.scale_geo(g)[1][0].astype(np.float32),
         )
 
     def inspect_raw(self, rgb: np.ndarray, xyz: np.ndarray) -> Inspection:

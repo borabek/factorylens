@@ -70,3 +70,14 @@ def test_the_app_builds(setup, tmp_path, root):
     assert app is not None
     with pytest.raises(FileNotFoundError):
         demo.build_app(tmp_path / "empty", root, tmp_path / "cache")
+
+
+def test_runs_can_be_shortened_and_warm_ups_are_reused(setup):
+    inspector, test, validation = setup
+    s = demo.run_stream(inspector, test, "xyz_missing", 1, validation=validation, max_parts=2)
+    assert len(s.rows) == 2
+    demo.warm_up(inspector, validation, "jpeg", 2)
+    first = list(inspector.history["rgb"])
+    demo.warm_up(inspector, validation, "jpeg", 2)
+    assert list(inspector.history["rgb"]) == first
+    assert ("jpeg", 2) in demo._WARM[inspector]

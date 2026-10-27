@@ -33,9 +33,10 @@ jobs:
           enable-cache: true
           python-version: ${{ matrix.python }}
       # open3d (FPFH features) needs libusb on macOS; the Linux job runs without
-      # the 3d extra and skips those tests
+      # the 3d extra and skips those tests, but installs the HTTP and demo extras
+      # so the FastAPI and Gradio apps are built at least once
       - if: runner.os == 'macOS'
         run: brew install libusb && uv sync --locked --extra 3d
       - if: runner.os != 'macOS'
-        run: uv sync --locked
+        run: uv sync --locked --extra serve --extra demo
       - run: uv run pytest -q --cov --cov-report=term

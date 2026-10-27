@@ -43,6 +43,10 @@
   .bar { display: inline-block; height: 8px; background: var(--accent); border-radius: 4px; vertical-align: middle; }
   .stream img { width: 100%; background: #fcfcfb; border-radius: 6px; }
   .note { color: var(--muted); font-size: 13px; }
+  .legend { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2); margin-top: 8px; flex-wrap: wrap; }
+  .scale { width: 160px; height: 10px; border-radius: 5px;
+           background: linear-gradient(90deg, #000004, #57106e, #bc3754, #f98e09, #fcffa4); }
+  td.best { font-weight: 600; }
   footer { margin-top: 40px; color: var(--ink-2); font-size: 13px; border-top: 1px solid var(--line); padding-top: 12px; }
   a { color: var(--accent); }
   [hidden] { display: none !important; }
@@ -58,7 +62,9 @@
   <div class="tabs" role="tablist">
     <button role="tab" aria-selected="true" data-tab="one">One part</button>
     <button role="tab" aria-selected="false" data-tab="stream">A sensor fails</button>
+    <button role="tab" aria-selected="false" data-tab="results">Results</button>
   </div>
+  <p id="error" class="card" hidden></p>
 
   <section id="one">
     <div class="controls">
@@ -67,6 +73,7 @@
       <label>break a sensor <select id="condition"></select></label>
     </div>
     <div class="grid" id="images"></div>
+    <div class="legend"><span>anomaly map: normal</span><span class="scale"></span><span>6 SDs above normal or more</span></div>
     <div class="card" id="result"></div>
     <p class="note">Before each part, the reliability window holds 15 normal parts in the same sensor
       state, as on a line that has been running. Corruptions are applied at severity 3 of 5.
@@ -83,6 +90,21 @@
     <p class="note">The product's test parts in random order; one sensor is corrupted (severity 3)
       from the middle of the run on. Both fusions use the same alarm threshold, set on normal
       validation parts for a 10% false alarm rate.</p>
+  </section>
+
+  <section id="results" hidden>
+    <p>Mean over the 10 MVTec 3D-AD products. Every model was fitted on normal parts only; the
+      corruptions hit one sensor at a time and are averaged over five severities. Full tables,
+      tests of significance and how each number was made:
+      <a href="https://github.com/borabek/factorylens/blob/main/docs/results.md">docs/results.md</a>.</p>
+    <h2>Detection (image AUROC)</h2>
+    <div id="r-detection"></div>
+    <h2>Alarms (target: 10% false alarms, threshold set on clean normal parts)</h2>
+    <div id="r-alarms"></div>
+    <p class="note">Early fusion is the best model on clean parts and the worst when a sensor
+      breaks. Late fusion survives a dead sensor but not a noisy one: with a noisy camera it
+      alarms on nearly every good part. Reliability fusion notices the broken sensor without
+      labels and keeps the alarm rate near its target.</p>
   </section>
 
   <footer>
@@ -158,10 +180,30 @@ fetch("data.json").then((r) => r.json()).then((data) => {
   $("s-corruption").addEventListener("change", showStream);
   document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
     document.querySelectorAll(".tabs button").forEach((x) => x.setAttribute("aria-selected", x === b));
-    $("one").hidden = b.dataset.tab !== "one";
-    $("stream").hidden = b.dataset.tab !== "stream";
+    for (const id of ["one", "stream", "results"]) $(id).hidden = b.dataset.tab !== id;
   }));
-  parts(); showOne(); showStream();
+  function showResults() {
+    const r = data.summary;
+    if (!r) return;
+    const cols = ["clean", "rgb_broken", "3d_broken"];
+    const best = Object.fromEntries(cols.map((c) => [c, Math.max(...r.detection.map((d) => d[c]))]));
+    $("r-detection").innerHTML = `<table>
+      <tr><th></th><th>clean</th><th>camera corrupted</th><th>3D sensor corrupted</th></tr>
+      ${r.detection.map((d) => `<tr><td>${d.model}</td>${cols.map((c) =>
+        `<td class="${d[c] === best[c] ? "best" : ""}">${d[c].toFixed(3)}</td>`).join("")}</tr>`).join("")}
+      <tr><td><em>the healthy sensor alone</em></td><td></td><td>${r.healthy.rgb_broken.toFixed(3)}</td><td>${r.healthy["3d_broken"].toFixed(3)}</td></tr>
+    </table>`;
+    const cell = (v) => `${pct(v[0])} / ${pct(v[1])}`;
+    $("r-alarms").innerHTML = `<table>
+      <tr><th></th><th>clean</th><th>camera corrupted</th><th>3D sensor corrupted</th></tr>
+      ${r.alarms.map((a) => `<tr><td>${a.model}</td><td>${cell(a.clean)}</td><td>${cell(a.rgb_broken)}</td><td>${cell(a["3d_broken"])}</td></tr>`).join("")}
+    </table><p class="note">false alarms on good parts / defective parts caught</p>`;
+  }
+
+  parts(); showOne(); showStream(); showResults();
+}).catch((e) => {
+  $("error").hidden = false;
+  $("error").textContent = "Could not load the precomputed results (" + e + "). Try reloading the page.";
 });
 </script>
 </body>

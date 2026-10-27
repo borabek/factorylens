@@ -1,5 +1,7 @@
 # Demo
 
+A precomputed version is online at **[huggingface.co/spaces/bora2005/factorylens](https://huggingface.co/spaces/bora2005/factorylens)**. It shows four parts per product (one good, three defect types) under ten sensor states, and a mid-run failure for five corruptions per product. It was made with the same functions as the live app (`scripts/build_static_space.py`). The live Gradio app below needs a paid Hugging Face account to host, so it runs locally.
+
 ```bash
 uv sync --extra demo --extra 3d
 uv run factorylens fit --category bagel --half     # or any other category; -> models/
@@ -35,4 +37,4 @@ Plain late fusion alarms on everything, so the line would stop. Reliability fusi
 
 ## Data and licence
 
-The app shows MVTec 3D-AD images and anomaly maps derived from them. The dataset is CC BY-NC-SA 4.0 (Bergmann et al., *The MVTec 3D-AD Dataset for Unsupervised 3D Anomaly Detection and Localization*, VISAPP 2022). A public deployment would have to carry the same licence and attribution, and stay non-commercial.
+The app shows MVTec 3D-AD images and anomaly maps derived from them. The dataset is CC BY-NC-SA 4.0 (Bergmann et al., *The MVTec 3D-AD Dataset for Unsupervised 3D Anomaly Detection and Localization*, VISAPP 2022). The Hugging Face Space carries the same licence and attribution and is marked non-commercial; none of its images or models are in this repository.

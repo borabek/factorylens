@@ -26,6 +26,7 @@ import subprocess
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 from PIL import Image
 
 from factorylens import demo
@@ -112,6 +113,53 @@ def product(name: str, models: Path, cache_dir: Path, out: Path) -> dict:
     return {"parts": parts, "streams": streams, "threshold": round(float(inspector.threshold), 3)}
 
 
+MODELS = {
+    "rgb": "RGB only",
+    "fpfh": "3D only",
+    "early": "early fusion",
+    "late": "late fusion",
+    "reliable_window": "reliability fusion",
+}
+
+
+def summary(analysis: Path) -> dict:
+    """Headline numbers for the Results tab, read from the repository's result files."""
+    rob = pd.read_csv(analysis / "robustness_summary.csv")
+    clean = rob.drop_duplicates("model").set_index("model")["clean"]
+    by = rob.groupby(["sensor", "model"])["mean"].mean()
+    detection = [
+        {
+            "model": MODELS[m],
+            "clean": round(float(clean[m]), 3),
+            "rgb_broken": round(float(by[("rgb", m)]), 3),
+            "3d_broken": round(float(by[("xyz", m)]), 3),
+        }
+        for m in MODELS
+    ]
+    healthy = {
+        "rgb_broken": round(float(clean["fpfh"]), 3),
+        "3d_broken": round(float(clean["rgb"]), 3),
+    }
+    cc = pd.read_csv(analysis / "conformal_clean.csv")
+    cc = cc[cc["alpha"] == 0.1].groupby("detector")[["false_alarm", "detection"]].mean()
+    cb = pd.read_csv(analysis / "conformal_broken.csv")
+    cb = cb.groupby(["sensor", "detector"])[["false_alarm", "detection"]].mean()
+    alarms = [
+        {
+            "model": MODELS[m],
+            "clean": [round(float(cc.loc[m, k]), 3) for k in ("false_alarm", "detection")],
+            "rgb_broken": [
+                round(float(cb.loc[("rgb", m), k]), 3) for k in ("false_alarm", "detection")
+            ],
+            "3d_broken": [
+                round(float(cb.loc[("xyz", m), k]), 3) for k in ("false_alarm", "detection")
+            ],
+        }
+        for m in ("late", "reliable_window")
+    ]
+    return {"detection": detection, "healthy": healthy, "alarms": alarms}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--models", type=Path, default=Path("models"))
@@ -119,28 +167,38 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=Path("build/static-space"))
     parser.add_argument("--products", nargs="*", help="default: every model in --models")
     parser.add_argument("--repo-id", help="default: <your user>/factorylens")
+    parser.add_argument("--analysis", type=Path, default=Path("results/analysis"))
+    parser.add_argument(
+        "--page-only",
+        action="store_true",
+        help="keep the images and per-part results in --out, refresh the page and the summary",
+    )
     parser.add_argument("--upload", action="store_true")
     args = parser.parse_args()
 
     commit = subprocess.run(
         ["git", "rev-parse", "--short", "HEAD"], check=True, capture_output=True, text=True
     ).stdout.strip()
-    if args.out.exists():
-        shutil.rmtree(args.out)
-    args.out.mkdir(parents=True)
+    if args.page_only:
+        data = json.loads((args.out / "data.json").read_text())
+    else:
+        if args.out.exists():
+            shutil.rmtree(args.out)
+        args.out.mkdir(parents=True)
+        names = args.products or sorted(p.stem for p in args.models.glob("*.pt"))
+        data = {
+            "severity": SEVERITY,
+            "conditions": CONDITIONS,
+            "streams": STREAMS,
+            "products": {n: product(n, args.models, args.cache, args.out) for n in names},
+        }
     for f in Path("space-static").iterdir():
         shutil.copy(f, args.out / f.name)
     readme = args.out / "README.md"
     readme.write_text(readme.read_text().replace("COMMIT", commit))
-
-    names = args.products or sorted(p.stem for p in args.models.glob("*.pt"))
-    data = {
-        "commit": commit,
-        "severity": SEVERITY,
-        "conditions": CONDITIONS,
-        "streams": STREAMS,
-        "products": {n: product(n, args.models, args.cache, args.out) for n in names},
-    }
+    data["commit"] = commit
+    data["summary"] = summary(args.analysis)
+    names = list(data["products"])
     (args.out / "data.json").write_text(json.dumps(data))
     size = sum(f.stat().st_size for f in args.out.rglob("*") if f.is_file()) / 1e6
     print(f"{args.out}: {len(names)} products, {size:.0f} MB, code at {commit}")

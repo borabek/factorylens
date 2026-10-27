@@ -249,7 +249,7 @@ def inspect_parts(args: argparse.Namespace) -> int:
 def run_demo(args: argparse.Namespace) -> int:
     from factorylens import demo
 
-    demo.build_app(args.models, args.root, args.cache).launch(
+    demo.build_app(args.models, args.root, args.cache, max_parts=args.max_parts).launch(
         server_name=args.host, server_port=args.port
     )
     return 0
@@ -421,6 +421,7 @@ def build_parser() -> argparse.ArgumentParser:
     dm.add_argument("--cache", default=DEFAULT_CACHE)
     dm.add_argument("--host", default="127.0.0.1")
     dm.add_argument("--port", type=int, default=7860)
+    dm.add_argument("--max-parts", type=int, help="shorter runs in the 'a sensor fails' view")
     dm.set_defaults(func=run_demo)
 
     rb = groups.add_parser("robustness", help="the sweep detectors on FactoryLens-C")

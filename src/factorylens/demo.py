@@ -19,6 +19,7 @@ is only imported by `build_app` (needs the `demo` extra).
 
 from __future__ import annotations
 
+import weakref
 from dataclasses import dataclass, replace
 from functools import lru_cache
 from pathlib import Path
@@ -149,13 +150,29 @@ class Stream:
     rows: list[dict[str, Any]]
 
 
+# per inspector (dropped with it), per (corruption, severity): the window's signals
+_WARM: weakref.WeakKeyDictionary[Inspector, dict[tuple[str, int], tuple[list[float], list[float]]]]
+_WARM = weakref.WeakKeyDictionary()
+
+
 def warm_up(inspector: Inspector, validation: Prepared, corruption: str, severity: int) -> None:
-    """Fill the reliability window with normal parts in the given sensor state."""
+    """Fill the reliability window with normal parts in the given sensor state.
+
+    The signals depend only on the model, the parts and the corruption, so they
+    are computed once per combination and reused."""
+    cached = _WARM.setdefault(inspector, {})
+    key = (corruption, severity)
+    if key not in cached:
+        inspector.reset()
+        window = inspector.config.reliability.window or 1
+        before = corrupt(validation, corruption, severity)
+        for i in range(min(window - 1, len(before))):
+            inspector.inspect(before.rgb[i], before.xyz[i], before.foreground[i])
+        cached[key] = (list(inspector.history["rgb"]), list(inspector.history["geo"]))
     inspector.reset()
-    window = inspector.config.reliability.window or 1
-    before = corrupt(validation, corruption, severity)
-    for i in range(min(window - 1, len(before))):
-        inspector.inspect(before.rgb[i], before.xyz[i], before.foreground[i])
+    rgb, geo = cached[key]
+    inspector.history["rgb"].extend(rgb)
+    inspector.history["geo"].extend(geo)
 
 
 def run_stream(
@@ -166,12 +183,13 @@ def run_stream(
     onset: float = 0.5,
     seed: int = 0,
     validation: Prepared | None = None,
+    max_parts: int | None = None,
 ) -> Stream:
     """The test parts in random order; from `onset` on, one sensor is corrupted.
 
     With `validation`, the window starts filled with normal parts, as on a line
-    that was already running."""
-    order = np.random.default_rng(seed).permutation(len(test))
+    that was already running. `max_parts` shortens the run (for slow machines)."""
+    order = np.random.default_rng(seed).permutation(len(test))[:max_parts]
     start = int(round(onset * len(order)))
     bad = corrupt(test, corruption, severity)
     if validation is not None:
@@ -279,7 +297,9 @@ def load_split(root: str, cache_dir: str, category: str, split: str) -> Prepared
     return cache.get(root, cache_dir, category, split)
 
 
-def build_app(models: str | Path, root: str | Path, cache_dir: str | Path) -> Any:
+def build_app(
+    models: str | Path, root: str | Path, cache_dir: str | Path, max_parts: int | None = None
+) -> Any:
     import gradio as gr  # type: ignore[import-not-found, unused-ignore]  # only in the demo extra
 
     available = sorted(p.stem for p in Path(models).glob("*.pt"))
@@ -304,7 +324,13 @@ def build_app(models: str | Path, root: str | Path, cache_dir: str | Path) -> An
     def stream(category: str, corruption: str, severity: int, seed: int) -> tuple[Any, ...]:
         inspector, test, validation = model(category)
         s = run_stream(
-            inspector, test, corruption, int(severity), seed=int(seed), validation=validation
+            inspector,
+            test,
+            corruption,
+            int(severity),
+            seed=int(seed),
+            validation=validation,
+            max_parts=max_parts,
         )
         return s.figure, s.text
 

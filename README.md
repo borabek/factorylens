@@ -75,7 +75,7 @@ uv run factorylens serve models/bagel.pt                # HTTP API, needs: uv sy
 uv run factorylens demo                                 # Gradio demo, needs: uv sync --extra demo
 ```
 
-The demo ([docs/demo.md](docs/demo.md)) breaks a sensor halfway through a simulated run and shows the weights and alarms part by part.
+The demo ([docs/demo.md](docs/demo.md)) breaks a sensor halfway through a simulated run and shows the weights and alarms part by part. A precomputed version runs on Hugging Face: [huggingface.co/spaces/bora2005/factorylens](https://huggingface.co/spaces/bora2005/factorylens) (MVTec 3D-AD derivatives, CC BY-NC-SA 4.0, non-commercial).
 
 ## Setup
 

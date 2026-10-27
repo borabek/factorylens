@@ -30,6 +30,9 @@ serve = [
     "python-multipart>=0.0.32",
     "uvicorn>=0.54.0",
 ]
+demo = [
+    "gradio>=6.30.0",
+]
 
 [dependency-groups]
 analysis = [

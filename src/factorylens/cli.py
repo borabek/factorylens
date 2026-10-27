@@ -246,6 +246,15 @@ def inspect_parts(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_demo(args: argparse.Namespace) -> int:
+    from factorylens import demo
+
+    demo.build_app(args.models, args.root, args.cache).launch(
+        server_name=args.host, server_port=args.port
+    )
+    return 0
+
+
 def serve_model(args: argparse.Namespace) -> int:
     from factorylens import api
 
@@ -405,6 +414,14 @@ def build_parser() -> argparse.ArgumentParser:
     srv.add_argument("--host", default="127.0.0.1")
     srv.add_argument("--port", type=int, default=8000)
     srv.set_defaults(func=serve_model)
+
+    dm = groups.add_parser("demo", help="interactive demo of fitted models (needs --extra demo)")
+    dm.add_argument("--models", default="models")
+    dm.add_argument("--root", default=DEFAULT_ROOT)
+    dm.add_argument("--cache", default=DEFAULT_CACHE)
+    dm.add_argument("--host", default="127.0.0.1")
+    dm.add_argument("--port", type=int, default=7860)
+    dm.set_defaults(func=run_demo)
 
     rb = groups.add_parser("robustness", help="the sweep detectors on FactoryLens-C")
     rb.add_argument("root", nargs="?", default=DEFAULT_ROOT)

@@ -1,0 +1,49 @@
+% Method overview, drawn with TikZ so it stays sharp at any size.
+\begin{tikzpicture}[
+    font=\footnotesize,
+    box/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, minimum height=6mm},
+    data/.style={box, fill=black!5},
+    rgb/.style={box, draw=blue!60!black, fill=blue!6},
+    geo/.style={box, draw=orange!70!black, fill=orange!8},
+    fuse/.style={box, draw=black, fill=black!10, thick},
+    arr/.style={-{Stealth[length=2mm]}, semithick},
+    node distance=3mm and 4mm,
+]
+% inputs
+\node[data] (img) {RGB image};
+\node[data, below=10mm of img] (pc) {point cloud};
+
+% detectors
+\node[rgb, right=of img] (rbank) {memory bank\\[-1pt]{\scriptsize PatchCore}};
+\node[geo, right=of pc] (gbank) {memory bank\\[-1pt]{\scriptsize FPFH}};
+
+% maps
+\node[rgb, right=of rbank] (rmap) {anomaly\\[-1pt]map};
+\node[geo, right=of gbank] (gmap) {anomaly\\[-1pt]map};
+
+% health
+\node[rgb, above right=0.5mm and 4mm of rmap, anchor=west] (rhealth) {health $u_\text{rgb}$\\[-1pt]{\scriptsize 25\% quantile}};
+\node[geo, below right=0.5mm and 4mm of gmap, anchor=west] (ghealth) {health $u_\text{3d}$\\[-1pt]{\scriptsize quantile + points}};
+\node[rgb, below=1.5mm of rhealth] (rz) {score $z_\text{rgb}$};
+\node[geo, above=1.5mm of ghealth] (gz) {score $z_\text{3d}$};
+
+% fusion and alarm
+\node[fuse, right=24mm of rmap, yshift=-8mm] (stouffer) {weighted\\[-1pt]Stouffer};
+\node[fuse, right=of stouffer] (alarm) {conformal\\[-1pt]threshold};
+\node[right=3mm of alarm, align=left] (out) {alarm,\\[-1pt]$p$-value,\\[-1pt]sensor alert};
+
+\draw[arr] (img) -- (rbank);
+\draw[arr] (pc) -- (gbank);
+\draw[arr] (rbank) -- (rmap);
+\draw[arr] (gbank) -- (gmap);
+\draw[arr] (rmap.east) -- ++(1.5mm,0) |- (rhealth.west);
+\draw[arr] (rmap.east) -- ++(1.5mm,0) |- (rz.west);
+\draw[arr] (gmap.east) -- ++(1.5mm,0) |- (ghealth.west);
+\draw[arr] (gmap.east) -- ++(1.5mm,0) |- (gz.west);
+\draw[arr] (rz.east) -- (stouffer.west);
+\draw[arr] (gz.east) -- (stouffer.west);
+\draw[arr, dashed] (rhealth.east) -| node[pos=0.25, above, font=\scriptsize] {$w_\text{rgb}$} (stouffer.north);
+\draw[arr, dashed] (ghealth.east) -| node[pos=0.25, below, font=\scriptsize] {$w_\text{3d}$} (stouffer.south);
+\draw[arr] (stouffer) -- (alarm);
+\draw[arr] (alarm) -- (out);
+\end{tikzpicture}

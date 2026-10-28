@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from factorylens import corruptions, experiments
+from factorylens import conformal, corruptions, experiments
 
 OUT = Path("paper/generated")
 FIGURES = Path("paper/figures")
@@ -213,7 +213,60 @@ def numbers() -> None:
         "sensMax": f3(rgb.max()),
         "msPerPart": f"{inspectors['ms_per_part'].mean():.0f}",
     }
+    values |= text_numbers()
     write("numbers", [f"\\newcommand{{\\{k}}}{{{v}}}" for k, v in values.items()])
+
+
+def text_numbers() -> dict[str, str]:
+    """The other values the text quotes, so none of them is typed by hand either."""
+    ref = json.loads(Path("configs/reference/btf.json").read_text())
+    runs = experiments.collect("results/btf-balanced-btfprep")
+    weights = [
+        json.loads((Path("results/btf-balanced-btfprep") / f).read_text())["config"][
+            "fpfh_weight_fitted"
+        ]
+        for f in runs["file"]
+    ]
+    rob = pd.read_csv(ANALYSIS / "robustness_summary.csv")
+    clean = rob.drop_duplicates("model").set_index("model")["clean"]
+    occl = rob[rob["corruption"] == "occlusion"].set_index("model")["mean"]
+    broken = pd.read_csv(ANALYSIS / "conformal_broken.csv")
+    rgb = broken[broken["sensor"] == "rgb"]
+    far = rgb.groupby("detector")["false_alarm"].mean()
+    no_occl = rgb[rgb["corruption"] != "occlusion"].groupby("detector")["false_alarm"].mean()
+    checks = pd.read_csv(ANALYSIS / "conformal_checks.csv")
+    tire = checks[(checks["check"] == "exchangeability") & (checks["sensor"] == "fpfh")]
+    tire = tire.set_index("category").loc["tire"]
+    n_val = int(pd.read_csv(ANALYSIS / "conformal_clean.csv")["n"].median())
+    lo, hi = conformal.false_alarm_quantiles(n_val, 0.1, [0.05, 0.95])
+    kt = pd.read_csv(ANALYSIS / "sweep_kshot_tests.csv")
+    fifty = kt[(kt["k"] == 50) & (kt["model"] == "early") & (kt["versus"] == "best single")]
+
+    def pct(x: float) -> str:
+        return f"{100 * x:.0f}\\%"
+
+    return {
+        "btfConcat": f3(per_category("results/btf-btfprep").mean()),
+        "btfPaper": f3(np.mean(ref["methods"]["BTF (RGB + FPFH)"]["image_auroc"])),
+        "btfBalanced": f3(per_category("results/btf-balanced-btfprep").mean()),
+        "spreadMin": f"{1 / max(weights):.0f}",
+        "spreadMax": f"{1 / min(weights):.0f}",
+        "earlyOurs": f3(clean["early"]),
+        "occlusionPerImage": f3(occl["reliable"]),
+        "occlusionLate": f3(occl["late"]),
+        "extentCost": f3(clean["reliable_window"] - clean["reliable_extent"]),
+        "lateRgbFalse": pct(far["late"]),
+        "reliableRgbFalse": pct(far["reliable_window"]),
+        "extentRgbFalse": pct(far["reliable_extent"]),
+        "healthyRgbFalse": pct(far["healthy sensor"]),
+        "reliableRgbFalseNoOcclusion": pct(no_occl["reliable_window"]),
+        "tireFalse": pct(tire["false_alarm"]),
+        "tireFive": pct(tire["false_alarm_plus5"]),
+        "minCalibration": str(conformal.min_calibration(0.05, 0.02)),
+        "betaLow": pct(lo),
+        "betaHigh": pct(hi),
+        "earlyFiftyP": f"{fifty['wilcoxon_p'].iloc[0]:.2f}",
+    }
 
 
 def main() -> None:

@@ -1,0 +1,176 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage[margin=0.75in,columnsep=0.3in]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{microtype}
+
+\input{generated/numbers}
+
+\title{When One Sensor Breaks:\\Reliability-Aware RGB + 3D Anomaly Detection,\\a Corruption Benchmark and Calibrated Alarms}
+\author{Bora Ilban Bayrakci\\University of Essex\\{\small\url{https://github.com/borabek/factorylens}}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Industrial inspection increasingly pairs a colour camera with a 3D sensor, and multimodal anomaly detectors are usually evaluated with both sensors working. We ask what happens when one of them degrades. On MVTec 3D-AD we first reproduce the RGB and FPFH halves of Back to the Feature, but not its fused result, and trace the gap to feature scale: the FPFH half of the concatenated feature is 12--47 times wider than the RGB half, so the fusion is FPFH in disguise. Rescaling it on training data alone lifts the same detector above both sensors. We then introduce FactoryLens-C, ten one-sensor corruptions at five severities plus a missing sensor for each, and show that early fusion, the best model on clean data, falls below the healthy sensor on its own for most of them. Late fusion survives a dead sensor but not a noisy one. A label-free reliability signal, the background level of each sensor's anomaly map judged over a window of recent parts, lets the fusion down-weight a degraded sensor while ranking clean parts exactly like late fusion. Finally, we turn scores into alarms with split-conformal thresholds. With a corrupted camera, late fusion raises an alarm on 94\% of good parts, while reliability fusion stays close to its 10\% target. We also report two dataset pitfalls found along the way and release code, seeds and a demo.
+\end{abstract}
+
+\section{Introduction}
+
+A camera and a 3D sensor see different defects. On MVTec 3D-AD \citep{bergmann2022mvtec3d}, a colour image is close to useless on potato and cookie, whose surface varies naturally, while 3D geometry misses colour defects entirely. Combining both is the obvious step, and recent detectors do so by concatenating features \citep{horwitz2023btf} or fusing them with learned modules \citep{wang2023m3dm}. These methods are evaluated with both sensors in working order. On a production line they are not always: lenses get dirty, cameras drift out of focus, structured light loses points on shiny surfaces, and a sensor can fail outright. A fused detector that is better on average but worse than either sensor alone when one of them degrades is a liability.
+
+This paper studies that situation with memory-bank detectors in the style of PatchCore \citep{roth2022patchcore} and Back to the Feature (BTF) \citep{horwitz2023btf}. Our contributions are:
+\begin{itemize}\itemsep0pt
+\item A reproduction of BTF in which both single-sensor halves reproduce and the fusion does not, with a causal explanation: unequal feature scale (Section~\ref{sec:btf}).
+\item \textbf{FactoryLens-C}, a seeded corruption benchmark for paired RGB and 3D data with one-sensor corruptions, misregistration and missing sensors (Section~\ref{sec:corruptions}).
+\item \textbf{Reliability-aware late fusion}: a label-free per-sensor health signal and a weighted Stouffer combination, evaluated on the full benchmark and on simulated mid-run failures (Section~\ref{sec:fusion}).
+\item Split-conformal alarm thresholds, with an account of how many normal parts a calibrated false alarm rate needs and of what a broken sensor does to it (Section~\ref{sec:alarms}).
+\item Two dataset pitfalls: a lighting difference between normal and defective MVTec 3D-AD test images, and time confounds in a multimodal manufacturing dataset (Section~\ref{sec:pitfalls}).
+\end{itemize}
+All numbers come from result files that record their configuration and code version, and every table in this paper is generated from them.
+
+\section{Related work}
+
+\textbf{Memory-bank anomaly detection.} PatchCore \citep{roth2022patchcore} stores a coreset of pretrained patch features from normal images and scores a test patch by its distance to the nearest stored one. BTF \citep{horwitz2023btf} showed that the same scheme with classical FPFH descriptors \citep{rusu2009fpfh} is competitive on point clouds, and that concatenating RGB and FPFH patch features improves on both. M3DM \citep{wang2023m3dm} fuses learned 2D and 3D features with additional trained modules. We stay with the training-free memory-bank family because it isolates the fusion question: the only thing that changes between our models is how two distances are combined.
+
+\textbf{Robustness benchmarks.} ImageNet-C \citep{hendrycks2019imagenetc} measures classifier robustness to common image corruptions at graded severities. We follow its design and severities for the RGB half and add corruptions of the point cloud and of the alignment between the two sensors.
+
+\textbf{Conformal anomaly detection.} Conformal p-values give a finite-sample guarantee on the false alarm rate of any score, provided new normal samples are exchangeable with the calibration samples \citep{vovk2005alrw,bates2023outliers}. For a single calibration set the realised rate is random \citep{vovk2012conditional}, which matters when a new product comes with few normal parts.
+
+\textbf{Multimodal manufacturing data.} The Future Factories (FF) datasets \citep{harik2024ff,harik2025ffv2} pair camera images with robot and PLC signals from an assembly line, and have been used for multimodal anomaly prediction \citep{prasad2024assemai,shyalika2025nsfmap}. We use their analog signals for a secondary study of shortcuts (Section~\ref{sec:pitfalls}).
+
+\section{Setup}
+\label{sec:setup}
+
+\textbf{Data.} MVTec 3D-AD has ten object categories with 2656 normal training, 294 normal validation and 1197 test samples, each an RGB image and an organised point cloud. We remove the background plane with RANSAC on a border ring (2\,mm threshold, small blobs dropped) and resize to 224\,px.
+
+\textbf{Detectors.} \emph{RGB}: PatchCore with an ImageNet WideResNet-50 \citep{zagoruyko2016wrn}, layers 2 and 3, a $3{\times}3$ neighbourhood average, a 10\% greedy coreset and Gaussian smoothing of the map. \emph{3D}: the same memory bank on FPFH descriptors with BTF's settings, on a $28{\times}28$ grid. \emph{Early fusion}: RGB and FPFH patches concatenated, with the FPFH half scaled so both halves have the same spread on that run's training patches. \emph{Late fusion}: the two image scores and maps, each standardised with the mean and standard deviation over the validation normals, summed.
+
+\textbf{Evaluation.} Image AUROC, pixel AUROC and AUPRO up to a false positive rate of 0.3 \citep{bergmann2021mvtecad}, cross-checked against the official implementation. Per-category differences between two detectors use a paired bootstrap over test images. Claims across categories use a Wilcoxon signed-rank test over the ten category means, with severities or k-shot draws averaged within a category first, because they are not independent.
+
+\section{Reproducing Back to the Feature}
+\label{sec:btf}
+
+\begin{table}[t]
+\centering\small
+\input{generated/btf}
+\caption{Image AUROC, mean of ten categories, with BTF's preprocessing. The single-sensor halves reproduce; the concatenation does not. Scaling the FPFH half so both halves have equal spread on the training patches lifts the same detector above both sensors.}
+\label{tab:btf}
+\end{table}
+
+With BTF's own preprocessing, both single-sensor detectors reproduce or exceed the published numbers, but the concatenated detector scores 0.801 against the published 0.873 and is below the better single sensor on eight of ten categories (Table~\ref{tab:btf}). The two halves of the concatenated feature have very different scales: on the training patches, the spread of the FPFH half is 12 to 47 times that of the RGB half, depending on the category. More than 99\% of each squared nearest-neighbour distance therefore comes from FPFH, and the ``fused'' detector is close to FPFH alone.
+
+We tested this explanation by intervening on scale only. Same features, same memory bank, same preprocessing, with the FPFH half multiplied by the ratio of spreads measured on the training patches: the image AUROC rises from 0.801 to 0.923, above both sensors on nine of ten categories. A fixed factor of 0.03 does about as well, but picking it would mean tuning on the test set; the balanced factor is fixed before any test image is seen. We do not know why the published fusion is not affected, but the result shows that concatenation is sensitive to feature scale in a way a fusion method should not be. All later experiments use our own preprocessing, under which balanced early fusion scores 0.910.
+
+\textbf{Data efficiency.} Table~\ref{tab:kshot} varies the number of normal training images. From five images on, both fusions are ahead of either sensor used on every category. The harder baseline is the better of the two sensors for each category, known only after seeing test results. Late fusion matches it with all the data. Early fusion exceeds it once there are 50 or more images (Wilcoxon $p=0.04$ over categories), but with ten or fewer it is fragile: in a quarter of runs it falls more than 0.05 below the better sensor, and sometimes below chance.
+
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{2.5pt}
+\input{generated/kshot}
+\caption{Image AUROC against the number of normal training images per category, mean of ten categories, $\pm$ standard deviation over five nested random draws.}
+\label{tab:kshot}
+\end{table}
+
+\section{FactoryLens-C}
+\label{sec:corruptions}
+
+FactoryLens-C corrupts one sensor at a time. RGB: Gaussian noise, defocus blur, brightness, JPEG and occlusion, with ImageNet-C's settings at 224\,px. 3D: depth noise (0.25--4\,mm), holes (5--50\% of the object's points removed in blobs), depth quantisation (0.5--5\,mm), a rigid tilt (1--10$^\circ$) and misregistration of the point cloud against the image (1--8\,px). Each has five severities, and each sensor can also be missing entirely. Randomness is seeded per sample, corruption and severity, so the benchmark is shared as code and seeds rather than as corrupted copies of the data, which keeps it within the dataset's non-commercial licence. Corruptions act on the preprocessed data, so clean and corrupted runs share their preprocessing exactly; a real noisy sensor would also disturb the background fit, which we leave out. Models are always fitted on clean training data and evaluated on corrupted test sets.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/robustness.png}
+\caption{Image AUROC against corruption severity, mean of ten categories. Dotted: each model's clean score. Reliability fusion is shown judged per part and over a 16-part window, and with the optional extent signal.}
+\label{fig:robustness}
+\end{figure*}
+
+Early fusion is the best model on clean data and the most fragile one (Table~\ref{tab:robustness}, Figure~\ref{fig:robustness}). Averaged over severities, it falls below the uncorrupted sensor on its own for nine of twelve corruptions, and below chance with the 3D sensor missing: one nearest neighbour serves both halves, so a corrupted half moves every patch away from the bank. Late fusion loses a missing sensor at no cost, because a dead sensor gives every part the same score, which does not change the ranking. A noisy sensor is different. Its scores vary from part to part without meaning, and late fusion falls significantly below the healthy sensor on defocus blur, JPEG and occlusion.
+
+\section{Reliability-aware fusion}
+\label{sec:fusion}
+
+\begin{table*}[t]
+\centering\small
+\input{generated/robustness}
+\caption{Mean of ten categories. Corrupted columns average all RGB or all 3D corruptions over five severities. \emph{Healthy sensor alone}: the clean score of the sensor that was not corrupted, i.e.\ what a system told which sensor broke could reach by switching it off.}
+\label{tab:robustness}
+\end{table*}
+
+The gap between late fusion and the healthy sensor is what a fusion has to close without being told which sensor broke. Our signal rests on one observation: a defect raises a small part of an anomaly map, while a degraded sensor raises all of it. For each sensor and part we take the 25\% quantile of the anomaly map over the object, its \emph{background level}, and express it in standard deviations of the same quantity on the validation normals. For 3D we add the point count, since missing points look like background to FPFH rather than like an anomaly. Let $u$ be how far a part's signal lies beyond the worst validation part. A sensor's weight is $w = \min(1, \max(0, 1 - u/3))$: full weight within the range of the validation parts, falling to zero three standard deviations beyond it. The standardised scores are combined with the weighted Stouffer rule \citep{whitlock2005weightedz},
+\begin{equation}
+s = \frac{w_\text{rgb}\, z_\text{rgb} + w_\text{3d}\, z_\text{3d}}{\sqrt{w_\text{rgb}^2 + w_\text{3d}^2}},
+\end{equation}
+which ranks parts exactly like late fusion when both weights are 1. If both sensors look off, both keep full weight. Nothing is fitted on labels or test data, and the quantile, ramp and window below were fixed before any run.
+
+\textbf{Judging one part is not enough.} Applied per part, the rule fails on occlusion: a grey square crosses the threshold in some parts and not in others, so the fused scores split by weight rather than by defect (0.636, below late fusion's 0.726). A real sensor fault lasts for many parts, so the final rule takes the median signal over the current and the previous 15 parts, in arrival order. On clean data this gives late fusion's score (Table~\ref{tab:robustness}). With a corrupted camera it reaches 0.788, against 0.764 for late fusion and 0.793 for the healthy sensor; it is significantly better than late fusion on blur and JPEG and significantly worse on none. AUPRO improves more: from 0.866 to 0.923 with the camera corrupted, and to 0.930 with the point cloud corrupted, the best of all models. Over ramps from 1 to 8 standard deviations and windows of 8 parts or more, the RGB-corrupted mean stays between \sensMin\ and \sensMax.
+
+\textbf{Occlusion.} An occluder lights up a large part of the object without moving its background level. A second signal, the 90\% quantile of the map (\emph{extent}), fixes it: occlusion reaches the healthy sensor's score and the fusion is no longer significantly below the healthy sensor anywhere. The extent signal also reacts to ordinary differences between validation and test parts and costs 0.007 on clean data, so we keep it optional (Table~\ref{tab:corruptions} in the appendix).
+
+\textbf{A sensor that fails mid-run.} To measure reaction time we replay each category's test parts in random order, clean for the first half and corrupted for the second. With the 16-part window a broken sensor is down-weighted after a median of \delaySixteen\ parts; the AUROC after the fault is \afterSixteen, against \afterLate\ for late fusion. A 4-part window reacts within \delayFour\ part and gives \afterFour, at the cost of \falseFour\ false switch-offs per stream of about 55 clean parts (Figure~\ref{fig:stream}). The window is a trade-off between reaction time and calm, and the right value depends on how long faults last on a given line.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/demo_stream.png}
+\caption{A bagel run in which the camera becomes noisy from part 55. Top: sensor weights. Bottom: fused scores of late fusion (grey) and reliability fusion (black) against the same alarm threshold (dashed).}
+\label{fig:stream}
+\end{figure}
+
+\section{From scores to alarms}
+\label{sec:alarms}
+
+A line needs a decision, not a ranking. We set split-conformal thresholds on the validation normals: with $n$ calibration scores, alarm above the $k$-th largest, $k = \lfloor \alpha (n+1) \rfloor$, which bounds the false alarm rate by $\alpha$ on average over calibration sets. On clean data the realised rate at $\alpha = 0.1$ is 9\% for both fusions (Table~\ref{tab:alarms}).
+
+\begin{table}[t]
+\centering\small\setlength{\tabcolsep}{4pt}
+\input{generated/alarms}
+\caption{False alarms on good parts / defective parts caught, $\alpha = 0.1$, thresholds from clean validation parts, mean over categories (and corruptions).}
+\label{tab:alarms}
+\end{table}
+
+\textbf{How many normal parts.} For one calibration set the false alarm rate is Beta$(k, n+1-k)$ distributed \citep{vovk2012conditional}. With the 22--42 validation parts a category has, a 10\% target can land anywhere between 3\% and 20\%, and the per-category rates we observe span 0--19\%. Keeping a 5\% target within two points, nine times out of ten, takes 32 normal parts.
+
+\textbf{When the guarantee fails.} Exchangeability is an assumption about the data. For FPFH, the normal test parts of three categories score higher than the validation parts (Mann--Whitney $p<0.05$; tire survives a Holm correction), and on tire the 3D detector alone alarms on 44\% of good parts. Adding five confirmed-good parts from the current run to the calibration set brings it down to 16\%.
+
+\textbf{When a sensor breaks.} With thresholds set on clean parts and a corrupted camera, late fusion alarms on 94\% of good parts: every score shifts upwards and crosses the threshold, which AUROC, a ranking metric, does not show. Reliability fusion stays at 19\% (13\% with the extent signal), close to the healthy sensor's 15\%, and catches about as many defects. Without occlusion its rate is 13\%.
+
+\section{Pitfalls found along the way}
+\label{sec:pitfalls}
+
+\textbf{Lighting in MVTec 3D-AD.} JPEG compression made single categories swing between AUROC 0 and 1 across severities. The cause is in the data: normal and defective test images differ in global brightness in several categories. On cable gland, the mean brightness of the \emph{background}, where no defect can be, separates them with AUROC \cableBackground. Equalising every image to the training brightness changes our detectors' mean AUROC by at most 0.006, so they do not exploit it, but a detector working on raw intensities could.
+
+\textbf{Time in Future Factories.} In the FF multimodal data, anomalies were introduced in long blocks, and within the camera period elapsed time alone separates anomalous from normal cycles with AUROC 0.986. We therefore used the analog signals for a cross-day study only, and found more of the same: on each test day the classes form two contiguous blocks, so time of day alone scores 1.0, and a classifier given the clock is perfect on the held-out day. For a sensor-only classifier, impurity importance and SHAP both rank a drifting robot first, while permutation importance of the held-out AUROC ranks the robot that handles the missing part, R03, first and gives the drifting one zero. We also found that one robot's joint angles were not logged during the whole normal block of day 1, a perfect label leak inside that day. These are instances of shortcut learning \citep{geirhos2020shortcut}, and they argue for reporting simple baselines such as time and brightness next to any detector on these datasets.
+
+\section{Limitations}
+
+All results are on one benchmark with ten object categories and a single run per configuration on the full training set (k-shot results use five draws). Corruptions are synthetic, applied after preprocessing, and severity scales were chosen by hand; real sensor faults may combine or drift. The reliability signal assumes defects are local and faults are global; local faults such as occluders need the extent signal, which costs clean performance. The conformal guarantee depends on exchangeability, which we showed is violated in places. Timings (about \msPerPart\,ms per part on a laptop GPU) were not measured on industrial hardware.
+
+\section{Conclusion}
+
+A fusion that is better on average can be worse than a single sensor when the other sensor degrades, and a threshold set on clean parts can turn a noisy camera into a stopped line. A simple label-free signal, how much of each anomaly map has lifted compared with normal parts, judged over recent parts, keeps the benefit of fusion on clean data and most of the healthy sensor's performance when one sensor breaks. The code, the corruption benchmark, the fitted-model tooling and a demo are available at the URL above.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\appendix
+\section{Per-corruption results}
+
+\begin{table}[h]
+\centering\small\setlength{\tabcolsep}{3pt}
+\input{generated/corruptions}
+\caption{Image AUROC per corruption, mean over five severities (missing sensors: one level) and ten categories.}
+\label{tab:corruptions}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\linewidth]{figures/corruptions.png}
+\caption{FactoryLens-C on a cookie with a crack, severities 1, 3 and 5. 3D corruptions are shown as shaded depth.}
+\end{figure}
+
+\end{document}

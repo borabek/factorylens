@@ -18,3 +18,5 @@ build/
 .vscode/
 .idea/
 /models/
+/paper/main.pdf
+/paper/figures/

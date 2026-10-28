@@ -1,0 +1,16 @@
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{image AUROC} & \multicolumn{3}{c}{AUPRO} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & clean & RGB corr. & 3D corr. & clean & RGB corr. & 3D corr. \\
+\midrule
+RGB & 0.800 & 0.551 & 0.800 & 0.906 & 0.575 & 0.906 \\
+3D & 0.793 & 0.793 & 0.655 & 0.929 & 0.929 & 0.707 \\
+Early fusion & 0.909 & 0.710 & 0.690 & 0.961 & 0.761 & 0.884 \\
+Late fusion & 0.876 & 0.764 & 0.831 & 0.970 & 0.866 & 0.913 \\
+Reliability fusion & 0.876 & 0.788 & 0.832 & 0.970 & 0.923 & 0.930 \\
+\quad + extent signal & 0.869 & 0.797 & 0.825 & 0.961 & 0.926 & 0.923 \\
+\midrule
+Healthy sensor alone & -- & 0.793 & 0.800 & -- & 0.929 & 0.906 \\
+\bottomrule
+\end{tabular}

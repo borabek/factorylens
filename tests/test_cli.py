@@ -148,7 +148,7 @@ def test_fit_and_inspect_commands(root, tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(insp, "Inspector", Tiny)
     out = tmp_path / "bagel.pt"
     args = ["fit", str(root), "--category", "bagel", "--cache", str(tmp_path / "cache")]
-    assert cli.main([*args, "--out", str(out)]) == 0
+    assert cli.main([*args, "--out", str(out), "--coreset-ratio", "0.5"]) == 0
     assert out.exists() and "alarm threshold" in capsys.readouterr().out
 
     s = mvtec3d.list_samples(root, "bagel", "test")[0]

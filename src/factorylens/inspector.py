@@ -13,6 +13,7 @@ the ImageNet backbone weights come from torchvision as usual.
 
 from __future__ import annotations
 
+import time
 from collections import deque
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -98,13 +99,15 @@ class Inspector:
 
     # -- fitting ---------------------------------------------------------------
 
-    def _features(self, p: Prepared) -> tuple[torch.Tensor, torch.Tensor]:
-        rgb = self.rgb_model.embed(p.rgb)
+    def _geo_features(self, p: Prepared) -> torch.Tensor:
         geo = fpfh.to_patches(
             np.stack([fpfh.fpfh_map(x, self.config.sweep.fpfh) for x in p.xyz]),
             self.config.sweep.fpfh,
         )
-        return rgb, geo.to(rgb.device)
+        return geo.to(self.rgb_model.device)
+
+    def _features(self, p: Prepared) -> tuple[torch.Tensor, torch.Tensor]:
+        return self.rgb_model.embed(p.rgb), self._geo_features(p)
 
     def fit(self, train: Prepared, validation: Prepared) -> Inspector:
         tr_rgb, tr_geo = self._features(train)
@@ -112,6 +115,17 @@ class Inspector:
         self.size = (train.rgb.shape[1], train.rgb.shape[2])
         self.rgb_bank.fit(tr_rgb)
         self.geo_bank.fit(tr_geo)
+        self.calibrate(validation, va_rgb, va_geo)
+        self.meta = {
+            "category": train.meta.get("category"),
+            "n_train": len(train),
+            "n_validation": len(validation),
+            "factorylens": __version__,
+        }
+        return self
+
+    def calibrate(self, validation: Prepared, va_rgb: torch.Tensor, va_geo: torch.Tensor) -> None:
+        """Fusion statistics and the alarm threshold, for banks that are already set."""
         rgb_val = self.rgb_bank.score(va_rgb, self.size)
         geo_val = self.geo_bank.score(va_geo, self.size)
         self.fusion = ReliabilityFusion(self.config.reliability).fit(
@@ -123,13 +137,6 @@ class Inspector:
             0
         ]
         self.threshold = conformal.threshold(self.calibration, self.config.alpha)
-        self.meta = {
-            "category": train.meta.get("category"),
-            "n_train": len(train),
-            "n_validation": len(validation),
-            "factorylens": __version__,
-        }
-        return self
 
     # -- inspecting --------------------------------------------------------------
 
@@ -139,7 +146,10 @@ class Inspector:
         self.history: dict[str, deque[float]] = {
             "rgb": deque(maxlen=window),
             "geo": deque(maxlen=window),
+            "seconds": deque(maxlen=window),
         }
+        # seconds per stage for the last part; exact on the CPU, where nothing runs async
+        self.timings: dict[str, float] = {}
 
     def status(self) -> dict[str, Any]:
         """Sensor health over the current window, for a line monitor."""
@@ -152,6 +162,7 @@ class Inspector:
                 "health_3d": float(u_geo),
                 "weight_rgb": float(w.rgb[0]),
                 "weight_3d": float(w.geo[0]),
+                "ms_per_part": 1000 * float(np.median(self.history["seconds"])),
             }
         return out
 
@@ -165,9 +176,24 @@ class Inspector:
             ["unknown"],
             ["part"],
         )
-        f_rgb, f_geo = self._features(part)
+        timings, start = {}, time.perf_counter()
+        last = start
+
+        def lap(stage: str) -> None:
+            nonlocal last
+            now = time.perf_counter()
+            timings[stage], last = now - last, now
+
+        # one stage after the other: open3d holds the GIL, so FPFH on a second thread
+        # slows the backbone down as much as it saves (docs/latency.md)
+        f_rgb = self.rgb_model.embed(part.rgb)
+        lap("backbone")
         r = self.rgb_bank.score(f_rgb, self.size)
+        lap("rgb_bank")
+        f_geo = self._geo_features(part)
+        lap("fpfh")
         g = self.geo_bank.score(f_geo, self.size)
+        lap("fpfh_bank")
         points = valid_points(part.xyz).sum(axis=(1, 2))
         u_rgb, u_geo = self.fusion.signals(r, g, part.foreground, points)
         self.history["rgb"].append(float(u_rgb[0]))
@@ -177,7 +203,7 @@ class Inspector:
         )
         scores, maps = self.fusion.combine(r, g, w)
         score = float(scores[0])
-        return Inspection(
+        out = Inspection(
             score=score,
             p_value=float(conformal.p_values(self.calibration, scores)[0]),
             alarm=score > self.threshold,
@@ -191,11 +217,22 @@ class Inspector:
             map_rgb=self.fusion.scale_rgb(r)[1][0].astype(np.float32),
             map_3d=self.fusion.scale_geo(g)[1][0].astype(np.float32),
         )
+        lap("fusion")
+        timings["total"] = last - start
+        self.history["seconds"].append(timings["total"])
+        self.timings = timings
+        return out
 
     def inspect_raw(self, rgb: np.ndarray, xyz: np.ndarray) -> Inspection:
         """A scan as it comes from the sensors, at full resolution."""
+        start = time.perf_counter()
         rgb, xyz, fg = cache.prepare_sample(rgb, xyz, self.config.sweep.settings)
-        return self.inspect(rgb, xyz, fg)
+        prepared = time.perf_counter() - start
+        out = self.inspect(rgb, xyz, fg)
+        self.timings = {"preprocess": prepared, **self.timings}
+        self.timings["total"] += prepared
+        self.history["seconds"][-1] += prepared
+        return out
 
     # -- saving ------------------------------------------------------------------
 

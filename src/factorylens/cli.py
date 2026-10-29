@@ -217,6 +217,9 @@ def fit_model(args: argparse.Namespace) -> int:
     from factorylens.inspector import Inspector, InspectorConfig
 
     config = InspectorConfig(alpha=args.alpha)
+    if args.coreset_ratio:
+        rgb = replace(config.sweep.rgb, coreset_ratio=args.coreset_ratio)
+        config = replace(config, sweep=replace(config.sweep, rgb=rgb))
     splits = {
         s: cache.get(args.root, args.cache, args.category, s, config.sweep.settings)
         for s in ("train", "validation")
@@ -400,6 +403,11 @@ def build_parser() -> argparse.ArgumentParser:
     fit.add_argument("--alpha", type=float, default=0.1, help="target false alarm rate")
     fit.add_argument("--out", help="default: models/<category>.pt")
     fit.add_argument("--half", action="store_true", help="store the banks as float16")
+    fit.add_argument(
+        "--coreset-ratio",
+        type=float,
+        help="share of training patches kept in each bank (default 0.1); see docs/latency.md",
+    )
     fit.add_argument("--device")
     fit.set_defaults(func=fit_model)
 

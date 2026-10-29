@@ -5,7 +5,8 @@
 POST /inspect with two files, `rgb` (any image PIL reads) and `xyz` (the
 organised point cloud as a 3-channel float TIFF, as MVTec 3D-AD stores it),
 returns the decision for that part as JSON, including `sensor_alert` when a
-sensor counted for less than half. GET /status reports sensor health over the
+sensor counted for less than half and the milliseconds each stage took.
+GET /status reports sensor health and the median time per part over the
 current window. Parts must be sent in the order
 they come off the line, because the reliability window carries over from one
 request to the next. POST /reset clears it.
@@ -73,7 +74,8 @@ def create_app(inspector: Inspector) -> FastAPI:
             )
         with lock:
             result = inspector.inspect_raw(image, cloud)
-        return result.as_dict(with_map=with_map)
+            timings = {k: round(1000 * v, 1) for k, v in inspector.timings.items()}
+        return result.as_dict(with_map=with_map) | {"timings_ms": timings}
 
     @app.get("/status")
     def status() -> dict[str, Any]:

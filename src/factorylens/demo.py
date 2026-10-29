@@ -300,7 +300,7 @@ def load_split(root: str, cache_dir: str, category: str, split: str) -> Prepared
 def build_app(
     models: str | Path, root: str | Path, cache_dir: str | Path, max_parts: int | None = None
 ) -> Any:
-    import gradio as gr  # type: ignore[import-not-found, unused-ignore]  # only in the demo extra
+    import gradio as gr  # type: ignore[import-not-found, import-untyped, unused-ignore]  # only in the demo extra
 
     available = sorted(p.stem for p in Path(models).glob("*.pt"))
     if not available:

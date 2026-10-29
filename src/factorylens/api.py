@@ -7,9 +7,11 @@ organised point cloud as a 3-channel float TIFF, as MVTec 3D-AD stores it),
 returns the decision for that part as JSON, including `sensor_alert` when a
 sensor counted for less than half and the milliseconds each stage took.
 GET /status reports sensor health and the median time per part over the
-current window. Parts must be sent in the order
-they come off the line, because the reliability window carries over from one
-request to the next. POST /reset clears it.
+current window, and the recent alarm rate against the range expected from
+the calibration set. Parts must be sent in the order they come off the line,
+because the reliability window carries over from one request to the next.
+POST /reset clears it. POST /confirm?part=N adds part N, checked by an
+operator and found good, to the calibration set.
 
 Needs the `serve` extra: uv sync --extra serve
 """
@@ -81,6 +83,20 @@ def create_app(inspector: Inspector) -> FastAPI:
     def status() -> dict[str, Any]:
         with lock:
             return inspector.status()
+
+    @app.post("/confirm")
+    def confirm(part: int) -> dict[str, Any]:
+        with lock:
+            try:
+                inspector.confirm_good(part)
+            except KeyError as e:
+                raise HTTPException(404, str(e.args[0])) from e
+            except ValueError as e:
+                raise HTTPException(409, str(e)) from e
+            return {
+                "calibration_parts": len(inspector.calibration),
+                "confirmed": inspector.meta["confirmed"],
+            }
 
     @app.post("/reset")
     def reset() -> dict[str, str]:

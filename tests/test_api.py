@@ -67,9 +67,18 @@ def test_bad_uploads_are_rejected(client, root):
 
 
 def test_status_and_reset(client, root):
-    assert client.get("/status").json() == {"parts_in_window": 0}
+    assert client.get("/status").json()["parts_in_window"] == 0
     client.post("/inspect", files=files(root))
     status = client.get("/status").json()
     assert status["parts_in_window"] == 1 and status["ms_per_part"] > 0
     assert client.post("/reset").json() == {"status": "reset"}
-    assert client.get("/status").json() == {"parts_in_window": 0}
+    assert client.get("/status").json()["parts_in_window"] == 0
+
+
+def test_confirming_a_good_part(client, root):
+    n = client.get("/status").json()["calibration_parts"]
+    part = client.post("/inspect", files=files(root)).json()["part"]
+    r = client.post(f"/confirm?part={part}")
+    assert r.status_code == 200 and r.json() == {"calibration_parts": n + 1, "confirmed": 1}
+    assert client.post(f"/confirm?part={part}").status_code == 404  # only once
+    assert client.post("/confirm?part=999").status_code == 404

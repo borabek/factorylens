@@ -13,6 +13,7 @@ the ImageNet backbone weights come from torchvision as usual.
 
 from __future__ import annotations
 
+import math
 import time
 from collections import deque
 from dataclasses import asdict, dataclass, field
@@ -33,6 +34,8 @@ from factorylens.models.patchcore import PatchCore, PatchCoreConfig
 from factorylens.sweep import SweepConfig
 
 FORMAT = 1
+RECENT = 100  # parts kept for the alarm rate and for confirming good parts
+MIN_FOR_RATE = 20  # parts before the alarm rate is judged
 
 
 @dataclass(frozen=True)
@@ -57,21 +60,35 @@ class Inspection:
     # each sensor's own map, on the same scale, before weighting
     map_rgb: np.ndarray | None = field(default=None, repr=False)
     map_3d: np.ndarray | None = field(default=None, repr=False)
+    part: int = 0  # number of this part since the model was loaded, for confirm_good()
+    # both sensors looked off; both are then kept at full weight, but it needs a person
+    both_off: bool = field(default=False, repr=False)
 
     @property
     def sensor_alert(self) -> str | None:
         """Which sensor needs looking at: counted at less than half weight for this part."""
-        off = [name for name, w in (("rgb", self.weight_rgb), ("3d", self.weight_3d)) if w < 0.5]
-        return "+".join(off) if off else None
+        return _alert(self.weight_rgb, self.weight_3d, self.both_off)
 
     def as_dict(self, with_map: bool = False) -> dict[str, Any]:
-        maps = {"anomaly_map", "map_rgb", "map_3d"}
-        d = {k: v for k, v in asdict(self).items() if k not in maps}
-        d = {k: (bool(v) if isinstance(v, (bool, np.bool_)) else float(v)) for k, v in d.items()}
+        skip = {"anomaly_map", "map_rgb", "map_3d", "both_off"}
+        d: dict[str, Any] = {k: _plain(v) for k, v in asdict(self).items() if k not in skip}
         d["sensor_alert"] = self.sensor_alert
         if with_map:
             d["anomaly_map"] = np.round(self.anomaly_map, 3).tolist()
         return d
+
+
+def _alert(weight_rgb: float, weight_3d: float, both_off: bool) -> str | None:
+    if both_off:
+        return "rgb+3d"
+    off = [name for name, w in (("rgb", weight_rgb), ("3d", weight_3d)) if w < 0.5]
+    return "+".join(off) if off else None
+
+
+def _plain(v: Any) -> bool | int | float:
+    if isinstance(v, (bool, np.bool_)):
+        return bool(v)
+    return v if isinstance(v, int) else float(v)
 
 
 def _sweep_from(d: dict[str, Any]) -> SweepConfig:
@@ -95,6 +112,9 @@ class Inspector:
         bank = self.config.sweep.rgb.bank_config()
         self.rgb_bank, self.geo_bank = MemoryBank(bank), MemoryBank(bank)
         self.meta: dict[str, Any] = {}
+        self.parts_seen = 0
+        # fused score of each recent part, or None if a sensor was down-weighted for it
+        self.recent: dict[int, float | None] = {}
         self.reset()
 
     # -- fitting ---------------------------------------------------------------
@@ -148,23 +168,62 @@ class Inspector:
             "geo": deque(maxlen=window),
             "seconds": deque(maxlen=window),
         }
+        self.alarms: deque[bool] = deque(maxlen=RECENT)
         # seconds per stage for the last part; exact on the CPU, where nothing runs async
         self.timings: dict[str, float] = {}
 
     def status(self) -> dict[str, Any]:
-        """Sensor health over the current window, for a line monitor."""
-        out: dict[str, Any] = {"parts_in_window": len(self.history["rgb"])}
+        """Sensor health over the current window and the recent alarm rate, for a line monitor.
+
+        The alarm rate counts every alarm, defects included, so a rate above the
+        expected range means either more defects than usual or normal parts that
+        no longer look like the calibration parts (drift). Either is worth a look.
+        """
+        out: dict[str, Any] = {
+            "parts_in_window": len(self.history["rgb"]),
+            "calibration_parts": len(self.calibration),
+            "threshold": self.threshold if math.isfinite(self.threshold) else None,
+        }
         if out["parts_in_window"]:
             u_rgb, u_geo = np.median(self.history["rgb"]), np.median(self.history["geo"])
             w = self.fusion.weights_from(np.array([u_rgb]), np.array([u_geo]))
+            assert w.both_off is not None
             out |= {
                 "health_rgb": float(u_rgb),
                 "health_3d": float(u_geo),
                 "weight_rgb": float(w.rgb[0]),
                 "weight_3d": float(w.geo[0]),
+                "sensor_alert": _alert(w.rgb[0], w.geo[0], bool(w.both_off[0])),
                 "ms_per_part": 1000 * float(np.median(self.history["seconds"])),
             }
+        if len(self.alarms) >= MIN_FOR_RATE:
+            rate = float(np.mean(self.alarms))
+            lo, hi = conformal.alarm_rate_range(
+                len(self.calibration), self.config.alpha, len(self.alarms)
+            )
+            out |= {
+                "alarm_rate": rate,
+                "alarm_rate_expected": [lo, hi],
+                "alarm_rate_high": rate > hi,
+            }
         return out
+
+    def confirm_good(self, part: int) -> None:
+        """An operator checked a recent part and it is good: add it to the calibration set.
+
+        Only parts inspected with both sensors at full weight can be added, because
+        only then is their score on the same scale as the calibration scores. More
+        calibration parts make the alarm rate tighter, and parts from the current
+        run correct a shift between the validation parts and the line.
+        """
+        if part not in self.recent:
+            raise KeyError(f"part {part} is not among the last {RECENT} parts inspected")
+        score = self.recent.pop(part)
+        if score is None:
+            raise ValueError(f"a sensor was down-weighted for part {part}, so it can't calibrate")
+        self.calibration = np.append(self.calibration, score)
+        self.threshold = conformal.threshold(self.calibration, self.config.alpha)
+        self.meta["confirmed"] = self.meta.get("confirmed", 0) + 1
 
     def inspect(self, rgb: np.ndarray, xyz: np.ndarray, foreground: np.ndarray) -> Inspection:
         """One preprocessed part: (S, S, 3) uint8 image, (S, S, 3) xyz, (S, S) object mask."""
@@ -203,6 +262,12 @@ class Inspector:
         )
         scores, maps = self.fusion.combine(r, g, w)
         score = float(scores[0])
+        self.parts_seen += 1
+        healthy = w.rgb[0] == 1 and w.geo[0] == 1
+        self.recent[self.parts_seen] = score if healthy else None
+        self.recent.pop(self.parts_seen - RECENT, None)
+        self.alarms.append(score > self.threshold)
+        assert w.both_off is not None
         out = Inspection(
             score=score,
             p_value=float(conformal.p_values(self.calibration, scores)[0]),
@@ -216,6 +281,8 @@ class Inspector:
             anomaly_map=maps[0].astype(np.float32),
             map_rgb=self.fusion.scale_rgb(r)[1][0].astype(np.float32),
             map_3d=self.fusion.scale_geo(g)[1][0].astype(np.float32),
+            part=self.parts_seen,
+            both_off=bool(w.both_off[0]),
         )
         lap("fusion")
         timings["total"] = last - start

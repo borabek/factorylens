@@ -95,7 +95,9 @@ def summary(r: Inspection, truth: str | None = None) -> str:
         f"| RGB | {r.weight_rgb:.2f} | {r.health_rgb:+.1f} | {r.score_rgb:.3f} |",
         f"| 3D | {r.weight_3d:.2f} | {r.health_3d:+.1f} | {r.score_3d:.3f} |",
     ]
-    if r.sensor_alert:
+    if r.both_off:
+        lines += ["", "Sensor alert: **both sensors** look off, so neither can be trusted."]
+    elif r.sensor_alert:
         lines += ["", f"Sensor alert: **{r.sensor_alert}** counted for less than half."]
     if truth is not None:
         lines += ["", f"Ground truth: `{truth}`"]

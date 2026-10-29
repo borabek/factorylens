@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- `sensor_alert` is `"rgb+3d"` when both sensors look off. Both are still kept at full weight, but the alert no longer stays empty in exactly the case where neither sensor can be trusted.
+- `GET /status` checks the alarm rate over the last 100 parts against the range expected from the calibration set (beta-binomial, 99%), so drift in normal parts shows up on a line monitor.
+- `Inspector.confirm_good` and `POST /confirm` add a part an operator found good to the calibration set. Every decision now carries a `part` number for this.
+
 ## 1.0.0 (2026-10-29)
 
 First release. Everything below was built and evaluated on MVTec 3D-AD, with the Future Factories analog data as a smaller sensor-only study.

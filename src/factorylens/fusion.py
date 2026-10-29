@@ -114,6 +114,8 @@ class Weights:
     geo: np.ndarray
     u_rgb: np.ndarray  # how far beyond the validation normals, in their SDs
     u_geo: np.ndarray
+    # both sensors looked off, so both were put back to full weight
+    both_off: np.ndarray | None = None
 
 
 class ReliabilityFusion:
@@ -185,7 +187,7 @@ class ReliabilityFusion:
         w_rgb, w_geo = self._weight(u_rgb), self._weight(u_geo)
         both_off = (w_rgb == 0) & (w_geo == 0)
         w_rgb[both_off], w_geo[both_off] = 1.0, 1.0
-        return Weights(w_rgb, w_geo, u_rgb, u_geo)
+        return Weights(w_rgb, w_geo, u_rgb, u_geo, both_off)
 
     def weights(
         self, rgb: Scored, geo: Scored, foreground: np.ndarray, points: np.ndarray

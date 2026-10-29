@@ -49,6 +49,22 @@ def false_alarm_quantiles(n: int, alpha: float, q: np.ndarray | list[float]) -> 
     return np.asarray(stats.beta.ppf(q, k, n + 1 - k))
 
 
+def alarm_rate_range(n: int, alpha: float, m: int, level: float = 0.99) -> tuple[float, float]:
+    """Range for the share of alarms among m normal parts, with n calibration parts.
+
+    The count is binomial given the false alarm rate, and the rate is
+    Beta(k, n + 1 - k) over calibration sets, so the count is beta-binomial.
+    A share outside this range is unlikely if the parts are still
+    exchangeable with the calibration set.
+    """
+    k = rank(n, alpha)
+    if k < 1:
+        return 0.0, 0.0
+    tail = (1 - level) / 2
+    lo, hi = np.asarray(stats.betabinom.ppf([tail, 1 - tail], m, k, n + 1 - k))
+    return float(lo / m), float(hi / m)
+
+
 def min_calibration(alpha: float, tolerance: float, confidence: float = 0.9) -> int:
     """Smallest n for which the false alarm rate stays below alpha + tolerance
     with the given probability over calibration sets."""

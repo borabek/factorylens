@@ -48,3 +48,16 @@ def test_min_calibration():
     )
     with pytest.raises(ValueError):
         conformal.min_calibration(0.05, -0.05)
+
+
+def test_alarm_rate_range_covers_simulated_runs():
+    rng = np.random.default_rng(0)
+    n, m, alpha = 30, 100, 0.1
+    lo, hi = conformal.alarm_rate_range(n, alpha, m, level=0.9)
+    inside = []
+    for _ in range(2000):
+        t = conformal.threshold(rng.normal(size=n), alpha)
+        rate = (rng.normal(size=m) > t).mean()
+        inside.append(lo <= rate <= hi)
+    assert np.mean(inside) >= 0.88  # a discrete range covers at least the level, up to noise
+    assert conformal.alarm_rate_range(5, 0.1, 50) == (0.0, 0.0)  # k = 0: never alarms

@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this code or FactoryLens-C, please cite it as below."
+title: "FactoryLens: reliability-aware RGB + 3D anomaly detection, a corruption benchmark and calibrated alarms"
+authors:
+  - family-names: "Ilban Bayrakci"
+    given-names: "Bora"
+    affiliation: "University of Essex"
+version: 1.0.0
+date-released: 2026-10-29
+license: MIT
+repository-code: "https://github.com/borabek/factorylens"
+keywords:
+  - anomaly detection
+  - industrial inspection
+  - multimodal fusion
+  - robustness
+  - conformal prediction
+  - MVTec 3D-AD

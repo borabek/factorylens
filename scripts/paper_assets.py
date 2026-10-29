@@ -199,7 +199,6 @@ def numbers() -> None:
         .groupby(["ramp", "window"])["auroc"]
         .mean()
     )
-    inspectors = pd.read_csv(ANALYSIS / "inspectors.csv")
     cable = conf.loc["cable_gland", "background_mean"]
     values = {
         "delaySixteen": f"{g.loc['window 16', 'delay']:.0f}",
@@ -211,10 +210,39 @@ def numbers() -> None:
         "cableBackground": f"{max(cable, 1 - cable):.2f}",
         "sensMin": f3(rgb.min()),
         "sensMax": f3(rgb.max()),
-        "msPerPart": f"{inspectors['ms_per_part'].mean():.0f}",
     }
-    values |= text_numbers()
+    values |= text_numbers() | latency_numbers()
     write("numbers", [f"\\newcommand{{\\{k}}}{{{v}}}" for k, v in values.items()])
+
+
+def latency_numbers() -> dict[str, str]:
+    """CPU cost of one part, from scripts/benchmark_latency.py."""
+    stages = pd.read_csv(ANALYSIS / "latency_stages.csv")
+    cpu = stages[(stages["device"] == "cpu") & (stages["banks"] == "float16")]
+    cpu = cpu.set_index("threads")
+    mps = stages[stages["device"] == "mps"]
+    core = (
+        pd.read_csv(ANALYSIS / "latency_coreset.csv")
+        .groupby("coreset_ratio")
+        .mean(numeric_only=True)
+    )
+    onnx = pd.read_csv(ANALYSIS / "latency_onnx.csv").set_index("threads")
+    four = cpu.loc[4]
+    return {
+        "cpuMs": f"{four['total_ms']:.0f}",
+        "cpuMsOne": f"{cpu.loc[1, 'total_ms']:.0f}",
+        "fpfhShare": f"{100 * four['fpfh_ms'] / four['total_ms']:.0f}\\%",
+        "mpsMs": f"{mps['total_ms'].iloc[0]:.0f}" if len(mps) else "--",
+        "peakGb": f"{four['peak_mb'] / 1000:.1f}",
+        "searchTen": f"{core.loc[0.1, 'banks_ms']:.0f}",
+        "searchOne": f"{core.loc[0.01, 'banks_ms']:.0f}",
+        "bankTen": f"{core.loc[0.1, 'bank_mb']:.0f}",
+        "bankOne": f"{core.loc[0.01, 'bank_mb']:.0f}",
+        "aurocTen": f3(core.loc[0.1, "auroc"]),
+        "aurocOne": f3(core.loc[0.01, "auroc"]),
+        "onnxOne": f"{onnx.loc[1, 'torch_ms']:.0f}",
+        "onnxOneOrt": f"{onnx.loc[1, 'onnxruntime_ms']:.0f}",
+    }
 
 
 def text_numbers() -> dict[str, str]:
@@ -230,6 +258,10 @@ def text_numbers() -> dict[str, str]:
     rob = pd.read_csv(ANALYSIS / "robustness_summary.csv")
     clean = rob.drop_duplicates("model").set_index("model")["clean"]
     occl = rob[rob["corruption"] == "occlusion"].set_index("model")["mean"]
+    by = rob.groupby(["sensor", "model"])["mean"].mean()
+    aupro = rob.groupby(["sensor", "model"])["aupro_mean"].mean()
+    cc = pd.read_csv(ANALYSIS / "conformal_clean.csv")
+    clean_far = cc[cc["alpha"] == 0.1].groupby("detector")["false_alarm"].mean()
     broken = pd.read_csv(ANALYSIS / "conformal_broken.csv")
     rgb = broken[broken["sensor"] == "rgb"]
     far = rgb.groupby("detector")["false_alarm"].mean()
@@ -252,6 +284,13 @@ def text_numbers() -> dict[str, str]:
         "spreadMin": f"{1 / max(weights):.0f}",
         "spreadMax": f"{1 / min(weights):.0f}",
         "earlyOurs": f3(clean["early"]),
+        "lateRgb": f3(by[("rgb", "late")]),
+        "reliableRgb": f3(by[("rgb", "reliable_window")]),
+        "healthyRgb": f3(clean["fpfh"]),
+        "lateAuproRgb": f3(aupro[("rgb", "late")]),
+        "reliableAuproRgb": f3(aupro[("rgb", "reliable_window")]),
+        "reliableAuproGeo": f3(aupro[("xyz", "reliable_window")]),
+        "cleanFalse": pct(clean_far["reliable_window"]),
         "occlusionPerImage": f3(occl["reliable"]),
         "occlusionLate": f3(occl["late"]),
         "extentCost": f3(clean["reliable_window"] - clean["reliable_extent"]),

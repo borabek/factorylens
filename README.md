@@ -1,6 +1,6 @@
 # FactoryLens
 
-[![ci](https://github.com/borabek/factorylens/actions/workflows/ci.yml/badge.svg)](https://github.com/borabek/factorylens/actions/workflows/ci.yml) [![demo](https://img.shields.io/badge/demo-Hugging%20Face-yellow)](https://huggingface.co/spaces/bora2005/factorylens)
+[![ci](https://github.com/borabek/factorylens/actions/workflows/ci.yml/badge.svg)](https://github.com/borabek/factorylens/actions/workflows/ci.yml) [![demo](https://img.shields.io/badge/demo-Hugging%20Face-yellow)](https://huggingface.co/spaces/bora2005/factorylens) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23764784.svg)](https://doi.org/10.5281/zenodo.23764784)
 
 Anomaly detection for industrial inspection using an RGB camera and a 3D sensor together, with a focus on what happens when one of the two sensors gets noisy or fails.
 

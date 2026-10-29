@@ -9,6 +9,7 @@ version: 1.0.0
 date-released: 2026-10-29
 license: MIT
 repository-code: "https://github.com/borabek/factorylens"
+doi: 10.5281/zenodo.23764784
 keywords:
   - anomaly detection
   - industrial inspection

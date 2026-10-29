@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 (2026-10-29)
+
+The inspector watches its own reliability on a line.
 
 - `sensor_alert` is `"rgb+3d"` when both sensors look off. Both are still kept at full weight, but the alert no longer stays empty in exactly the case where neither sensor can be trusted.
 - `GET /status` checks the alarm rate over the last 100 parts against the range expected from the calibration set (beta-binomial, 99%), so drift in normal parts shows up on a line monitor.

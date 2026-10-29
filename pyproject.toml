@@ -1,6 +1,6 @@
 [project]
 name = "factorylens"
-version = "1.0.0"
+version = "1.1.0"
 description = "RGB + 3D anomaly detection for industrial inspection"
 readme = "README.md"
 license = "MIT"

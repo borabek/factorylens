@@ -33,6 +33,7 @@ Each pair is an RGB image and an organised point cloud (H × W × 3 float TIFF i
 | `health_rgb`, `health_3d` | how far each sensor's anomaly map sits beyond anything seen on the validation parts, in their SDs; ≤ 0 looks normal |
 | `score_rgb`, `score_3d` | the two single-sensor scores |
 | `sensor_alert` | `"rgb"`, `"3d"` or `"rgb+3d"` when that sensor counted for less than half; `null` otherwise |
+| `timings_ms` | milliseconds per stage for this part and in total (HTTP only; `Inspector.timings` in Python, in seconds) |
 
 The weights come from the median health over the last 16 parts. So a sensor that starts failing is switched off after a few parts, and one bad part does not switch it off on its own. The first parts after starting have a shorter history. `Inspector.reset()` (or `POST /reset`) clears it, for example after a sensor has been repaired.
 
@@ -46,7 +47,7 @@ curl -X POST localhost:8000/inspect -F rgb=@part1.png -F xyz=@part1.tiff
 
 - `GET /health` shows the model and its settings.
 - `POST /inspect` returns the JSON above. Add `?with_map=true` to get the anomaly map as well.
-- `GET /status` reports each sensor's health and weight over the current window, for a line monitor.
+- `GET /status` reports each sensor's health and weight over the current window, and the median time per part, for a line monitor.
 - `POST /reset` clears the window.
 
 Requests are handled one at a time, because the window is shared state.
@@ -72,6 +73,6 @@ Requests are handled one at a time, because the window is shared state.
 
 - The means match the benchmark through a different code path, which runs the whole test set at once: AUROC 0.876, false alarms 0.089, defects caught 0.668 (results.md, robustness and alarm thresholds).
 - Per category, the false alarm rate at a 10% target ranges from 0% to 19%. That is the spread the Beta distribution predicts for 22–42 calibration parts, so it is not a fault of a particular category.
-- Fitting takes 50–130 s per category. Inspection takes 60–100 ms per part on an M4 MacBook Air, plus about 50 ms for background removal on a raw 800 × 800 scan. These are laptop numbers, not a claim about factory hardware.
+- Fitting takes 50–130 s per category. Inspection takes 60–100 ms per part on an M4 MacBook Air with the backbone on the GPU (MPS), plus background removal on the raw scan. On the CPU alone a raw scan takes about 150 ms in total; [latency.md](latency.md) breaks that down by stage and shows what the coreset size, threads, float16 and ONNX change. These are laptop numbers, not a claim about factory hardware.
 
 See also the [model card](model_card.md).

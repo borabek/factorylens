@@ -78,6 +78,10 @@ def test_raw_scans_are_preprocessed_first(inspector, root):
         mvtec3d.load_rgb(sample.rgb_path), mvtec3d.load_xyz(sample.xyz_path)
     )
     assert np.isfinite(out.score)
+    t = inspector.timings
+    assert list(t) == ["preprocess", "backbone", "rgb_bank", "fpfh", "fpfh_bank", "fusion", "total"]
+    assert all(v >= 0 for v in t.values())
+    assert inspector.status()["ms_per_part"] == pytest.approx(1000 * t["total"])
 
 
 def test_old_model_files_are_refused(inspector, tmp_path):

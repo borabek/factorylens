@@ -41,7 +41,7 @@ Early fusion scores higher on clean data (0.910) but collapses when a sensor deg
 - **Reaction time.** Sensor health is judged over the last 16 parts. After a sensor fails, it takes a median of 7 parts to down-weight it. A shorter window reacts faster but switches healthy sensors off more often (results.md, "A sensor that fails mid-run").
 - **Calibration size.** With about 30 validation parts, a 10% false alarm target can land anywhere between 3% and 20% for a given calibration set. The guarantee also assumes new normal parts look like the validation parts. That fails for FPFH on tire, where the 3D detector on its own alarms on 44% of good parts. Adding five confirmed-good parts from the current run to the calibration set brings it down to 16%.
 - **Dataset artefacts.** In several MVTec 3D-AD categories, normal and defective test images differ in lighting ([data.md](data.md)). A control run showed the detectors here do not exploit it, but the absolute numbers are from this dataset only.
-- **Hardware.** About 105 ms per part on an M4 laptop (MPS). This was not measured on industrial or edge hardware.
+- **Hardware.** About 150 ms per part on the CPU of an M4 laptop, 1.5 GB peak memory ([latency.md](latency.md)). A 1% coreset cuts the search from 38 to 5 ms at no measurable cost in AUROC. Nothing was measured on industrial or edge hardware.
 
 ## Ethical considerations
 

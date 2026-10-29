@@ -4,11 +4,11 @@
 
 Anomaly detection for industrial inspection using an RGB camera and a 3D sensor together, with a focus on what happens when one of the two sensors gets noisy or fails.
 
-This is a work in progress (started October 2026). The research question, the dataset decision and the hypotheses are in [docs/research_plan.md](docs/research_plan.md).
+The write-up is a short paper in [paper/](paper/) (`make paper` builds it). The research question, the dataset decision and the hypotheses are in [docs/research_plan.md](docs/research_plan.md). How the inspector would sit on a real production line, and what is missing for that, is in [docs/architecture.md](docs/architecture.md).
 
-## Where things are
+## Results
 
-**First results** (full tables in [docs/results.md](docs/results.md)), image AUROC averaged over the 10 categories:
+**Reproducing Back to the Feature** (full tables in [docs/results.md](docs/results.md)), image AUROC averaged over the 10 categories:
 
 | | this repo | published (Back to the Feature) |
 |---|---|---|
@@ -37,7 +37,9 @@ This is a work in progress (started October 2026). The research question, the da
 - Late fusion survives a dead sensor at no cost, because a constant score doesn't change the ranking. A *noisy* sensor still drags it down: 0.764 when the RGB image is corrupted, against 0.793 for FPFH alone.
 - **Reliability fusion** ([src/factorylens/fusion.py](src/factorylens/fusion.py)) reads each sensor's health without labels, from the background level of its anomaly map against the validation normals over the last 16 parts, and down-weights the one that looks off. It keeps the clean score (0.876, same as late fusion), reaches 0.788 with the RGB image corrupted and 0.832 with the point cloud corrupted, and has the best localisation under 3D corruption (AUPRO 0.930). It beats late fusion significantly on blur and JPEG and loses on nothing. Occlusion is the one corruption it doesn't fix, because a local occluder looks like a defect. An optional second signal (how much of the object lights up) fixes that too (0.794, the healthy sensor's score) at a cost of 0.007 on clean data. It also matters when the fault starts: on a mid-run failure, a 4-part window reacts within a part, while the default 16 needs 7 (`scripts/fault_stream.py`).
 
-**From scores to alarms** ([src/factorylens/conformal.py](src/factorylens/conformal.py), split-conformal thresholds from the validation normals): on clean data the false alarm rate matches the target (9% for a 10% target). But with only 22–33 normal parts per category, a single calibration set can land anywhere between 3% and 20%. And with thresholds set on clean parts, a corrupted RGB camera makes late fusion alarm on 94% of normal parts, while reliability fusion stays at 19% and still catches as many defects as the healthy sensor.
+**From scores to alarms** ([src/factorylens/conformal.py](src/factorylens/conformal.py), split-conformal thresholds from the validation normals): on clean data the false alarm rate matches the target (9% for a 10% target). But with only 22–42 normal parts per category, a single calibration set can land anywhere between 3% and 20%. And with thresholds set on clean parts, a corrupted RGB camera makes late fusion alarm on 94% of normal parts, while reliability fusion stays at 19% and still catches as many defects as the healthy sensor.
+
+**Cost on a CPU** ([docs/latency.md](docs/latency.md)): about 150 ms per part on a laptop CPU, peak 1.5 GB, with the 3D features (FPFH) the largest stage. Threads and the GPU change little. Keeping 1% of the training patches in the memory banks instead of 10% cuts the search from 38 to 5 ms with the same mean AUROC (0.878 vs 0.876), and `factorylens fit --coreset-ratio` exposes it. Laptop numbers, not edge hardware.
 
 Findings from the data itself, each with the script that produces it:
 
@@ -92,6 +94,10 @@ Download instructions are in [docs/data.md](docs/data.md). The code downloads pu
 
 - [MVTec 3D-AD](https://www.mvtec.com/company/research/datasets/mvtec-3d-ad) (CC BY-NC-SA 4.0), the main benchmark
 - [Future Factories analog dataset](https://www.kaggle.com/datasets/ramyharik/ff-2023-12-12-analog-dataset) (CC BY-SA 4.0), used for a smaller sensor-only study
+
+## Citing
+
+If you use the code or FactoryLens-C, please cite the release; GitHub's "Cite this repository" button gives the entry from [CITATION.cff](CITATION.cff). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

@@ -4,7 +4,8 @@ import torch
 from test_fpfh import fake_fpfh_map
 from test_sweep import TINY
 
-from factorylens import corruptions
+from factorylens import conformal, corruptions
+from factorylens import inspector as insp
 from factorylens.data import cache, mvtec3d
 from factorylens.fusion import ReliabilityConfig
 from factorylens.inspector import Inspector, InspectorConfig
@@ -66,10 +67,53 @@ def test_a_dead_camera_is_switched_off_after_the_window_fills(inspector, splits)
     assert results[-1].sensor_alert == "rgb" and results[-1].as_dict()["sensor_alert"] == "rgb"
     status = inspector.status()
     assert status["weight_rgb"] == 0 and status["parts_in_window"] == 3
+    assert status["sensor_alert"] == "rgb"
+    # its score isn't on the calibration scale, so it can't be confirmed as good
+    with pytest.raises(ValueError, match="down-weighted"):
+        inspector.confirm_good(results[-1].part)
     inspector.reset()
-    assert inspector.status() == {"parts_in_window": 0}
+    assert inspector.status()["parts_in_window"] == 0
     clean = inspector.inspect(*parts(splits["validation"])[0])
     assert clean.weight_rgb == 1 and clean.sensor_alert is None
+
+
+def test_both_sensors_off_is_an_alert_too(inspector, splits):
+    both = corruptions.corrupt(
+        corruptions.corrupt(splits["test"], "rgb_missing", 1), "xyz_missing", 1
+    )
+    results = [inspector.inspect(*part) for part in parts(both)]
+    # nothing is left to decide with, so both keep full weight, but a person has to look
+    assert results[-1].weight_rgb == results[-1].weight_3d == 1
+    assert results[-1].sensor_alert == "rgb+3d"
+    assert "both_off" not in results[-1].as_dict()
+    assert inspector.status()["sensor_alert"] == "rgb+3d"
+
+
+def test_confirmed_good_parts_join_the_calibration_set(inspector, splits):
+    n = len(inspector.calibration)
+    out = inspector.inspect(*parts(splits["validation"])[0])
+    assert out.part == 1 and out.as_dict()["part"] == 1
+    inspector.confirm_good(out.part)
+    assert len(inspector.calibration) == n + 1 and inspector.calibration[-1] == out.score
+    assert inspector.meta["confirmed"] == 1
+    assert inspector.threshold == conformal.threshold(inspector.calibration, CONFIG.alpha)
+    with pytest.raises(KeyError):
+        inspector.confirm_good(out.part)
+
+
+def test_the_alarm_rate_is_judged_after_enough_parts(inspector, splits):
+    good = parts(splits["validation"]) * insp.RECENT
+    for part in good[: insp.MIN_FOR_RATE - 1]:
+        inspector.inspect(*part)
+    assert "alarm_rate" not in inspector.status()
+    inspector.threshold = -np.inf  # every part alarms from here, as if the line had drifted
+    for part in good[: insp.RECENT]:
+        inspector.inspect(*part)
+    status = inspector.status()
+    lo, hi = status["alarm_rate_expected"]
+    n = len(inspector.calibration)
+    assert (lo, hi) == conformal.alarm_rate_range(n, CONFIG.alpha, insp.RECENT) and hi < 1
+    assert status["alarm_rate"] == 1 and status["alarm_rate_high"]
 
 
 def test_raw_scans_are_preprocessed_first(inspector, root):

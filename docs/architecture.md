@@ -23,7 +23,7 @@ flowchart LR
 3. **Inference on the edge PC.** `Inspector` holds both memory banks, the fusion statistics and the alarm threshold for one product. It answers one part at a time and keeps the reliability window as state. The reject decision has to arrive within the line's cycle time, which is why inference sits next to the machine rather than in a data centre. On the laptop a part takes about 150 ms end to end on the CPU ([latency.md](latency.md)).
 4. **Reject signal.** `alarm` would go to the PLC, which drives the reject gate. Nothing here talks to a PLC. In practice that would be OPC UA or a digital output, and it needs a watchdog: if the inspector does not answer in time, the part should be rejected or held, not passed.
 5. **Monitoring.** Every answer also carries the score, the conformal p-value, both sensor weights and `sensor_alert`. These go to the line's monitoring system as a time series. `GET /status` gives the current health of both sensors without inspecting a part.
-6. **People in the loop.** An operator reviews alarms and sensor alerts. Their answers come back in two ways: confirmed-good parts at the start of a run tighten the alarm threshold, and `POST /reset` clears the reliability window after a sensor has been cleaned or replaced.
+6. **People in the loop.** An operator reviews alarms and sensor alerts. Their answers come back in two ways. `POST /confirm` adds a part they checked and found good to the calibration set, which tightens the alarm threshold and corrects a shift between the validation parts and the current run. `POST /reset` clears the reliability window after a sensor has been cleaned or replaced.
 
 ## Time budget
 
@@ -46,8 +46,9 @@ The reject gate has to know the answer before the part reaches it. What is left 
 | fit a model per product | `factorylens fit`, one `.pt` file per product | a model registry with versions and who approved each one |
 | inspect a part | `Inspector.inspect_raw`, `POST /inspect` | sensor drivers, trigger handling |
 | decide reject / pass | `alarm` at a stated false alarm rate | PLC interface, timeout behaviour |
-| sensor health | weights, `sensor_alert`, `GET /status` | alerts routed to maintenance |
-| recalibrate | add confirmed-good parts to the calibration set (results.md, alarm thresholds) | a UI for the operator to confirm parts |
+| sensor health | weights, `sensor_alert` (also when both sensors look off), `GET /status` | alerts routed to maintenance |
+| drift in normal parts | recent alarm rate against the range the calibration set predicts, `GET /status` | a policy for what happens when it is high |
+| recalibrate | `Inspector.confirm_good`, `POST /confirm` | a UI for the operator to confirm parts, and a record of who confirmed what |
 | reset after repair | `Inspector.reset()`, `POST /reset` | a record of who reset it and why |
 | timing | `Inspector.timings`, `scripts/benchmark_latency.py` | measurement on the actual edge hardware |
 
@@ -67,10 +68,10 @@ The reject gate has to know the answer before the part reaches it. What is left 
 | 3D sensor loses points (reflective part, dust) | fewer valid points, FPFH map lifts | 3D weight drops, `sensor_alert = "3d"` |
 | one sensor dies completely | constant or empty input | that sensor is switched off; late fusion alone would also cope, early fusion would not |
 | something blocks part of the image | a local blob, like a defect | **not caught** by the default signal; the extent option catches it at a small cost on clean data |
-| both sensors look off | both weights would be 0 | both kept at full weight, since switching both off leaves nothing to decide with; `health_rgb` and `health_3d` both show it, but `sensor_alert` stays empty, which is a gap |
-| a new batch of material looks slightly different | normal parts score higher, false alarms rise | not detected as a sensor fault; the alarm rate in monitoring rises and the calibration set should be refreshed |
+| both sensors look off | both weights would be 0 | both kept at full weight, since switching both off leaves nothing to decide with, and `sensor_alert = "rgb+3d"` so a person looks |
+| a new batch of material looks slightly different | normal parts score higher, false alarms rise | not a sensor fault; `GET /status` flags the alarm rate once it leaves its expected range, and confirming a few good parts from the new batch recalibrates |
 
-The last row is the main gap. The reliability signal separates "this sensor is broken" from "this part is defective". It does not separate either of those from a slow drift in what normal parts look like. Watching the alarm rate against its expected range is the simplest guard. A real deployment would also need a recalibration policy.
+The last row is the hardest case. The reliability signal separates "this sensor is broken" from "this part is defective". It does not separate either of those from a slow drift in what normal parts look like. The inspector therefore watches its own alarm rate over the last 100 parts. With n calibration parts, the number of alarms among m normal parts follows a beta-binomial distribution (the binomial given the false alarm rate, and Beta(k, n + 1 − k) for the rate itself), and `/status` reports the 99% range and whether the rate is above it. That rate counts real defects too, so a high rate means either more defects than usual or drift; both need a person. It is a check, not a cure. What to do when it fires (stop, recalibrate, refit) is a policy a real line has to decide.
 
 ## Data handling
 

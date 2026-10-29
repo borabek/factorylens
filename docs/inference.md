@@ -32,7 +32,8 @@ Each pair is an RGB image and an organised point cloud (H × W × 3 float TIFF i
 | `weight_rgb`, `weight_3d` | how much each sensor counted for this part (0–1) |
 | `health_rgb`, `health_3d` | how far each sensor's anomaly map sits beyond anything seen on the validation parts, in their SDs; ≤ 0 looks normal |
 | `score_rgb`, `score_3d` | the two single-sensor scores |
-| `sensor_alert` | `"rgb"`, `"3d"` or `"rgb+3d"` when that sensor counted for less than half; `null` otherwise |
+| `sensor_alert` | `"rgb"`, `"3d"` or `"rgb+3d"` when that sensor counted for less than half, or when both looked off (both are then kept at full weight); `null` otherwise |
+| `part` | number of the part since the model was loaded, for `POST /confirm` |
 | `timings_ms` | milliseconds per stage for this part and in total (HTTP only; `Inspector.timings` in Python, in seconds) |
 
 The weights come from the median health over the last 16 parts. So a sensor that starts failing is switched off after a few parts, and one bad part does not switch it off on its own. The first parts after starting have a shorter history. `Inspector.reset()` (or `POST /reset`) clears it, for example after a sensor has been repaired.
@@ -47,8 +48,9 @@ curl -X POST localhost:8000/inspect -F rgb=@part1.png -F xyz=@part1.tiff
 
 - `GET /health` shows the model and its settings.
 - `POST /inspect` returns the JSON above. Add `?with_map=true` to get the anomaly map as well.
-- `GET /status` reports each sensor's health and weight over the current window, and the median time per part, for a line monitor.
-- `POST /reset` clears the window.
+- `GET /status` reports each sensor's health and weight over the current window and the median time per part. After 20 parts it also gives the alarm rate over the last 100 against the range expected from the calibration set (`alarm_rate`, `alarm_rate_expected`, `alarm_rate_high`). A rate above the range means more defects than usual or normal parts drifting away from the calibration parts.
+- `POST /confirm?part=N` adds part N to the calibration set after an operator has checked it and found it good. Only one of the last 100 parts inspected with both sensors at full weight can be added, and each part only once. `Inspector.save` keeps the added parts.
+- `POST /reset` clears the window and the alarm history.
 
 Requests are handled one at a time, because the window is shared state.
 

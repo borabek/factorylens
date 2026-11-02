@@ -11,10 +11,20 @@ k / (n + 1) <= alpha on average over calibration sets. For one fixed
 calibration set it is random: Beta(k, n + 1 - k) distributed (Vovk 2012),
 which is what decides how many normal parts a line needs before the promised
 rate means anything. With k = 0 (n < 1/alpha - 1) the rule never alarms.
+
+`FaultTest` asks a different question of the same idea: has a stream of values
+stopped looking like its calibration values? Each new value gets a conformal
+p-value against the calibration values and everything seen so far. If the
+stream is exchangeable those p-values are independent and uniform (Vovk 2005),
+so a betting function that integrates to 1 over [0, 1] has mean 1 on them, and
+the Shiryaev-Roberts statistic R = (1 + R) * bet(p) has R_t - t as a martingale.
+Doob's inequality then bounds a false flag within t values by t / level, and
+the mean time to a false flag is at least `level`.
 """
 
 from __future__ import annotations
 
+import bisect
 import math
 
 import numpy as np
@@ -76,3 +86,47 @@ def min_calibration(alpha: float, tolerance: float, confidence: float = 0.9) -> 
         ):
             return n
     raise ValueError("no n below 100000 is enough")
+
+
+def bet(p: float, epsilon: float) -> float:
+    """Power betting function: integrates to 1 on [0, 1], large when p is small."""
+    return float(epsilon * p ** (epsilon - 1))
+
+
+class FaultTest:
+    """Flags a stream once its values stop looking like the calibration values.
+
+    Only large values count as evidence, and only their ranks matter, so the
+    scale of the signal needs no tuning. A flag stays up until a new test starts.
+    """
+
+    def __init__(
+        self,
+        calibration: np.ndarray | list[float],
+        epsilon: float = 0.1,
+        level: float = 1000.0,
+        seed: int = 0,
+    ) -> None:
+        if not 0 < epsilon < 1:
+            raise ValueError(f"epsilon must be between 0 and 1, got {epsilon}")
+        if level <= 1:
+            raise ValueError(f"level must be above 1, got {level}")
+        self.epsilon, self.level = epsilon, level
+        self.bag = sorted(float(v) for v in calibration)
+        self.statistic = 0.0
+        self.flagged = False
+        self._rng = np.random.default_rng(seed)
+
+    def update(self, value: float) -> bool:
+        """Take the next value; True once the stream has been flagged."""
+        if self.flagged:
+            return True
+        value = float(value)
+        low, high = bisect.bisect_left(self.bag, value), bisect.bisect_right(self.bag, value)
+        ties = high - low + 1  # the new value ties with itself
+        # 1 - random is in (0, 1], so the p-value is never exactly 0
+        p = (len(self.bag) - high + (1 - self._rng.random()) * ties) / (len(self.bag) + 1)
+        self.statistic = (1 + self.statistic) * bet(p, self.epsilon)
+        self.bag.insert(high, value)
+        self.flagged = self.statistic >= self.level
+        return self.flagged

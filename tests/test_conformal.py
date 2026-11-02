@@ -2,6 +2,7 @@ import math
 
 import numpy as np
 import pytest
+from scipy import integrate
 
 from factorylens import conformal
 
@@ -67,3 +68,61 @@ def test_alarm_rate_range_covers_simulated_runs():
 def test_alpha_outside_zero_to_one_is_refused(alpha):
     with pytest.raises(ValueError, match="between 0 and 1"):
         conformal.threshold(np.arange(22.0), alpha)
+
+
+def test_the_bet_has_mean_one_on_uniform_p_values():
+    assert integrate.quad(conformal.bet, 0, 1, args=(0.1,))[0] == pytest.approx(1)
+
+
+def test_fault_test_p_values_are_uniform_on_an_exchangeable_stream():
+    # one bet per value is all a run of R = (1 + R) * bet(p) sees, so recover p from it
+    rng = np.random.default_rng(0)
+    ps = []
+    for seed in range(300):
+        t = conformal.FaultTest(rng.normal(size=20), level=1e300, seed=seed)
+        for x in rng.normal(size=10):
+            before = t.statistic
+            t.update(x)
+            ps.append(((t.statistic / (1 + before)) / t.epsilon) ** (1 / (t.epsilon - 1)))
+    counts = np.histogram(ps, bins=10, range=(0, 1))[0]
+    assert counts.min() > 0.8 * len(ps) / 10 and counts.max() < 1.2 * len(ps) / 10
+
+
+def test_fault_test_keeps_its_false_flag_bound():
+    rng = np.random.default_rng(0)
+    t_max, level = 60, 200
+    flags = 0
+    runs = 1500
+    for seed in range(runs):
+        test = conformal.FaultTest(rng.normal(size=30), level=level, seed=seed)
+        flags += any(test.update(x) for x in rng.normal(size=t_max))
+    assert flags / runs <= t_max / level
+
+
+def test_fault_test_ignores_scale_and_notices_a_shift():
+    rng = np.random.default_rng(0)
+    calibration, clean = rng.normal(size=30), rng.normal(size=40)
+    a, b = conformal.FaultTest(calibration), conformal.FaultTest(calibration * 1000 + 5)
+    for x in clean:
+        a.update(x)
+        b.update(x * 1000 + 5)
+    assert a.statistic == pytest.approx(b.statistic)  # only ranks matter
+    assert not a.flagged
+    delay = next(i for i in range(100) if a.update(20.0 + i))
+    assert delay < 15
+
+
+def test_fault_test_only_treats_large_values_as_evidence():
+    t = conformal.FaultTest(np.arange(30.0))
+    assert not any(t.update(-100.0 - i) for i in range(200))
+
+
+def test_fault_test_flag_stays_up_and_settings_are_checked():
+    t = conformal.FaultTest(np.arange(30.0), level=2)
+    while not t.update(1000.0):
+        pass
+    assert t.update(-1000.0) and t.flagged
+    with pytest.raises(ValueError, match="epsilon"):
+        conformal.FaultTest([1.0], epsilon=1.5)
+    with pytest.raises(ValueError, match="level"):
+        conformal.FaultTest([1.0], level=0.5)

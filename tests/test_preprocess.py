@@ -111,3 +111,12 @@ def test_remove_background_drops_floating_specks():
     _, without, _ = pp.remove_background(xyz, border=5, min_component=0)
     assert without[2, 50] and not with_cleaning[2, 50]
     assert with_cleaning[box].mean() > 0.99
+
+
+def test_no_plane_from_points_that_cannot_give_one():
+    with pytest.raises(pp.NoBackground):
+        pp.fit_plane(np.ones((50, 3), np.float32))  # all the same point
+    with pytest.raises(pp.NoBackground):
+        pp.remove_background(np.zeros((40, 40, 3), np.float32))
+    with pytest.raises(pp.NoBackground):
+        pp.remove_background(np.full((40, 40, 3), np.nan, np.float32))

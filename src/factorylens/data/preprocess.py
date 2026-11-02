@@ -87,6 +87,10 @@ def _least_squares_plane(points: np.ndarray) -> Plane:
     return Plane(normal, float(-normal @ centroid))
 
 
+class NoBackground(ValueError):
+    """Too few usable points to find the background plane, e.g. a dead 3D sensor."""
+
+
 def fit_plane(
     points: np.ndarray,
     threshold: float = 0.002,
@@ -95,7 +99,7 @@ def fit_plane(
 ) -> Plane:
     """RANSAC plane fit to (N, 3) points, refined by least squares on the inliers."""
     if len(points) < 3:
-        raise ValueError("need at least 3 points to fit a plane")
+        raise NoBackground("need at least 3 points to fit a plane")
     rng = np.random.default_rng(seed)
     best, best_count = None, -1
     for _ in range(iterations):
@@ -106,8 +110,10 @@ def fit_plane(
         if count > best_count:
             best, best_count = plane, count
     if best is None:
-        raise ValueError("all sampled point triples were collinear")
+        raise NoBackground("all sampled point triples were collinear")
     inliers = points[np.abs(best.distance(points)) < threshold]
+    if len(inliers) < 3:  # values so large that the distances overflow
+        raise NoBackground("no plane fits these points")
     return _least_squares_plane(inliers)
 
 

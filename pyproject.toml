@@ -32,6 +32,7 @@ serve = [
 ]
 demo = [
     "gradio>=6.30.0",
+    "matplotlib>=3.11.2",
 ]
 
 [dependency-groups]

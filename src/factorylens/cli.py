@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
+import math
 import sys
 import time
 from collections.abc import Sequence
@@ -217,7 +219,7 @@ def fit_model(args: argparse.Namespace) -> int:
     from factorylens.inspector import Inspector, InspectorConfig
 
     config = InspectorConfig(alpha=args.alpha)
-    if args.coreset_ratio:
+    if args.coreset_ratio is not None:
         rgb = replace(config.sweep.rgb, coreset_ratio=args.coreset_ratio)
         config = replace(config, sweep=replace(config.sweep, rgb=rgb))
     splits = {
@@ -232,24 +234,52 @@ def fit_model(args: argparse.Namespace) -> int:
         f"validation parts, alarm threshold {inspector.threshold:.3f} for alpha {args.alpha}"
     )
     print(f"wrote {out}")
+    if math.isinf(inspector.threshold):
+        print(
+            f"warning: {len(splits['validation'])} validation parts are too few for alpha "
+            f"{args.alpha}, so this model will never alarm; it needs at least "
+            f"{math.ceil(1 / args.alpha) - 1}",
+            file=sys.stderr,
+        )
     return 0
 
 
 def inspect_parts(args: argparse.Namespace) -> int:
+    import tifffile
+
     from factorylens.data import mvtec3d
     from factorylens.inspector import Inspector
 
-    inspector = Inspector.load(args.model, device=args.device)
     if len(args.files) % 2:
         print("give the files in pairs: RGB image, then xyz TIFF", file=sys.stderr)
         return 2
+    try:
+        inspector = Inspector.load(args.model, device=args.device)
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
     for rgb_path, xyz_path in zip(args.files[::2], args.files[1::2], strict=True):
-        result = inspector.inspect_raw(mvtec3d.load_rgb(rgb_path), mvtec3d.load_xyz(xyz_path))
+        try:
+            scan = mvtec3d.load_rgb(rgb_path), mvtec3d.load_xyz(xyz_path)
+            result = inspector.inspect_raw(*scan)
+        except (OSError, ValueError, tifffile.TiffFileError) as e:
+            print(f"error: {rgb_path}, {xyz_path}: {e}", file=sys.stderr)
+            return 1
         print(json.dumps({"rgb": rgb_path, **result.as_dict()}))
     return 0
 
 
+def _installed(hint: str, *modules: str) -> bool:
+    """Say what is missing before starting a service that would only fail on its first part."""
+    missing = [m for m in modules if importlib.util.find_spec(m) is None]
+    if missing:
+        print(f"error: {', '.join(missing)} not installed; run: {hint}", file=sys.stderr)
+    return not missing
+
+
 def run_demo(args: argparse.Namespace) -> int:
+    if not _installed("uv sync --extra 3d --extra demo", "gradio", "matplotlib", "open3d"):
+        return 1
     from factorylens import demo
 
     demo.build_app(args.models, args.root, args.cache, max_parts=args.max_parts).launch(
@@ -259,6 +289,9 @@ def run_demo(args: argparse.Namespace) -> int:
 
 
 def serve_model(args: argparse.Namespace) -> int:
+    hint = "uv sync --extra 3d --extra serve"
+    if not _installed(hint, "fastapi", "uvicorn", "python_multipart", "open3d"):
+        return 1
     from factorylens import api
 
     api.serve(args.model, host=args.host, port=args.port)
@@ -297,6 +330,13 @@ def ff_blocks(args: argparse.Namespace) -> int:
         counts = part["label"].value_counts()
         print(f"{name}: {len(part)} cycles, " + ", ".join(f"{k} {v}" for k, v in counts.items()))
     return 0
+
+
+def _share(text: str) -> float:
+    value = float(text)
+    if not 0 < value < 1:
+        raise argparse.ArgumentTypeError(f"must be between 0 and 1, got {text}")
+    return value
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -400,12 +440,12 @@ def build_parser() -> argparse.ArgumentParser:
     fit.add_argument("root", nargs="?", default=DEFAULT_ROOT)
     fit.add_argument("--category", required=True, choices=mvtec3d.CATEGORIES)
     fit.add_argument("--cache", default=DEFAULT_CACHE)
-    fit.add_argument("--alpha", type=float, default=0.1, help="target false alarm rate")
+    fit.add_argument("--alpha", type=_share, default=0.1, help="target false alarm rate")
     fit.add_argument("--out", help="default: models/<category>.pt")
     fit.add_argument("--half", action="store_true", help="store the banks as float16")
     fit.add_argument(
         "--coreset-ratio",
-        type=float,
+        type=_share,
         help="share of training patches kept in each bank (default 0.1); see docs/latency.md",
     )
     fit.add_argument("--device")
@@ -457,7 +497,15 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    result: int = args.func(args)
+    try:
+        result: int = args.func(args)
+    except FileNotFoundError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
+    except ModuleNotFoundError as e:
+        hint = "uv sync --extra 3d" if e.name == "open3d" else "see the README"
+        print(f"error: {e.name} is not installed; {hint}", file=sys.stderr)
+        return 1
     return result
 
 

@@ -23,6 +23,8 @@ from scipy import stats
 
 def rank(n: int, alpha: float) -> int:
     """How many calibration scores may lie above the threshold."""
+    if not 0 < alpha < 1:
+        raise ValueError(f"alpha must be between 0 and 1, got {alpha}")
     return math.floor(alpha * (n + 1))
 
 

@@ -73,8 +73,8 @@ To use a fitted model on new parts, see [docs/inference.md](docs/inference.md) a
 ```bash
 uv run factorylens fit --category bagel                 # -> models/bagel.pt (with alarm threshold)
 uv run factorylens inspect models/bagel.pt part.png part.tiff
-uv run factorylens serve models/bagel.pt                # HTTP API, needs: uv sync --extra serve
-uv run factorylens demo                                 # Gradio demo, needs: uv sync --extra demo
+uv run factorylens serve models/bagel.pt                # HTTP API, needs: uv sync --extra 3d --extra serve
+uv run factorylens demo                                 # Gradio demo, needs: uv sync --extra 3d --extra demo
 ```
 
 The demo ([docs/demo.md](docs/demo.md)) breaks a sensor halfway through a simulated run and shows the weights and alarms part by part. A precomputed version runs on Hugging Face: [huggingface.co/spaces/bora2005/factorylens](https://huggingface.co/spaces/bora2005/factorylens) (MVTec 3D-AD derivatives, CC BY-NC-SA 4.0, non-commercial).
@@ -84,9 +84,11 @@ The demo ([docs/demo.md](docs/demo.md)) breaks a sensor halfway through a simula
 Needs [uv](https://docs.astral.sh/uv/) and Python 3.11+.
 
 ```bash
-make install   # creates .venv, installs pre-commit hooks
+make install   # creates .venv with the 3D features, installs pre-commit hooks
 make check     # lint, type check, tests with coverage
 ```
+
+`uv sync` replaces what is installed, so name all the extras you need in one command. On macOS, open3d needs libusb first: `brew install libusb`.
 
 ## Data
 

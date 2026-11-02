@@ -61,3 +61,9 @@ def test_alarm_rate_range_covers_simulated_runs():
         inside.append(lo <= rate <= hi)
     assert np.mean(inside) >= 0.88  # a discrete range covers at least the level, up to noise
     assert conformal.alarm_rate_range(5, 0.1, 50) == (0.0, 0.0)  # k = 0: never alarms
+
+
+@pytest.mark.parametrize("alpha", [0, 1, 1.5, -0.1])
+def test_alpha_outside_zero_to_one_is_refused(alpha):
+    with pytest.raises(ValueError, match="between 0 and 1"):
+        conformal.threshold(np.arange(22.0), alpha)

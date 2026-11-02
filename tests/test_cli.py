@@ -156,3 +156,30 @@ def test_fit_and_inspect_commands(root, tmp_path, monkeypatch, capsys):
     line = capsys.readouterr().out.strip()
     assert '"alarm"' in line and str(s.rgb_path) in line
     assert cli.main(["inspect", str(out), str(s.rgb_path)]) == 2
+
+
+@pytest.mark.parametrize(
+    "flag",
+    [["--alpha", "0"], ["--alpha", "1.5"], ["--coreset-ratio", "0"], ["--coreset-ratio", "-1"]],
+)
+def test_fit_refuses_shares_outside_zero_to_one(flag, capsys):
+    with pytest.raises(SystemExit):
+        cli.main(["fit", "--category", "bagel", *flag])
+    assert "between 0 and 1" in capsys.readouterr().err
+
+
+def test_inspect_reports_bad_files_without_a_traceback(tmp_path, capsys):
+    bad = tmp_path / "bad.pt"
+    bad.write_bytes(b"not a model")
+    assert cli.main(["inspect", str(bad), "a.png", "a.tiff"]) == 1
+    assert "not a FactoryLens model" in capsys.readouterr().err
+    assert cli.main(["inspect", str(tmp_path / "nope.pt"), "a.png", "a.tiff"]) == 1
+    assert "No such file" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("command", [["serve", "m.pt"], ["demo"]])
+def test_services_say_what_is_missing_before_starting(command, monkeypatch, capsys):
+    monkeypatch.setattr(cli.importlib.util, "find_spec", lambda name: None)
+    assert cli.main(command) == 1
+    err = capsys.readouterr().err
+    assert "open3d" in err and "uv sync --extra 3d" in err

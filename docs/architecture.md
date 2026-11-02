@@ -66,7 +66,7 @@ The reject gate has to know the answer before the part reaches it. What is left 
 |---|---|---|
 | camera gets dirty, out of focus or noisy | the RGB map lifts everywhere | RGB weight drops after a median of 7 parts with the default window (16), `sensor_alert = "rgb"`, 3D carries the decision |
 | 3D sensor loses points (reflective part, dust) | fewer valid points, FPFH map lifts | 3D weight drops, `sensor_alert = "3d"` |
-| one sensor dies completely | constant or empty input | that sensor is switched off; late fusion alone would also cope, early fusion would not |
+| one sensor dies completely | constant or empty input, also on raw scans | that sensor is switched off and the fused score ranks parts like the other sensor alone; late fusion alone would also cope, early fusion would not |
 | something blocks part of the image | a local blob, like a defect | **not caught** by the default signal; the extent option catches it at a small cost on clean data |
 | both sensors look off | both weights would be 0 | both kept at full weight, since switching both off leaves nothing to decide with, and `sensor_alert = "rgb+3d"` so a person looks |
 | a new batch of material looks slightly different | normal parts score higher, false alarms rise | not a sensor fault; `GET /status` flags the alarm rate once it leaves its expected range, and confirming a few good parts from the new batch recalibrates |

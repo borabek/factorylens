@@ -879,6 +879,7 @@ dependencies = [
 ]
 demo = [
     { name = "gradio" },
+    { name = "matplotlib" },
 ]
 serve = [
     { name = "fastapi" },
@@ -915,6 +916,7 @@ dev = [
 requires-dist = [
     { name = "fastapi", marker = "extra == 'serve'", specifier = ">=0.162.0" },
     { name = "gradio", marker = "extra == 'demo'", specifier = ">=6.30.0" },
+    { name = "matplotlib", marker = "extra == 'demo'", specifier = ">=3.11.2" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "open3d", marker = "extra == '3d'", specifier = ">=0.20.0" },
     { name = "pandas", specifier = ">=3.0.6" },

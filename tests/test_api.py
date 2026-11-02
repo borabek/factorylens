@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 import tifffile
 from fastapi.testclient import TestClient
+from PIL import Image
 from test_inspector import CONFIG, no_open3d  # noqa: F401  (fixture)
 
 from factorylens import api
@@ -82,3 +83,31 @@ def test_confirming_a_good_part(client, root):
     assert r.status_code == 200 and r.json() == {"calibration_parts": n + 1, "confirmed": 1}
     assert client.post(f"/confirm?part={part}").status_code == 404  # only once
     assert client.post("/confirm?part=999").status_code == 404
+
+
+def test_a_dead_3d_sensor_gets_an_answer_not_a_500(client):
+    empty = io.BytesIO()
+    tifffile.imwrite(empty, np.zeros((64, 64, 3), np.float32), photometric="rgb")
+    image = io.BytesIO()
+    Image.fromarray(np.zeros((64, 64, 3), np.uint8)).save(image, "PNG")
+    r = client.post(
+        "/inspect", files={"rgb": ("a.png", image.getvalue()), "xyz": ("a.tiff", empty.getvalue())}
+    )
+    assert r.status_code == 200, r.text
+    assert np.isfinite(r.json()["score"])
+
+
+def test_integer_depth_is_refused(client):
+    image = io.BytesIO()
+    Image.fromarray(np.zeros((64, 64, 3), np.uint8)).save(image, "PNG")
+    cloud = io.BytesIO()
+    tifffile.imwrite(cloud, np.zeros((64, 64, 3), np.int16), photometric="rgb")
+    r = client.post(
+        "/inspect", files={"rgb": ("a.png", image.getvalue()), "xyz": ("a.tiff", cloud.getvalue())}
+    )
+    assert r.status_code == 422 and "floats in metres" in r.json()["detail"]
+
+
+def test_health_says_which_version_fitted_the_model(client):
+    body = client.get("/health").json()
+    assert "fitted_with" in body and "factorylens" not in body

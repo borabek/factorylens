@@ -1,0 +1,13 @@
+versus,metric,unseen_p
+window 16,auroc_after,0.002
+window 16,false_alarm_after,0.0098
+window 16,false_flag,0.625
+window 16,caught_after,0.002
+window 4,auroc_after,0.2324
+window 4,false_alarm_after,0.7695
+window 4,false_flag,0.125
+window 4,caught_after,0.4316
+late,auroc_after,1.0
+late,false_alarm_after,0.002
+late,false_flag,0.0625
+late,caught_after,0.002

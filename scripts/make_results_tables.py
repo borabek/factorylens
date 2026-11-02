@@ -862,6 +862,108 @@ def stream_section() -> list[str]:
     ]
 
 
+def sequential_section() -> list[str]:
+    path = Path("results/analysis/sequential_summary.csv")
+    if not path.exists():
+        return []
+    primary = "sequential e=0.1 A=1000"
+    summary = pd.read_csv(path)
+    unseen = summary[~summary["seen"]].set_index("detector")
+    seen = summary[summary["seen"]].set_index("detector")
+    tests = pd.read_csv("results/analysis/sequential_tests.csv")
+    p = tests.set_index(["versus", "metric"])["unseen_p"]
+    bound = pd.read_csv("results/analysis/sequential_bound.csv")
+    over = bound[bound["false_flag"] > bound["bound"]]
+    by = pd.read_csv("results/analysis/sequential_corruptions.csv")
+    by = by[by["detector"] == primary].set_index("corruption")
+
+    def row(t: pd.DataFrame, name: str, label: str) -> dict[str, str]:
+        r = t.loc[name]
+        delay = "" if pd.isna(r["delay"]) else f"{r['delay']:.0f}"
+        return {
+            "": label,
+            "AUROC before": f"{r['auroc_before']:.3f}",
+            "AUROC after": f"{r['auroc_after']:.3f}",
+            "false alarms after": f"{100 * r['false_alarm_after']:.0f}%",
+            "defects caught after": f"{100 * r['caught_after']:.0f}%",
+            "parts to notice": delay,
+            "false flag before the fault": f"{100 * r['false_flag']:.1f}%",
+            "healthy sensor off after": f"{100 * r['healthy_off_after']:.1f}%",
+        }
+
+    names = [
+        ("late", "late fusion"),
+        ("window 16", "window 16"),
+        ("window 4", "window 4"),
+        (primary, "sequential test"),
+    ]
+    shown = pd.DataFrame([row(unseen, *n) for n in names]).set_index("")
+    grid = summary[~summary["seen"] & summary["detector"].str.startswith("sequential")].copy()
+    grid["setting"] = grid["detector"].str.replace("sequential ", "")
+    grid_rows = [
+        {
+            "setting": r["setting"],
+            "AUROC after": f"{r['auroc_after']:.3f}",
+            "parts to notice": f"{r['delay']:.0f}",
+            "false flag before the fault": f"{100 * r['false_flag']:.1f}%",
+            "fault noticed": f"{100 * r['noticed']:.0f}%",
+        }
+        for _, r in grid.iterrows()
+    ]
+    return [
+        "## A sequential test instead of a window",
+        "",
+        "The window and the ramp above are set by hand, and nothing says how often they will "
+        "switch a healthy sensor off. `conformal.FaultTest` gives that statement. Each part's "
+        "health signal gets a conformal p-value against the validation parts and the parts seen "
+        "so far, and a Shiryaev-Roberts statistic R = (1 + R) * bet(p) flags the sensor at "
+        "R >= A. On an exchangeable stream a false flag within t parts has probability at most "
+        "t / A. A flagged sensor gets weight 0 until a reset. This is the conformal martingale "
+        "idea of Vovk et al. (2003, 2021) applied to sensor health; the technique isn't new.",
+        "",
+        "The settings (epsilon 0.1, A = 1000) were fixed after a prototype on five faults at "
+        "severity 3. The table is the other 47 conditions, 20 orders per category; "
+        "`scripts/sequential_faults.py`, code at commit f9630bf.",
+        "",
+        shown.to_markdown(disable_numparse=True),
+        "",
+        f"- Against window 16 (Wilcoxon over categories): better AUROC after the fault "
+        f"(p = {p['window 16', 'auroc_after']:.3f}) and fewer false alarms "
+        f"(p = {p['window 16', 'false_alarm_after']:.3f}), and it notices a fault in "
+        f"{unseen.loc[primary, 'delay']:.0f} parts instead of "
+        f"{unseen.loc['window 16', 'delay']:.0f}. Fewer false flags, but not significantly "
+        f"(p = {p['window 16', 'false_flag']:.2f}).",
+        f"- What it costs: fewer defects caught at the same threshold "
+        f"(p = {p['window 16', 'caught_after']:.3f}), and a flag stays up. A healthy sensor "
+        f"ends up off in {100 * unseen.loc[primary, 'healthy_off_after']:.1f}% of streams, "
+        "where the window recovers by itself. If a false flag is followed by a real fault, "
+        "both sensors are flagged, both keep full weight and the alert says rgb+3d.",
+        f"- Against window 4: no significant difference in AUROC "
+        f"(p = {p['window 4', 'auroc_after']:.2f}). False flags in "
+        f"{100 * unseen.loc[primary, 'false_flag']:.0f}% of streams against "
+        f"{100 * unseen.loc['window 4', 'false_flag']:.0f}%, but concentrated in a few "
+        f"categories, so not significant over ten (p = {p['window 4', 'false_flag']:.2f}).",
+        f"- On the five faults the prototype saw: AUROC after "
+        f"{seen.loc[primary, 'auroc_after']:.3f}, against "
+        f"{seen.loc['window 16', 'auroc_after']:.3f} for window 16 and "
+        f"{seen.loc['window 4', 'auroc_after']:.3f} for window 4.",
+        f"- The bound: on clean test streams, the false flag rate is below t / A on "
+        f"{len(bound) - len(over)} of {len(bound)} sensor channels. The exception is "
+        f"{over['category'].iloc[0]} {over['sensor'].iloc[0]} "
+        f"({100 * over['false_flag'].iloc[0]:.0f}% against "
+        f"{100 * over['bound'].iloc[0]:.0f}%), where normal test parts really do score above "
+        "the validation parts, so the assumption behind the bound fails there.",
+        f"- Local and geometric faults stay hard. Tilt and misregistration are noticed in "
+        f"{100 * by.loc['tilt', 'noticed']:.0f}% and {100 * by.loc['misregister', 'noticed']:.0f}% "
+        "of streams, as with the window; they barely move the background level.",
+        "",
+        "Sensitivity on the same conditions:",
+        "",
+        pd.DataFrame(grid_rows).set_index("setting").to_markdown(disable_numparse=True),
+        "",
+    ]
+
+
 def modality_section() -> list[str]:
     path = Path("results/analysis/modality_importance.csv")
     if not path.exists():
@@ -1063,6 +1165,7 @@ def main() -> None:
         *sweep_section(),
         *robustness_section(),
         *stream_section(),
+        *sequential_section(),
         *modality_section(),
         *conformal_section(),
         *layer_section(),

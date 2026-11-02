@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.2 (2026-11-02)
+
+- The paper's conclusion said the reliability signal "can sit on top of learned fusion models". That is untested, and for detectors that predict one sensor from the other it probably can't say which sensor broke, because every map depends on both. The paper now says so.
+
 ## 1.2.1 (2026-11-02)
 
 - A negative result in the paper and on the results page: with the camera corrupted, five confirmed-good parts bring false alarms from 18.5% to 13.2% and defects caught from 57.8% to 52.4%, which misses the bar set in advance (at most 12%, at least 55%). The paper's conclusion said confirmed parts "repaired the alarm rate"; that holds for a shift between validation and test parts, not for a broken sensor, and it now says so.

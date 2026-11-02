@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## 1.2.1 (2026-11-02)
 
 - A negative result in the paper and on the results page: with the camera corrupted, five confirmed-good parts bring false alarms from 18.5% to 13.2% and defects caught from 57.8% to 52.4%, which misses the bar set in advance (at most 12%, at least 55%). The paper's conclusion said confirmed parts "repaired the alarm rate"; that holds for a shift between validation and test parts, not for a broken sensor, and it now says so.
+- CI: pull requests run on Linux with all extras, so the FPFH tests run there too, and a broken open3d install fails loudly. macOS has its own workflow after merges and weekly, because GitHub sometimes assigns no runner and cancels the job, which blocked merges.
 
 ## 1.2.0 (2026-11-02)
 

@@ -88,7 +88,7 @@ make install   # creates .venv with the 3D features, installs pre-commit hooks
 make check     # lint, type check, tests with coverage
 ```
 
-`uv sync` replaces what is installed, so name all the extras you need in one command. On macOS, open3d needs libusb first: `brew install libusb`.
+`uv sync` replaces what is installed, so name all the extras you need in one command. open3d needs a system library first: `brew install libusb` on macOS, `sudo apt-get install libegl1 libgl1 libgomp1` on Debian or Ubuntu.
 
 ## Data
 

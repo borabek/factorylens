@@ -14,6 +14,7 @@ the ImageNet backbone weights come from torchvision as usual.
 from __future__ import annotations
 
 import math
+import pickle
 import time
 from collections import deque
 from dataclasses import asdict, dataclass, field
@@ -89,6 +90,18 @@ def _plain(v: Any) -> bool | int | float:
     if isinstance(v, (bool, np.bool_)):
         return bool(v)
     return v if isinstance(v, int) else float(v)
+
+
+def check_scan(rgb: np.ndarray, xyz: np.ndarray) -> None:
+    """Refuse what can't be a scan from the sensors, rather than give a wrong answer."""
+    if rgb.ndim != 3 or rgb.shape[-1] != 3 or rgb.dtype != np.uint8:
+        raise ValueError(f"rgb must be (H, W, 3) uint8, got {rgb.shape} {rgb.dtype}")
+    if xyz.ndim != 3 or xyz.shape[-1] != 3:
+        raise ValueError(f"xyz must be (H, W, 3), got {xyz.shape}")
+    if not np.issubdtype(xyz.dtype, np.floating):
+        raise ValueError(f"xyz must hold floats in metres, got {xyz.dtype}")
+    if rgb.shape[:2] != xyz.shape[:2]:
+        raise ValueError(f"rgb {rgb.shape[:2]} and xyz {xyz.shape[:2]} differ in size")
 
 
 def _sweep_from(d: dict[str, Any]) -> SweepConfig:
@@ -227,6 +240,12 @@ class Inspector:
 
     def inspect(self, rgb: np.ndarray, xyz: np.ndarray, foreground: np.ndarray) -> Inspection:
         """One preprocessed part: (S, S, 3) uint8 image, (S, S, 3) xyz, (S, S) object mask."""
+        check_scan(rgb, xyz)
+        if rgb.shape[:2] != self.size or foreground.shape != self.size:
+            raise ValueError(
+                f"expected parts of {self.size}, got rgb {rgb.shape[:2]} and "
+                f"mask {foreground.shape}; inspect_raw takes scans of any size"
+            )
         part = Prepared(
             rgb[None],
             xyz[None],
@@ -292,8 +311,9 @@ class Inspector:
 
     def inspect_raw(self, rgb: np.ndarray, xyz: np.ndarray) -> Inspection:
         """A scan as it comes from the sensors, at full resolution."""
+        check_scan(rgb, xyz)
         start = time.perf_counter()
-        rgb, xyz, fg = cache.prepare_sample(rgb, xyz, self.config.sweep.settings)
+        rgb, xyz, fg = cache.prepare_scan(rgb, xyz.astype(np.float32), self.config.sweep.settings)
         prepared = time.perf_counter() - start
         out = self.inspect(rgb, xyz, fg)
         self.timings = {"preprocess": prepared, **self.timings}
@@ -336,7 +356,12 @@ class Inspector:
     @classmethod
     def load(cls, path: str | Path, device: str | None = None) -> Inspector:
         # tensors and plain values only, so a model file cannot run code when loaded
-        state = torch.load(path, weights_only=True)
+        try:
+            state = torch.load(path, weights_only=True)
+        except (pickle.UnpicklingError, EOFError, RuntimeError) as e:
+            raise ValueError(f"{path} is not a FactoryLens model file") from e
+        if not isinstance(state, dict) or "format" not in state:
+            raise ValueError(f"{path} is not a FactoryLens model file")
         if state["format"] != FORMAT:
             raise ValueError(f"model file format {state['format']}, this version reads {FORMAT}")
         fusion = ReliabilityFusion.from_state(state["fusion"])

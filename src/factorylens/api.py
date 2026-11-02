@@ -29,7 +29,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from PIL import Image
 
 from factorylens import __version__
-from factorylens.inspector import Inspector
+from factorylens.inspector import Inspector, check_scan
 
 
 def read_rgb(data: bytes) -> np.ndarray:
@@ -41,12 +41,9 @@ def read_rgb(data: bytes) -> np.ndarray:
 
 def read_xyz(data: bytes) -> np.ndarray:
     try:
-        xyz = tifffile.imread(io.BytesIO(data)).astype(np.float32)
+        return np.asarray(tifffile.imread(io.BytesIO(data)))
     except Exception as e:  # noqa: BLE001
         raise HTTPException(422, f"xyz is not a readable TIFF: {e}") from e
-    if xyz.ndim != 3 or xyz.shape[-1] != 3:
-        raise HTTPException(422, f"xyz must be (H, W, 3), got {xyz.shape}")
-    return xyz
 
 
 def create_app(inspector: Inspector) -> FastAPI:
@@ -55,12 +52,14 @@ def create_app(inspector: Inspector) -> FastAPI:
 
     @app.get("/health")
     def health() -> dict[str, Any]:
+        meta = dict(inspector.meta)
         return {
             "status": "ok",
             "version": __version__,
+            "fitted_with": meta.pop("factorylens", None),
             "alpha": inspector.config.alpha,
             "window": inspector.config.reliability.window,
-            **inspector.meta,
+            **meta,
         }
 
     @app.post("/inspect")
@@ -70,10 +69,10 @@ def create_app(inspector: Inspector) -> FastAPI:
         with_map: bool = False,
     ) -> dict[str, Any]:
         image, cloud = read_rgb(await rgb.read()), read_xyz(await xyz.read())
-        if image.shape[:2] != cloud.shape[:2]:
-            raise HTTPException(
-                422, f"rgb {image.shape[:2]} and xyz {cloud.shape[:2]} differ in size"
-            )
+        try:
+            check_scan(image, cloud)
+        except ValueError as e:
+            raise HTTPException(422, str(e)) from e
         with lock:
             result = inspector.inspect_raw(image, cloud)
             timings = {k: round(1000 * v, 1) for k, v in inspector.timings.items()}

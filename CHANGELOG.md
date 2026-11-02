@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+Found by testing the installed service end to end, with real scans and with what a broken sensor could send.
+
+- A dead 3D sensor on a raw scan (zeros, NaN or infinite everywhere) made every request fail with a 500, so the window never filled and `sensor_alert` never fired. It now goes through as a part with no points. With one sensor dead throughout, the fused AUROC on raw bagel and tire scans equals the other sensor's alone. The benchmark corrupts preprocessed data, which is why it never hit this; its numbers don't change.
+- NaN and infinite values count as missing points, as zeros do.
+- `uv sync --extra serve` gave a service whose `/health` said ok and whose `/inspect` always failed, and `--extra demo` gave a demo that couldn't start. The demo extra now brings matplotlib, the docs name the extras needed together, `make install` includes the 3D features, and `serve` and `demo` say what is missing before starting.
+- `alpha` outside 0-1 gave a wrong threshold without a word (1.5 alarmed above the median), and `--coreset-ratio 0` was ignored. Both are refused now. `fit` warns when there are too few validation parts for `alpha`, so the model would never alarm.
+- Refused instead of answered wrongly: integer depth, parts of the wrong size, a non-uint8 image. A file that isn't a model gets a clear error, and the CLI reports bad files without a traceback.
+- `/health` calls the version that fitted the model `fitted_with`.
+
 ## 1.1.0 (2026-10-29)
 
 The inspector watches its own reliability on a line.

@@ -146,3 +146,66 @@ def test_half_precision_banks_are_smaller_and_still_load(inspector, splits, tmp_
     half = Inspector.load(tmp_path / "half.pt", device="cpu")
     assert half.rgb_bank.bank.dtype == torch.float32
     assert np.isfinite(half.inspect(*parts(splits["test"])[0]).score_rgb)
+
+
+@pytest.mark.parametrize("fill", [0.0, np.nan, np.inf])
+def test_a_dead_3d_sensor_on_a_raw_scan_is_judged_not_a_crash(inspector, root, fill):
+    sample = mvtec3d.list_samples(root, "bagel", "test")[0]
+    rgb, xyz = mvtec3d.load_rgb(sample.rgb_path), mvtec3d.load_xyz(sample.xyz_path)
+    for _ in range(3):
+        out = inspector.inspect_raw(rgb, np.full_like(xyz, fill))
+    # on the 3D side only: the fixture's random backbone can make RGB look off as well
+    assert np.isfinite(out.score) and out.health_3d > 0 and "3d" in out.sensor_alert
+
+
+def test_both_sensors_dead_on_raw_scans_is_an_alert(inspector, root):
+    sample = mvtec3d.list_samples(root, "bagel", "test")[0]
+    rgb, xyz = mvtec3d.load_rgb(sample.rgb_path), mvtec3d.load_xyz(sample.xyz_path)
+    for _ in range(3):
+        out = inspector.inspect_raw(np.zeros_like(rgb), np.zeros_like(xyz))
+    assert np.isfinite(out.score) and "3d" in out.sensor_alert
+
+
+def test_nan_marks_a_missing_point_like_zero_does(inspector, root):
+    sample = mvtec3d.list_samples(root, "bagel", "test")[0]
+    rgb, xyz = mvtec3d.load_rgb(sample.rgb_path), mvtec3d.load_xyz(sample.xyz_path)
+    with_zeros = xyz.copy()
+    with_zeros[:, ::7] = 0
+    with_nan = xyz.copy()
+    with_nan[:, ::7] = np.nan
+    a = inspector.inspect_raw(rgb, with_zeros)
+    inspector.reset()
+    b = inspector.inspect_raw(rgb, with_nan)
+    assert a.score == pytest.approx(b.score)
+
+
+@pytest.mark.parametrize(
+    "rgb, xyz, message",
+    [
+        (np.zeros((8, 8), np.uint8), np.zeros((8, 8, 3), np.float32), "rgb must be"),
+        (np.zeros((8, 8, 3)), np.zeros((8, 8, 3), np.float32), "rgb must be"),
+        (np.zeros((8, 8, 3), np.uint8), np.zeros((8, 8), np.float32), "xyz must be"),
+        (np.zeros((8, 8, 3), np.uint8), np.zeros((8, 8, 3), np.int16), "floats in metres"),
+        (np.zeros((8, 8, 3), np.uint8), np.zeros((9, 8, 3), np.float32), "differ in size"),
+    ],
+)
+def test_what_cannot_be_a_scan_is_refused(inspector, rgb, xyz, message):
+    with pytest.raises(ValueError, match=message):
+        inspector.inspect_raw(rgb, xyz)
+
+
+def test_a_preprocessed_part_of_the_wrong_size_is_refused(inspector, splits):
+    rgb, xyz, fg = parts(splits["test"])[0]
+    with pytest.raises(ValueError, match="expected parts"):
+        inspector.inspect(rgb[:10], xyz[:10], fg[:10])
+
+
+def test_a_file_that_is_not_a_model_is_refused(tmp_path):
+    garbage = tmp_path / "garbage.pt"
+    garbage.write_bytes(b"not a model")
+    with pytest.raises(ValueError, match="not a FactoryLens model"):
+        Inspector.load(garbage)
+    other = tmp_path / "other.pt"
+    torch.save({"weights": torch.zeros(1)}, other)
+    with pytest.raises(ValueError, match="not a FactoryLens model"):
+        Inspector.load(other)

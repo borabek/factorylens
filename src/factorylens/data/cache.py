@@ -93,6 +93,25 @@ def prepare_sample(
     )
 
 
+def prepare_scan(
+    rgb: np.ndarray, xyz: np.ndarray, settings: Settings
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """prepare_sample for a live line, where the 3D sensor may return nothing usable.
+
+    No points and no object mask is what a dead 3D sensor looks like after
+    preprocessing, so the reliability signal judges it like any other fault.
+    """
+    try:
+        return prepare_sample(rgb, xyz, settings)
+    except preprocess.NoBackground:
+        size = settings.size
+        return (
+            preprocess.resize_rgb(rgb, size),
+            np.zeros((size, size, 3), np.float32),
+            np.zeros((size, size), bool),
+        )
+
+
 def prepare(root: str | Path, category: str, split: str, settings: Settings) -> Prepared:
     rgbs, xyzs, fgs, masks, defects, stems = [], [], [], [], [], []
     size = settings.size

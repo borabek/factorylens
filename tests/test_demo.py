@@ -4,7 +4,7 @@ from test_inspector import CONFIG, no_open3d  # noqa: F401  (fixture)
 
 from factorylens import demo
 from factorylens.data import cache
-from factorylens.inspector import Inspector
+from factorylens.inspector import Inspection, Inspector
 
 
 @pytest.fixture
@@ -81,3 +81,8 @@ def test_runs_can_be_shortened_and_warm_ups_are_reused(setup):
     demo.warm_up(inspector, validation, "jpeg", 2)
     assert list(inspector.history["rgb"]) == first
     assert ("jpeg", 2) in demo._WARM[inspector]
+
+
+def test_the_summary_says_when_both_sensors_look_off():
+    r = Inspection(1.0, 0.5, False, 1.0, 1.0, 9.0, 9.0, 1.0, 1.0, np.zeros((4, 4)), both_off=True)
+    assert "both sensors" in demo.summary(r)

@@ -1,7 +1,7 @@
 .PHONY: install lint typecheck test check paper
 
 install:
-	uv sync
+	uv sync --extra 3d
 	uv run pre-commit install
 
 lint:

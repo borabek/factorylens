@@ -94,7 +94,10 @@ def load_rgb(path: str | Path) -> np.ndarray:
 
 def load_xyz(path: str | Path) -> np.ndarray:
     """(H, W, 3) float32, zeros where the sensor has no measurement."""
-    return tifffile.imread(path).astype(np.float32, copy=False)
+    xyz = tifffile.imread(path)
+    if not np.issubdtype(xyz.dtype, np.floating):
+        raise ValueError(f"{path}: xyz must hold floats in metres, got {xyz.dtype}")
+    return xyz.astype(np.float32, copy=False)
 
 
 def load_defect_map(path: str | Path) -> np.ndarray:
@@ -112,8 +115,11 @@ def load_mask(path: str | Path) -> np.ndarray:
 
 
 def valid_points(xyz: np.ndarray) -> np.ndarray:
-    """(H, W) bool, True where the 3D sensor returned a point."""
-    return np.any(xyz != 0, axis=-1)
+    """(H, W) bool, True where the 3D sensor returned a point.
+
+    MVTec 3D-AD marks a missing point with zeros; many sensors use NaN instead.
+    """
+    return np.any(xyz != 0, axis=-1) & np.all(np.isfinite(xyz), axis=-1)
 
 
 def defect_names(root: str | Path, category: str) -> dict[int, str]:

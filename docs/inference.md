@@ -36,12 +36,14 @@ Each pair is an RGB image and an organised point cloud (H × W × 3 float TIFF i
 | `part` | number of the part since the model was loaded, for `POST /confirm` |
 | `timings_ms` | milliseconds per stage for this part and in total (HTTP only; `Inspector.timings` in Python, in seconds) |
 
-The weights come from the median health over the last 16 parts. So a sensor that starts failing is switched off after a few parts, and one bad part does not switch it off on its own. The first parts after starting have a shorter history. `Inspector.reset()` (or `POST /reset`) clears it, for example after a sensor has been repaired.
+The weights come from the median health over the last 16 parts. So a sensor that starts failing is switched off after a few parts, and one bad part does not switch it off on its own. The first parts after starting have a shorter history, so a large defect on the very first part can look like a sensor fault: on bagel, 19% of defective parts raise `sensor_alert` when judged alone, without hurting the AUROC (0.924 instead of 0.926). `Inspector.reset()` (or `POST /reset`) clears it, for example after a sensor has been repaired.
+
+A dead 3D sensor is an answer, not an error. A scan with no usable points (all zeros, NaN or infinite, or points that don't fit a plane) goes through as a part with no points and no object mask, and the reliability signal handles it like any other fault. NaN and infinite values mark single points as missing, as zeros do. On raw bagel and tire scans with one sensor dead throughout, the fused AUROC equals the other sensor's alone. What can't be a scan is refused: wrong shapes, integer depth (the points must be floats in metres), an image and a point cloud of different sizes.
 
 ## HTTP
 
 ```bash
-uv sync --extra serve
+uv sync --extra 3d --extra serve
 uv run factorylens serve models/bagel.pt --port 8000
 curl -X POST localhost:8000/inspect -F rgb=@part1.png -F xyz=@part1.tiff
 ```

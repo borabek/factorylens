@@ -211,7 +211,7 @@ def numbers() -> None:
         "sensMin": f3(rgb.min()),
         "sensMax": f3(rgb.max()),
     }
-    values |= text_numbers() | latency_numbers() | sequential_numbers()
+    values |= text_numbers() | latency_numbers() | sequential_numbers() | recalibration_numbers()
     write("numbers", [f"\\newcommand{{\\{k}}}{{{v}}}" for k, v in values.items()])
 
 
@@ -242,6 +242,28 @@ def latency_numbers() -> dict[str, str]:
         "aurocOne": f3(core.loc[0.01, "auroc"]),
         "onnxOne": f"{onnx.loc[1, 'torch_ms']:.0f}",
         "onnxOneOrt": f"{onnx.loc[1, 'onnxruntime_ms']:.0f}",
+    }
+
+
+def recalibration_numbers() -> dict[str, str]:
+    """Five confirmed-good parts with the camera corrupted, against the bar set in advance."""
+    t = pd.read_csv(ANALYSIS / "recalibration.csv")
+    w = t[(t["sensor"] == "rgb") & (t["detector"] == "window")]
+    none, five = w[w["k"] == 0], w[(w["k"] == 5) & (w["rule"] == "any")]
+    p = pd.read_csv(ANALYSIS / "recalibration_tests.csv").set_index(["metric", "versus"])["p"]
+    occlusion = five[five["corruption"] == "occlusion"]["false_alarm"].mean()
+
+    def pct(x: float) -> str:
+        return f"{100 * x:.1f}\\%"
+
+    return {
+        "recalFalse": pct(five["false_alarm"].mean()),
+        "recalCaught": pct(five["caught"].mean()),
+        "recalNoneFalse": pct(none["false_alarm"].mean()),
+        "recalNoneCaught": pct(none["caught"].mean()),
+        "recalFalseP": f"{p['false_alarm', 'no confirmed parts']:.3f}",
+        "recalCaughtP": f"{p['caught', 'no confirmed parts']:.3f}",
+        "recalOcclusion": f"{100 * occlusion:.0f}\\%",
     }
 
 

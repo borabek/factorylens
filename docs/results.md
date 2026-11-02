@@ -343,6 +343,25 @@ Where the rate goes wrong, and what fixes it (`scripts/conformal_checks.py`):
 - The fused scores take their z-score statistics from the same validation parts they are calibrated on. Splitting the validation parts in two, one half for each job, gives 0.074 instead of 0.094: the strict version stays under the target too, at the price of a smaller calibration set.
 - One idea that did not work: calibrating each part against validation parts fused with that part's own sensor weights. With the RGB image corrupted, the false alarm rate went from 0.185 to 0.206. The excess there comes from occlusion and from FPFH's own shift, not from the weights.
 
+## Confirmed-good parts when a sensor is broken
+
+Five confirmed-good parts repair FPFH's shift on clean sensors (above). Do they also repair the alarm rate when a sensor is broken? `scripts/recalibration.py` adds k good parts from the current run to the calibration set and measures the rest, 200 draws per condition. The question, the main setting and the bar were committed before the first run (5c0c62f): reliability fusion, k = 5, every RGB corruption, alpha 0.1.
+
+|                      | false alarms   | defects caught   |
+|:---------------------|:---------------|:-----------------|
+| no confirmed parts   | 18.5%          | 57.8%            |
+| 5 confirmed parts    | 13.2%          | 52.4%            |
+| healthy sensor alone | 14.7%          | 55.3%            |
+| bar set in advance   | <= 12%         | >= 55%           |
+
+**It misses both bars.**
+
+- False alarms do fall (p = 0.004), but so do defects caught (p = 0.019). That is what a higher threshold does, so this moves along the trade-off rather than improving it. Against the healthy sensor alone neither difference is significant (p = 0.92, 1.00).
+- Occlusion falls from 42% to 24% and is still the problem. The other corruptions reach 10-12%.
+- With the extent signal as well: 10.5% false alarms, 51.2% caught. That meets the first bar and misses the second. It was a side arm, so it is a lead rather than a result.
+- Harmless on clean parts: 8.4% false alarms and 65.0% caught, against 8.9% and 66.8%.
+- The running service can't do this yet. `confirm_good` only takes parts with both sensors at full weight, and that leaves five such good parts in 12 of the 260 RGB conditions (brightness and occlusion only). On those, false alarms fall from 56% to 28%.
+
 ## Which backbone layers (RGB)
 
 Same detector, every layer combination on the same 28x28 patch grid (`scripts/run_layer_ablation.py`), full training set.

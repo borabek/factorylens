@@ -44,6 +44,10 @@ class InspectorConfig:
     sweep: SweepConfig = field(default_factory=SweepConfig)
     reliability: ReliabilityConfig = field(default_factory=lambda: ReliabilityConfig(window=16))
     alpha: float = 0.1  # target false alarm rate
+    # switch a sensor off with conformal.FaultTest instead of the median window; off by
+    # default because every published number uses the window (docs/results.md compares them)
+    fault_test: bool = False
+    fault_level: float = 1000.0  # mean parts between false flags on an exchangeable stream
 
 
 @dataclass
@@ -126,6 +130,7 @@ class Inspector:
         self.rgb_bank, self.geo_bank = MemoryBank(bank), MemoryBank(bank)
         self.meta: dict[str, Any] = {}
         self.parts_seen = 0
+        self.health_validation: dict[str, list[float]] | None = None
         # fused score of each recent part, or None if a sensor was down-weighted for it
         self.recent: dict[int, float | None] = {}
         self.reset()
@@ -169,6 +174,10 @@ class Inspector:
         self.calibration = self.fusion.combine(rgb_val, geo_val, Weights(ones, ones, zeros, zeros))[
             0
         ]
+        u_rgb, u_geo = self.fusion.signals(
+            rgb_val, geo_val, validation.foreground, valid_points(validation.xyz).sum(axis=(1, 2))
+        )
+        self.health_validation = {"rgb": u_rgb.tolist(), "3d": u_geo.tolist()}
         self.threshold = conformal.threshold(self.calibration, self.config.alpha)
 
     # -- inspecting --------------------------------------------------------------
@@ -182,8 +191,35 @@ class Inspector:
             "seconds": deque(maxlen=window),
         }
         self.alarms: deque[bool] = deque(maxlen=RECENT)
+        self.fault_tests: dict[str, conformal.FaultTest] | None = None
         # seconds per stage for the last part; exact on the CPU, where nothing runs async
         self.timings: dict[str, float] = {}
+
+    def _start_fault_tests(self) -> dict[str, conformal.FaultTest]:
+        if self.fault_tests is None:
+            assert self.health_validation is not None
+            self.fault_tests = {
+                name: conformal.FaultTest(values, level=self.config.fault_level, seed=seed)
+                for seed, (name, values) in enumerate(self.health_validation.items())
+            }
+        return self.fault_tests
+
+    def _current_weights(self) -> Weights:
+        """Sensor weights from the health of the recent parts, by the rule in the config."""
+        u_rgb = np.array([np.median(self.history["rgb"])])
+        u_geo = np.array([np.median(self.history["geo"])])
+        if not self.config.fault_test:
+            return self.fusion.weights_from(u_rgb, u_geo)
+        tests = self._start_fault_tests()
+        off_rgb, off_geo = tests["rgb"].flagged, tests["3d"].flagged
+        both = off_rgb and off_geo
+        return Weights(
+            np.array([1.0 if both or not off_rgb else 0.0]),
+            np.array([1.0 if both or not off_geo else 0.0]),
+            u_rgb,
+            u_geo,
+            np.array([both]),
+        )
 
     def status(self) -> dict[str, Any]:
         """Sensor health over the current window and the recent alarm rate, for a line monitor.
@@ -198,17 +234,20 @@ class Inspector:
             "threshold": self.threshold if math.isfinite(self.threshold) else None,
         }
         if out["parts_in_window"]:
-            u_rgb, u_geo = np.median(self.history["rgb"]), np.median(self.history["geo"])
-            w = self.fusion.weights_from(np.array([u_rgb]), np.array([u_geo]))
+            w = self._current_weights()
             assert w.both_off is not None
             out |= {
-                "health_rgb": float(u_rgb),
-                "health_3d": float(u_geo),
+                "health_rgb": float(w.u_rgb[0]),
+                "health_3d": float(w.u_geo[0]),
                 "weight_rgb": float(w.rgb[0]),
                 "weight_3d": float(w.geo[0]),
                 "sensor_alert": _alert(w.rgb[0], w.geo[0], bool(w.both_off[0])),
                 "ms_per_part": 1000 * float(np.median(self.history["seconds"])),
             }
+        if self.config.fault_test:
+            tests = self._start_fault_tests()
+            out["fault_statistic_rgb"] = tests["rgb"].statistic
+            out["fault_statistic_3d"] = tests["3d"].statistic
         if len(self.alarms) >= MIN_FOR_RATE:
             rate = float(np.mean(self.alarms))
             lo, hi = conformal.alarm_rate_range(
@@ -276,9 +315,11 @@ class Inspector:
         u_rgb, u_geo = self.fusion.signals(r, g, part.foreground, points)
         self.history["rgb"].append(float(u_rgb[0]))
         self.history["geo"].append(float(u_geo[0]))
-        w = self.fusion.weights_from(
-            np.array([np.median(self.history["rgb"])]), np.array([np.median(self.history["geo"])])
-        )
+        if self.config.fault_test:
+            tests = self._start_fault_tests()
+            tests["rgb"].update(float(u_rgb[0]))
+            tests["3d"].update(float(u_geo[0]))
+        w = self._current_weights()
         scores, maps = self.fusion.combine(r, g, w)
         score = float(scores[0])
         self.parts_seen += 1
@@ -339,6 +380,8 @@ class Inspector:
                         "settings": asdict(self.config.sweep.settings),
                     },
                     "alpha": self.config.alpha,
+                    "fault_test": self.config.fault_test,
+                    "fault_level": self.config.fault_level,
                 },
                 "pretrained": self.pretrained,
                 # ImageNet weights come from torchvision; anything else has to travel with the file
@@ -348,6 +391,7 @@ class Inspector:
                 "geo_bank": self.geo_bank.bank.cpu().to(dtype),
                 "fusion": self.fusion.state(),
                 "calibration": self.calibration.tolist(),
+                "health_validation": self.health_validation,
                 "meta": self.meta,
             },
             path,
@@ -369,6 +413,9 @@ class Inspector:
             sweep=_sweep_from(state["config"]["sweep"]),
             reliability=fusion.config,
             alpha=state["config"]["alpha"],
+            # files from before 1.2 have none of these three
+            fault_test=state["config"].get("fault_test", False),
+            fault_level=state["config"].get("fault_level", 1000.0),
         )
         inspector = cls(config, device=device, pretrained=state["pretrained"])
         if state["backbone"] is not None:
@@ -379,6 +426,7 @@ class Inspector:
         inspector.size = tuple(state["size"])
         inspector.fusion = fusion
         inspector.calibration = np.asarray(state["calibration"])
+        inspector.health_validation = state.get("health_validation")
         inspector.threshold = conformal.threshold(inspector.calibration, config.alpha)
         inspector.meta = state["meta"]
         return inspector

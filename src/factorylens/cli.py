@@ -222,6 +222,8 @@ def fit_model(args: argparse.Namespace) -> int:
     if args.coreset_ratio is not None:
         rgb = replace(config.sweep.rgb, coreset_ratio=args.coreset_ratio)
         config = replace(config, sweep=replace(config.sweep, rgb=rgb))
+    if args.fault_test:
+        config = replace(config, fault_test=True)
     splits = {
         s: cache.get(args.root, args.cache, args.category, s, config.sweep.settings)
         for s in ("train", "validation")
@@ -447,6 +449,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--coreset-ratio",
         type=_share,
         help="share of training patches kept in each bank (default 0.1); see docs/latency.md",
+    )
+    fit.add_argument(
+        "--fault-test",
+        action="store_true",
+        help="switch sensors off with a sequential test instead of the median window",
     )
     fit.add_argument("--device")
     fit.set_defaults(func=fit_model)

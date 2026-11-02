@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import numpy as np
 import pytest
 import torch
@@ -209,3 +211,49 @@ def test_a_file_that_is_not_a_model_is_refused(tmp_path):
     torch.save({"weights": torch.zeros(1)}, other)
     with pytest.raises(ValueError, match="not a FactoryLens model"):
         Inspector.load(other)
+
+
+@pytest.fixture
+def tested(splits):
+    config = replace(CONFIG, fault_test=True, fault_level=3.0)
+    return Inspector(config, device="cpu", pretrained=False).fit(
+        splits["train"], splits["validation"]
+    )
+
+
+def test_a_fault_test_switches_a_sensor_off_and_keeps_it_off(tested, splits):
+    good = parts(splits["validation"])[0]
+    tested.inspect(*good)
+    assert tested.status()["fault_statistic_rgb"] >= 0
+    dead = parts(corruptions.corrupt(splits["test"], "xyz_missing", 1))
+    results = [tested.inspect(*p) for p in dead * 5]
+    assert tested.fault_tests["3d"].flagged and "3d" in results[-1].sensor_alert
+    assert results[-1].weight_3d == 0 or results[-1].both_off
+    # one good part doesn't bring it back; only a reset does, after the sensor is repaired
+    assert tested.inspect(*good).sensor_alert is not None
+    tested.reset()
+    assert tested.fault_tests is None
+    assert tested.inspect(*good).weight_3d == 1
+    assert not tested.fault_tests["3d"].flagged
+
+
+def test_fault_test_settings_survive_saving(tested, tmp_path):
+    tested.save(tmp_path / "model.pt")
+    loaded = Inspector.load(tmp_path / "model.pt")
+    assert loaded.config.fault_test and loaded.config.fault_level == 3.0
+    assert loaded.health_validation == tested.health_validation
+
+
+def test_model_files_from_before_the_fault_test_still_load(inspector, tmp_path):
+    inspector.save(tmp_path / "model.pt")
+    state = torch.load(tmp_path / "model.pt", weights_only=False)
+    del state["health_validation"], state["config"]["fault_test"], state["config"]["fault_level"]
+    torch.save(state, tmp_path / "old.pt")
+    old = Inspector.load(tmp_path / "old.pt")
+    assert not old.config.fault_test and old.health_validation is None
+
+
+def test_the_window_rule_is_unchanged_by_default(inspector, splits):
+    assert not inspector.config.fault_test
+    inspector.inspect(*parts(splits["validation"])[0])
+    assert inspector.fault_tests is None and "fault_statistic_rgb" not in inspector.status()

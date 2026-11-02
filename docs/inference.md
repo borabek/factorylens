@@ -40,6 +40,8 @@ The weights come from the median health over the last 16 parts. So a sensor that
 
 A dead 3D sensor is an answer, not an error. A scan with no usable points (all zeros, NaN or infinite, or points that don't fit a plane) goes through as a part with no points and no object mask, and the reliability signal handles it like any other fault. NaN and infinite values mark single points as missing, as zeros do. On raw bagel and tire scans with one sensor dead throughout, the fused AUROC equals the other sensor's alone. What can't be a scan is refused: wrong shapes, integer depth (the points must be floats in metres), an image and a point cloud of different sizes.
 
+`factorylens fit --fault-test` replaces the median window with a sequential test. Each sensor's health goes through `conformal.FaultTest`, and a sensor it flags gets weight 0 until `reset()`. It notices a fault in about 3 parts instead of 7, and on a stream of exchangeable parts a false flag within t parts has probability at most t / 1000. It also catches fewer defects at the same threshold, and a false flag stays until someone resets it, where the window recovers by itself. The window stays the default because every published number uses it. The comparison is in [results.md](results.md), "A sequential test instead of a window".
+
 ## HTTP
 
 ```bash
@@ -50,7 +52,7 @@ curl -X POST localhost:8000/inspect -F rgb=@part1.png -F xyz=@part1.tiff
 
 - `GET /health` shows the model and its settings.
 - `POST /inspect` returns the JSON above. Add `?with_map=true` to get the anomaly map as well.
-- `GET /status` reports each sensor's health and weight over the current window and the median time per part. After 20 parts it also gives the alarm rate over the last 100 against the range expected from the calibration set (`alarm_rate`, `alarm_rate_expected`, `alarm_rate_high`). A rate above the range means more defects than usual or normal parts drifting away from the calibration parts.
+- `GET /status` reports each sensor's health and weight over the current window and the median time per part. After 20 parts it also gives the alarm rate over the last 100 against the range expected from the calibration set (`alarm_rate`, `alarm_rate_expected`, `alarm_rate_high`), and with `--fault-test` the two test statistics (`fault_statistic_rgb`, `fault_statistic_3d`). A rate above the range means more defects than usual or normal parts drifting away from the calibration parts.
 - `POST /confirm?part=N` adds part N to the calibration set after an operator has checked it and found it good. Only one of the last 100 parts inspected with both sensors at full weight can be added, and each part only once. `Inspector.save` keeps the added parts.
 - `POST /reset` clears the window and the alarm history.
 

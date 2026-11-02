@@ -211,7 +211,7 @@ def numbers() -> None:
         "sensMin": f3(rgb.min()),
         "sensMax": f3(rgb.max()),
     }
-    values |= text_numbers() | latency_numbers()
+    values |= text_numbers() | latency_numbers() | sequential_numbers()
     write("numbers", [f"\\newcommand{{\\{k}}}{{{v}}}" for k, v in values.items()])
 
 
@@ -242,6 +242,48 @@ def latency_numbers() -> dict[str, str]:
         "aurocOne": f3(core.loc[0.01, "auroc"]),
         "onnxOne": f"{onnx.loc[1, 'torch_ms']:.0f}",
         "onnxOneOrt": f"{onnx.loc[1, 'onnxruntime_ms']:.0f}",
+    }
+
+
+def sequential_numbers() -> dict[str, str]:
+    """The sequential test against the window, on conditions the prototype didn't see."""
+    summary = pd.read_csv(ANALYSIS / "sequential_summary.csv")
+    t = summary[~summary["seen"]].set_index("detector")
+    s, w, four = t.loc["sequential e=0.1 A=1000"], t.loc["window 16"], t.loc["window 4"]
+    p = pd.read_csv(ANALYSIS / "sequential_tests.csv").set_index(["versus", "metric"])["unseen_p"]
+    bound = pd.read_csv(ANALYSIS / "sequential_bound.csv")
+    corr = pd.read_csv(ANALYSIS / "sequential_corruptions.csv")
+    corr = corr[corr["detector"] == "sequential e=0.1 A=1000"].set_index("corruption")
+
+    def pct(x: float) -> str:
+        return f"{100 * x:.0f}\\%"
+
+    def pct1(x: float) -> str:
+        return f"{100 * x:.1f}\\%"
+
+    return {
+        "seqAfter": f3(s["auroc_after"]),
+        "seqWindowAfter": f3(w["auroc_after"]),
+        "seqFourAfter": f3(four["auroc_after"]),
+        "seqDelay": f"{s['delay']:.0f}",
+        "seqWindowDelay": f"{w['delay']:.0f}",
+        "seqAlarm": pct(s["false_alarm_after"]),
+        "seqWindowAlarm": pct(w["false_alarm_after"]),
+        "seqCaught": pct(s["caught_after"]),
+        "seqWindowCaught": pct(w["caught_after"]),
+        "seqFlag": pct(s["false_flag"]),
+        "seqWindowFlag": pct(w["false_flag"]),
+        "seqFourFlag": pct(four["false_flag"]),
+        "seqHealthyOff": pct1(s["healthy_off_after"]),
+        "seqAfterP": f"{p['window 16', 'auroc_after']:.3f}",
+        "seqAlarmP": f"{p['window 16', 'false_alarm_after']:.3f}",
+        "seqFlagP": f"{p['window 16', 'false_flag']:.2f}",
+        "seqCaughtP": f"{p['window 16', 'caught_after']:.3f}",
+        "seqFourP": f"{p['window 4', 'auroc_after']:.2f}",
+        "seqBoundOk": str(int((bound["false_flag"] <= bound["bound"]).sum())),
+        "seqBoundAll": str(len(bound)),
+        "seqTilt": pct(corr.loc["tilt", "noticed"]),
+        "seqMisregister": pct(corr.loc["misregister", "noticed"]),
     }
 
 

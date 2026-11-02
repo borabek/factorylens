@@ -253,6 +253,40 @@ The benchmark above corrupts a whole test set at once. `scripts/fault_stream.py`
 - None of the false switch-offs costs anything measurable before the fault (AUROC 0.873-0.874).
 - So the right window depends on how long faults last compared with how fast they must be caught. 16 was fixed before any run and is kept in the main table; 4-8 parts is the better choice when faults start in the middle of a run.
 
+## A sequential test instead of a window
+
+The window and the ramp above are set by hand, and nothing says how often they will switch a healthy sensor off. `conformal.FaultTest` gives that statement. Each part's health signal gets a conformal p-value against the validation parts and the parts seen so far, and a Shiryaev-Roberts statistic R = (1 + R) * bet(p) flags the sensor at R >= A. On an exchangeable stream a false flag within t parts has probability at most t / A. A flagged sensor gets weight 0 until a reset. This is the conformal martingale idea of Vovk et al. (2003, 2021) applied to sensor health; the technique isn't new.
+
+The settings (epsilon 0.1, A = 1000) were fixed after a prototype on five faults at severity 3. The table is the other 47 conditions, 20 orders per category; `scripts/sequential_faults.py`, code at commit f9630bf.
+
+|                 | AUROC before   | AUROC after   | false alarms after   | defects caught after   | parts to notice   | false flag before the fault   | healthy sensor off after   |
+|:----------------|:---------------|:--------------|:---------------------|:-----------------------|:------------------|:------------------------------|:---------------------------|
+| late fusion     | 0.875          | 0.802         | 65%                  | 86%                    |                   | 0.0%                          | 0.0%                       |
+| window 16       | 0.875          | 0.788         | 21%                  | 62%                    | 7                 | 10.5%                         | 0.0%                       |
+| window 4        | 0.875          | 0.805         | 16%                  | 59%                    | 1                 | 27.5%                         | 14.0%                      |
+| sequential test | 0.874          | 0.801         | 17%                  | 58%                    | 3                 | 7.0%                          | 3.7%                       |
+
+- Against window 16 (Wilcoxon over categories): better AUROC after the fault (p = 0.002) and fewer false alarms (p = 0.010), and it notices a fault in 3 parts instead of 7. Fewer false flags, but not significantly (p = 0.62).
+- What it costs: fewer defects caught at the same threshold (p = 0.002), and a flag stays up. A healthy sensor ends up off in 3.7% of streams, where the window recovers by itself. If a false flag is followed by a real fault, both sensors are flagged, both keep full weight and the alert says rgb+3d.
+- Against window 4: no significant difference in AUROC (p = 0.23). False flags in 7% of streams against 28%, but concentrated in a few categories, so not significant over ten (p = 0.12).
+- On the five faults the prototype saw: AUROC after 0.775, against 0.753 for window 16 and 0.790 for window 4.
+- The bound: on clean test streams, the false flag rate is below t / A on 19 of 20 sensor channels. The exception is rope rgb (11% against 10%), where normal test parts really do score above the validation parts, so the assumption behind the bound fails there.
+- Local and geometric faults stay hard. Tilt and misregistration are noticed in 4% and 4% of streams, as with the window; they barely move the background level.
+
+Sensitivity on the same conditions:
+
+| setting        | AUROC after   | parts to notice   | false flag before the fault   | fault noticed   |
+|:---------------|:--------------|:------------------|:------------------------------|:----------------|
+| e=0.05 A=100   | 0.801         | 2                 | 22.0%                         | 65%             |
+| e=0.05 A=1000  | 0.798         | 4                 | 2.0%                          | 58%             |
+| e=0.05 A=10000 | 0.797         | 7                 | 0.0%                          | 40%             |
+| e=0.1 A=100    | 0.799         | 1                 | 40.0%                         | 63%             |
+| e=0.1 A=1000   | 0.801         | 3                 | 7.0%                          | 72%             |
+| e=0.1 A=10000  | 0.798         | 5                 | 2.0%                          | 70%             |
+| e=0.2 A=100    | 0.798         | 1                 | 56.0%                         | 51%             |
+| e=0.2 A=1000   | 0.803         | 2                 | 20.0%                         | 71%             |
+| e=0.2 A=10000  | 0.801         | 3                 | 4.0%                          | 75%             |
+
 ## Which sensor each defect type needs
 
 `scripts/modality_importance.py` drops one sensor's term from late fusion (full training set) and measures the image AUROC each defect type loses, against all normal test images of its category. Averaged here over the categories that have the defect type:

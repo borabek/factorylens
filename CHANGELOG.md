@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-Found by testing the installed service end to end, with real scans and with what a broken sensor could send.
+- `fit --fault-test`: an optional sequential test for sensor faults instead of the median window (`conformal.FaultTest`, conformal martingales on the health signal). On 47 conditions it did not see while its settings were fixed, it notices a fault in 3 parts instead of 7 and lifts the AUROC after the fault from 0.788 to 0.801 (p = 0.002). It catches fewer defects at the same threshold, and a flag stays up until a reset. The window stays the default, so published numbers don't move.
+
+Found by testing the installed service end to end, with real scans and with what a broken sensor could send:
 
 - A dead 3D sensor on a raw scan (zeros, NaN or infinite everywhere) made every request fail with a 500, so the window never filled and `sensor_alert` never fired. It now goes through as a part with no points. With one sensor dead throughout, the fused AUROC on raw bagel and tire scans equals the other sensor's alone. The benchmark corrupts preprocessed data, which is why it never hit this; its numbers don't change.
 - NaN and infinite values count as missing points, as zeros do.

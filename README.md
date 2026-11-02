@@ -4,7 +4,7 @@
 
 Anomaly detection for industrial inspection using an RGB camera and a 3D sensor together, with a focus on what happens when one of the two sensors gets noisy or fails.
 
-The write-up is a short paper in [paper/](paper/) (`make paper` builds it). The research question, the dataset decision and the hypotheses are in [docs/research_plan.md](docs/research_plan.md). How the inspector would sit on a real production line, and what is missing for that, is in [docs/architecture.md](docs/architecture.md).
+The write-up is a short paper: [PDF](https://github.com/borabek/factorylens/releases/latest/download/factorylens_paper.pdf), source in [paper/](paper/) (`make paper` builds it). The research question, the dataset decision and the hypotheses are in [docs/research_plan.md](docs/research_plan.md). How the inspector would sit on a real production line, and what is missing for that, is in [docs/architecture.md](docs/architecture.md).
 
 ## Results
 
@@ -103,4 +103,4 @@ If you use the code or FactoryLens-C, please cite the release; GitHub's "Cite th
 
 ## License
 
-Code is MIT. The datasets keep their own licences.
+Code is MIT. The datasets keep their own licences. Figures in the paper and in docs/figures that show MVTec 3D-AD images are derived from it and stay under CC BY-NC-SA 4.0.

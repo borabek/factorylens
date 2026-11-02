@@ -53,7 +53,7 @@ curl -X POST localhost:8000/inspect -F rgb=@part1.png -F xyz=@part1.tiff
 - `GET /health` shows the model and its settings.
 - `POST /inspect` returns the JSON above. Add `?with_map=true` to get the anomaly map as well.
 - `GET /status` reports each sensor's health and weight over the current window and the median time per part. After 20 parts it also gives the alarm rate over the last 100 against the range expected from the calibration set (`alarm_rate`, `alarm_rate_expected`, `alarm_rate_high`), and with `--fault-test` the two test statistics (`fault_statistic_rgb`, `fault_statistic_3d`). A rate above the range means more defects than usual or normal parts drifting away from the calibration parts.
-- `POST /confirm?part=N` adds part N to the calibration set after an operator has checked it and found it good. Only one of the last 100 parts inspected with both sensors at full weight can be added, and each part only once. `Inspector.save` keeps the added parts.
+- `POST /confirm?part=N` adds part N to the calibration set after an operator has checked it and found it good. Only one of the last 100 parts inspected with both sensors at full weight can be added, and each part only once. So this corrects a shift in normal parts, not a broken sensor: during most faults no part qualifies, and in an offline test confirmed parts only traded defects caught for false alarms (results.md, "Confirmed-good parts when a sensor is broken"). `Inspector.save` keeps the added parts.
 - `POST /reset` clears the window and the alarm history.
 
 Requests are handled one at a time, because the window is shared state.

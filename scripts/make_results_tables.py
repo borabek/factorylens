@@ -1016,6 +1016,80 @@ def modality_section() -> list[str]:
     ]
 
 
+def recalibration_section() -> list[str]:
+    path = Path("results/analysis/recalibration.csv")
+    if not path.exists():
+        return []
+    t = pd.read_csv(path)
+    tests = pd.read_csv("results/analysis/recalibration_tests.csv")
+    p = tests.set_index(["metric", "versus"])["p"]
+    rgb = t[t["sensor"] == "rgb"]
+    window = rgb[rgb["detector"] == "window"]
+    none = window[window["k"] == 0]
+    five = window[(window["k"] == 5) & (window["rule"] == "any")]
+    healthy = rgb[rgb["detector"] == "healthy sensor"]
+    extent = rgb[(rgb["detector"] == "extent") & (rgb["k"] == 5) & (rgb["rule"] == "any")]
+    clean = t[(t["sensor"] == "clean") & (t["detector"] == "window")]
+    clean_none = clean[clean["k"] == 0]
+    clean_five = clean[(clean["k"] == 5) & (clean["rule"] == "any")]
+    strict = window[(window["k"] == 5) & (window["rule"] == "full weight")]
+    keys = ["category", "corruption", "severity"]
+    same = none.merge(strict[keys])
+
+    def row(label: str, d: pd.DataFrame) -> dict[str, str]:
+        return {
+            "": label,
+            "false alarms": f"{100 * d['false_alarm'].mean():.1f}%",
+            "defects caught": f"{100 * d['caught'].mean():.1f}%",
+        }
+
+    shown = pd.DataFrame(
+        [
+            row("no confirmed parts", none),
+            row("5 confirmed parts", five),
+            row("healthy sensor alone", healthy),
+            {"": "bar set in advance", "false alarms": "<= 12%", "defects caught": ">= 55%"},
+        ]
+    ).set_index("")
+    by = five.groupby("corruption")["false_alarm"].mean()
+    before = none.groupby("corruption")["false_alarm"].mean()
+    return [
+        "## Confirmed-good parts when a sensor is broken",
+        "",
+        "Five confirmed-good parts repair FPFH's shift on clean sensors (above). Do they also "
+        "repair the alarm rate when a sensor is broken? `scripts/recalibration.py` adds k good "
+        "parts from the current run to the calibration set and measures the rest, 200 draws per "
+        "condition. The question, the main setting and the bar were committed before the first "
+        "run (5c0c62f): reliability fusion, k = 5, every RGB corruption, alpha 0.1.",
+        "",
+        shown.to_markdown(disable_numparse=True),
+        "",
+        "**It misses both bars.**",
+        "",
+        f"- False alarms do fall (p = {p['false_alarm', 'no confirmed parts']:.3f}), but so do "
+        f"defects caught (p = {p['caught', 'no confirmed parts']:.3f}). That is what a higher "
+        "threshold does, so this moves along the trade-off rather than improving it. Against the "
+        f"healthy sensor alone neither difference is significant "
+        f"(p = {p['false_alarm', 'healthy sensor']:.2f}, {p['caught', 'healthy sensor']:.2f}).",
+        f"- Occlusion falls from {100 * before['occlusion']:.0f}% to "
+        f"{100 * by['occlusion']:.0f}% and is still the problem. The other corruptions reach "
+        f"{100 * by.drop('occlusion').min():.0f}-{100 * by.drop('occlusion').max():.0f}%.",
+        f"- With the extent signal as well: {100 * extent['false_alarm'].mean():.1f}% false "
+        f"alarms, {100 * extent['caught'].mean():.1f}% caught. That meets the first bar and "
+        "misses the second. It was a side arm, so it is a lead rather than a result.",
+        f"- Harmless on clean parts: {100 * clean_five['false_alarm'].mean():.1f}% false alarms "
+        f"and {100 * clean_five['caught'].mean():.1f}% caught, against "
+        f"{100 * clean_none['false_alarm'].mean():.1f}% and "
+        f"{100 * clean_none['caught'].mean():.1f}%.",
+        f"- The running service can't do this yet. `confirm_good` only takes parts with both "
+        f"sensors at full weight, and that leaves five such good parts in {len(strict)} of the "
+        f"{len(none)} RGB conditions (brightness and occlusion only). On those, false alarms "
+        f"fall from {100 * same['false_alarm'].mean():.0f}% to "
+        f"{100 * strict['false_alarm'].mean():.0f}%.",
+        "",
+    ]
+
+
 def conformal_section() -> list[str]:
     path = Path("results/analysis/conformal_clean.csv")
     if not path.exists():
@@ -1168,6 +1242,7 @@ def main() -> None:
         *sequential_section(),
         *modality_section(),
         *conformal_section(),
+        *recalibration_section(),
         *layer_section(),
         *checks_section(),
     ]

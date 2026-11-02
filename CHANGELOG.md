@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- A negative result in the paper and on the results page: with the camera corrupted, five confirmed-good parts bring false alarms from 18.5% to 13.2% and defects caught from 57.8% to 52.4%, which misses the bar set in advance (at most 12%, at least 55%). The paper's conclusion said confirmed parts "repaired the alarm rate"; that holds for a shift between validation and test parts, not for a broken sensor, and it now says so.
+
 ## 1.2.0 (2026-11-02)
 
 - `fit --fault-test`: an optional sequential test for sensor faults instead of the median window (`conformal.FaultTest`, conformal martingales on the health signal). On 47 conditions it did not see while its settings were fixed, it notices a fault in 3 parts instead of 7 and lifts the AUROC after the fault from 0.788 to 0.801 (p = 0.002). It catches fewer defects at the same threshold, and a flag stays up until a reset. The window stays the default, so published numbers don't move.

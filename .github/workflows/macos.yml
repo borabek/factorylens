@@ -1,0 +1,28 @@
+# Apple Silicon, same as the machine the experiments run on. Separate from ci.yml because
+# macOS runners are sometimes not assigned at all: that must not block a pull request or
+# turn the CI badge red. It runs after a merge and once a week.
+name: macos
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+          python-version: ${{ matrix.python }}
+      # open3d needs libusb on macOS
+      - run: brew install libusb && uv sync --locked --extra 3d
+      - run: uv run pytest -q --cov --cov-report=term

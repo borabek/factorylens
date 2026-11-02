@@ -21,25 +21,23 @@ jobs:
       # or changed a result without regenerating them
       - run: uv run python scripts/paper_assets.py && git diff --exit-code paper/generated
 
+  # Everything runs on Linux, so a pull request never waits for a macOS runner. GitHub
+  # sometimes assigns none and cancels the job after 15 minutes. macos.yml covers that side.
   test:
     strategy:
       fail-fast: false
       matrix:
-        # macos-latest is Apple Silicon, same as the machine the experiments run on
-        os: [ubuntu-latest, macos-latest]
         python: ["3.11", "3.12"]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.3.0
         with:
           enable-cache: true
           python-version: ${{ matrix.python }}
-      # open3d (FPFH features) needs libusb on macOS; the Linux job runs without
-      # the 3d extra and skips those tests, but installs the HTTP and demo extras
-      # so the FastAPI and Gradio apps are built at least once
-      - if: runner.os == 'macOS'
-        run: brew install libusb && uv sync --locked --extra 3d
-      - if: runner.os != 'macOS'
-        run: uv sync --locked --extra serve --extra demo
+      # open3d needs these on Linux, even without a display
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq libegl1 libgl1 libgomp1
+      - run: uv sync --locked --extra 3d --extra serve --extra demo
+      # the FPFH tests skip themselves without open3d, so a broken install must fail here
+      - run: uv run python -c "import open3d"
       - run: uv run pytest -q --cov --cov-report=term
